@@ -17,8 +17,48 @@ class Database {
     }
     //endregion
 
+    //region Getters && Setters
+    public function getHost(){
+        return $this->host;
+    }
+    
+    public function setHost($host) {
+        $this->host = $host;
+    }
+
+    public function getDbName(){
+        return $this->dbName;
+    }
+    
+    public function setDbName($dbName) {
+        $this->dbName = $dbName;
+    }
+
+    public function getUsername(){
+        return $this->username;
+    }
+    
+    public function setusername($username) {
+        $this->username = $username;
+    }
+
+    public function getPassword(){
+        return $this->password;
+    }
+    
+    public function setPassword($password) {
+        $this->password = $password;
+    }
+
+    public function getConn(){
+        return $this->conn;
+    }
+    
+    //endregion
+
+
     //region métodos
-    function getConnection()
+    public function getConnection()
     {
         try {
             $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->dbName, $this->username, $this->password);
@@ -26,7 +66,7 @@ class Database {
         } catch (PDOException $exception) {
             echo "LOG > Error de Conexión " . $exception->getMessage();
         }
-        echo "LOG > Conexión establecida";
+        //echo "LOG > Conexión establecida";
     }
     //endregion
 

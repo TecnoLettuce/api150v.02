@@ -15,36 +15,45 @@
 
 
     $database = new Database();
-    $db = $database->getConnection();
+
+    /**
+     * Comprobación de que la conexión es valida
+     */
+
+    // echo "\nEsto es lo que posee el objeto db > ".$database->getHost()."/".$database->getDbName()."/".$database->getUsername()."/".$database->getPassword();
 
     // recoger los datos que se pasan por post 
     $data = json_decode(file_get_contents("php://input"));
 
+    // Pruebas
+    $nombreRecibidoPorGet = htmlspecialchars($_GET["username"]);
+    $passwordRecibidaPorGet = htmlspecialchars($_GET["password"]);
+    //echo "\nRecibo por get > ".$nombreRecibidoPorGet;
+    //echo "\nRecibo por get > ".$passwordRecibidaPorGet;
+
     // Mirar a ver si hay datos 
-    if (!empty($data->userName) && !empty($data->password)) {
-        // Si todo tiene valores, se asignan a las variables 
-        $usuarioPasado = $data->userName;
-        $contraseñaPasada = $data->password;
+    if (!empty($nombreRecibidoPorGet) && !empty($passwordRecibidaPorGet)) {
 
         // Consultamos a ver si el usuario existe 
-        $query = "SELECT idUser FROM user WHERE username LIKE ".$usuarioPasado." AND password LIKE ".$contraseñaPasada.";";
-        echo "LOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
+        $query = "SELECT idUser FROM user WHERE username LIKE '".$nombreRecibidoPorGet."' AND password LIKE '".$passwordRecibidaPorGet."';";
+       // echo "\nLOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
         // declarar la query
-        $stmt = $this->conn->prepare($query);
+        $stmt = $database->getConn()->prepare($query);
         //Esto debe devolver un ID de usuario, si es correcto, se crea la sesion 
         $idObtenido = $stmt->execute();
 
         if ($idObtenido != null) {
             // Usuario existe
-            echo "LOG > Class LOGIN > Usuario Logado";
+            // echo "\nLOG > Class LOGIN > Usuario Logado";
             // Aqui ahora se genera el token y se crea la sesion 
             $tokenGenerado = generateToken();
-            crearSesion($tokenGenerado, $idObtenido);
-            echo 'LOG > Class LOGIN > Si estas viendo esto, la session se creó correctamente';
+            crearSesion($tokenGenerado, $idObtenido, $database);
+            // echo "\nLOG > Class LOGIN > Si estas viendo esto, la session se creó correctamente";
+            echo json_encode(array("token : ".$tokenGenerado)); 
             return true;
         } else {
             // Usuario no existe
-            echo "LOG > Class LOGIN > Los Datos no coinciden con ningun usuario";
+            // echo "\nLOG > Class LOGIN > Los Datos no coinciden con ningun usuario";
             return false;
         }
 
@@ -52,7 +61,7 @@
     } else {
         // si faltan datos, se comunica 
         http_response_code(400);
-        echo json_encode(array("LOG"=> "Introduce un usuario y contraseña válidos"));
+        echo json_encode(array("\nLOG"=> "Introduce un usuario y contraseña válidos"));
         
     }
 
@@ -68,24 +77,38 @@
     /**
      * Función que genera una sesion con los datos disponibles 
      */
-    function crearSesion($tokenGenerado, $idObtenido) {
+    function crearSesion($tokenGenerado, $idObtenido, $database) {
         $expireDateGenerated = generateExpireDate();
 
         // Lanzamos la consulta para crear la sesion
-        $query = "INSERT INTO session (idSession, idUser, token, expireDate) VALUES (null, ".$idObtenido.", ".$tokenGenerado.", ".$expireDateGenerated.");";
-        echo "LOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
+        $query = "INSERT INTO session (idSession, idUser, token, expireDate) VALUES (null, ".$idObtenido.", '".$tokenGenerado."', '".$expireDateGenerated."');";
+        // echo "LOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
         // declarar la query
-        $db = new Database();
-        $db->getConnection();
-        $stmt = $db->conn->prepare($query);
+        $stmt = $database->getConn()->prepare($query);
         // ejecutamos la inserción
         $stmt->execute();
+
+        /*
+        // Pruebas
+        echo "\n\n He llegado hasta aqui en la consulta de insertar la session"; 
+        $queryConfirmar = "SELECT * FROM session WHERE token LIKE 'sampletoken'";
+        echo "\n".$queryConfirmar;
+        $stmt = $database->getConn()->prepare($queryConfirmar);
+        echo "\n\nDEVUELTO > ".$stmt->execute()."\n";
+        */
+
+
     }
 
     function generateExpireDate() {
         // Se usa el expire date de prueba
+        $expireDate = date("Y-m-d");
+        /*
         $expireDate=mktime(11, 14, 54, 8, 12, 2021);
-        echo "Created date is " .$expireDate;
+         */
+        $expireDate = $expireDate." 23:59:59";
+        // echo "\n\nCreated date is " .$expireDate."\n";
+
         return $expireDate; 
     }
 
