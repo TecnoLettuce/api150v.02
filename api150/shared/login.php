@@ -38,22 +38,27 @@
         $query = "SELECT idUser FROM user WHERE username LIKE '".$nombreRecibidoPorGet."' AND password LIKE '".$passwordRecibidaPorGet."';";
        // echo "\nLOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
         // declarar la query
-        $stmt = $database->getConn()->prepare($query);
+        $resultado = $database->getConn()->query($query);
         //Esto debe devolver un ID de usuario, si es correcto, se crea la sesion 
-        $idObtenido = $stmt->execute();
 
-        if ($idObtenido != null) {
+        if ($resultado->rowCount() != 0 ) {
+            $idObtenido;
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $idObtenido = $row["idUser"];
+            }
             // Usuario existe
             // echo "\nLOG > Class LOGIN > Usuario Logado";
             // Aqui ahora se genera el token y se crea la sesion 
-            $tokenGenerado = generateToken();
-            crearSesion($tokenGenerado, $idObtenido, $database);
+            $expireDateGenerated = generateExpireDate();
+            $tokenGenerado = generateToken($nombreRecibidoPorGet, $expireDateGenerated);
+            
+            crearSesion($tokenGenerado, $idObtenido, $expireDateGenerated, $database);
             // echo "\nLOG > Class LOGIN > Si estas viendo esto, la session se creó correctamente";
             echo json_encode(array("token : ".$tokenGenerado)); 
             return true;
         } else {
             // Usuario no existe
-            // echo "\nLOG > Class LOGIN > Los Datos no coinciden con ningun usuario";
+            echo json_encode("Los datos introducidos no coinciden con ningún usuario");
             return false;
         }
 
@@ -69,19 +74,19 @@
      * Función que genera un token para la sesion
      * @renturn String
      */
-    function generateToken() {
-        $token = "SampleToken";
+    function generateToken($nombreRecibidoPorGet, $expireDateGenerated) {
+        $cadena = $nombreRecibidoPorGet . $expireDateGenerated . random_int(0,1000);
+        $token = sha1($cadena, $raw_output = false);
         return $token;
     }
 
     /**
      * Función que genera una sesion con los datos disponibles 
      */
-    function crearSesion($tokenGenerado, $idObtenido, $database) {
-        $expireDateGenerated = generateExpireDate();
-
+    function crearSesion($tokenGenerado, $idObtenido, $expireDate, $database) {
+        
         // Lanzamos la consulta para crear la sesion
-        $query = "INSERT INTO session (idSession, idUser, token, expireDate) VALUES (null, ".$idObtenido.", '".$tokenGenerado."', '".$expireDateGenerated."');";
+        $query = "INSERT INTO session (idSession, idUser, token, expireDate) VALUES (null, ".$idObtenido.", '".$tokenGenerado."', '".$expireDate."');";
         // echo "LOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
         // declarar la query
         $stmt = $database->getConn()->prepare($query);
@@ -101,12 +106,22 @@
     }
 
     function generateExpireDate() {
-        // Se usa el expire date de prueba
-        $expireDate = date("Y-m-d");
+        
+        $date = date("Y-m-d H:i:s"); //"Y-m-d"
+        // echo $date;
+        // Sacamos las horas 
+        $primeraParte = substr($date, 0,11);
+        // echo "Primera Parte > ".$primeraParte."\n";
+        $horas = substr($date, 11, 2);
+        // echo $horas."\n";
+        $segundaParte = substr($date, 13,6);
+        // echo "Segunda Parte > ".$segundaParte;
+        $horas = $horas+1;
+        $expireDate = $primeraParte.$horas.$segundaParte;
+        // echo "\nHora reconstruida > ".$expireDate;
         /*
         $expireDate=mktime(11, 14, 54, 8, 12, 2021);
          */
-        $expireDate = $expireDate." 23:59:59";
         // echo "\n\nCreated date is " .$expireDate."\n";
 
         return $expireDate; 
