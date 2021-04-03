@@ -12,9 +12,10 @@
     include_once '../config/database.php';
     include_once '../objects/user.php';
     include_once '../objects/session.php';
+    include_once '../util/commonFunctions.php';
 
     $database = new Database();
-
+    $common = new CommonFunctions();
     // recogemos los datos pasados 
     $data = json_decode(file_get_contents("php://input"));
 
@@ -26,22 +27,32 @@
     $mailRecibido = htmlspecialchars($_GET["mail"]);
     $rolRecibido = htmlspecialchars($_GET["rol"]);
     $tokenRecibido = htmlspecialchars($_GET["token"]);
+    $rolAdmin = htmlspecialchars($_GET["rolAdmin"]);
 
     // Comprobamos que todo esta en orden 
     // echo "Datos recibidos > ".$userNameRecibido." > ".$passwordRecibida." > ".$mailRecibido." > ".$rolRecibido." > ".$tokenRecibido;
 
     // Comprobamos que no faltan datos esenciales 
-    if (!empty($userNameRecibido) && !empty($passwordRecibida) && !empty($mailRecibido) && !empty($tokenRecibido)) {
+    if (!empty($userNameRecibido) && !empty($passwordRecibida) && !empty($mailRecibido) && !empty($tokenRecibido) && !empty($rolAdmin)) {
 
         // Comprobamos si el rol está asignado 
         $rolRecibido = comprobarRol($rolRecibido);
         // Comprobamos si el token es valido 
-        $tokenValido = comprobarToken($tokenRecibido);
+        $tokenValido = $common->comprobarToken($tokenRecibido);
+        //$tokenValido = comprobarToken($tokenRecibido);
 
         if ($tokenValido) {
-            // Se le permite crear el usuario 
-            $idUser = crearUsuario($userNameRecibido, $passwordRecibida, $mailRecibido, $rolRecibido);
-            echo json_encode("Se ha creado el nuevo usuario ");
+
+            // Se comprueba que los roles del usuario permiten crear otros usuarios 
+            $rolValido = $common->comprobarRolAdmin($rolAdmin);
+            if ($rolValido) {
+                // Se le permite crear el usuario 
+                $idUser = crearUsuario($userNameRecibido, $passwordRecibida, $mailRecibido, $rolRecibido);
+                echo json_encode("Se ha creado el nuevo usuario ");
+            } else {
+                echo json_encode("Está intentando crear un usuario sin permisos de administrador");
+            }
+            
 
         } else {
             echo json_encode("El token de usuario que está utilizando no es válido");
@@ -85,30 +96,5 @@
             return $rol; 
         }
     }
-
-    /**
-     * Recibe un token y comprueba si existe.
-     * Si existe devolverá true y dejará realizar operaciones 
-     * Si no existe devolverá false
-     * @param $token
-     * @return boolean
-     */
-    function comprobarToken ($token) {
-        $database = new Database();
-        $consulta = "SELECT idSession FROM session WHERE token LIKE '".$token."';";
-        // echo "\n\nConsulta del token > ".$consulta."\n\n";
-        $resultado = $database->getConn()->query($consulta);
-        //Esto debe devolver un ID de usuario, si es correcto, se crea la sesion 
-        
-        if ($resultado->rowCount() == 0) {
-            // El token del usuario que esta creando el nuevo usuario no existe 
-            return false;
-        } else {
-            return true;
-        }
-
-        
-    }
-
 
 ?>
