@@ -27,35 +27,27 @@
     $mailRecibido = htmlspecialchars($_GET["mail"]);
     $rolRecibido = htmlspecialchars($_GET["rol"]);
     $tokenRecibido = htmlspecialchars($_GET["token"]);
-    $rolAdmin = htmlspecialchars($_GET["rolAdmin"]);
+    
 
     // Comprobamos que todo esta en orden 
     // echo "Datos recibidos > ".$userNameRecibido." > ".$passwordRecibida." > ".$mailRecibido." > ".$rolRecibido." > ".$tokenRecibido;
 
     // Comprobamos que no faltan datos esenciales 
-    if (!empty($userNameRecibido) && !empty($passwordRecibida) && !empty($mailRecibido) && !empty($tokenRecibido) && !empty($rolAdmin)) {
+    if (!empty($userNameRecibido) && !empty($passwordRecibida) && !empty($mailRecibido) && !empty($tokenRecibido)) {
 
         // Comprobamos si el rol está asignado 
         $rolRecibido = comprobarRol($rolRecibido);
         // Comprobamos si el token es valido 
-        $tokenValido = $common->comprobarToken($tokenRecibido);
+        $tokenValido = $common->comprobarTokenAdmin($tokenRecibido);
         //$tokenValido = comprobarToken($tokenRecibido);
 
-        if ($tokenValido) {
-
-            // Se comprueba que los roles del usuario permiten crear otros usuarios 
-            $rolValido = $common->comprobarRolAdmin($rolAdmin);
-            if ($rolValido) {
-                // Se le permite crear el usuario 
-                $idUser = crearUsuario($userNameRecibido, $passwordRecibida, $mailRecibido, $rolRecibido);
-                echo json_encode("Se ha creado el nuevo usuario ");
-            } else {
-                echo json_encode("Está intentando crear un usuario sin permisos de administrador");
-            }
-            
-
-        } else {
+        if ($tokenValido == -1) {
             echo json_encode("El token de usuario que está utilizando no es válido");
+        } else if ($tokenValido == 0) {
+            echo json_encode("Está intentando crear un usuario sin permisos de administrador");
+        } else {
+            $idUser = crearUsuario($userNameRecibido, $passwordRecibida, $mailRecibido, $rolRecibido);
+            echo json_encode("Se ha creado el nuevo usuario ");
         }
         
     } else {
