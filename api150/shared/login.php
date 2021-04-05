@@ -36,7 +36,7 @@
 
         // Consultamos a ver si el usuario existe 
         $query = "SELECT idUser FROM user WHERE username LIKE '".$nombreRecibidoPorGet."' AND password LIKE '".$passwordRecibidaPorGet."';";
-       // echo "\nLOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
+        //echo "\nLOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
         // declarar la query
         $resultado = $database->getConn()->query($query);
         //Esto debe devolver un ID de usuario, si es correcto, se crea la sesion 
@@ -58,7 +58,7 @@
             return true;
         } else {
             // Usuario no existe
-            echo json_encode("Los datos introducidos no coinciden con ningún usuario");
+            echo json_encode(array("token : "));
             return false;
         }
 
@@ -66,7 +66,7 @@
     } else {
         // si faltan datos, se comunica 
         http_response_code(400);
-        echo json_encode(array("\nLOG"=> "Introduce un usuario y contraseña válidos"));
+        echo json_encode(array("token : "));
         
     }
 
@@ -108,7 +108,7 @@
     function generateExpireDate() {
 
         $tiempoUnix = time();
-        echo "El tiempo unix generado es ".$tiempoUnix;
+        // echo "El tiempo unix generado es ".$tiempoUnix;
         // Sobre el unix, se le suma la cantidad que nosotros queramos 
         /*
          * 60 es un minuto
@@ -119,7 +119,7 @@
          $expire = $tiempoUnix + 120;
 
         $expireDate = gmdate("Y-m-d H:i:s", $tiempoUnix);
-        echo "El expireDate Generado es ".$expireDate;
+        // echo "El expireDate Generado es ".$expireDate;
         return $expireDate; 
     }
 

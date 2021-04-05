@@ -47,11 +47,11 @@
             echo json_encode("Está intentando crear un usuario sin permisos de administrador");
         } else {
             $idUser = crearUsuario($userNameRecibido, $passwordRecibida, $mailRecibido, $rolRecibido);
-            echo json_encode("Se ha creado el nuevo usuario ");
+            echo json_encode(array("error : 0")); // todo bien 
         }
         
     } else {
-        echo json_encode("Faltan datos necesarios para la creación del usuario");
+        echo json_encode(array("error : 1")); // Faltan datos
     }
 
 
@@ -64,7 +64,7 @@
         $database = new Database();
         // Lanzamos la consulta para crear el user
         $query = "INSERT INTO user (idUser, userName, password, mail, idRol) VALUES (null, '".$username."', '".$password."', '".$mail."', ".$rol.");";
-        echo "\nConsulta para insertar > ".$query."\n";
+        //echo "\nConsulta para insertar > ".$query."\n";
         $stmt = $database->getConn()->prepare($query);
         // ejecutamos la inserción
         $stmt->execute();
