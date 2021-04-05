@@ -65,6 +65,58 @@ class CommonFunctions {
             return false;
         }
     }
+
+
+    /**
+     * TODO
+     * Recibe el token del usuario y comprueba si la sesión está expirada 
+     * @param String token
+     * @return boolean
+     */
+    public function comprobarExpireDate ($token) {
+        $tiempoActual = time();
+        // Recogemos el expireDate asociado al token que recibimos 
+        $query = "SELECT expireDate FROM session WHERE token LIKE '".$token."';";
+        $database = new Database();
+        $resultado = $database->getConn()->query($query);
+        $tiempoSession = "";
+        while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+            $tiempoSession = $row["expireDate"];
+        }
+
+        // Convertimos el date a timestamp
+        $tiempoSessionTimestamp = strtotime($tiempoSession);
+
+
+        if ($tiempoSessionTimestamp > $tiempoActual) {
+            // Aqui el tiempo del expire es un tiempo más grande que el tiempo actual,
+            // por lo tanto token valido
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
+    /**
+     * TODO
+     * Funcion que se llama cada vez que el usuario realiza una acción
+     * Otorga 2 minutos más de login desde el momento en el que se realiza la acción
+     * @param String Token
+     * @return Void
+     */
+    public function ActualizarExpireDate($tokenUsuario) {
+        $tiempoActual = time();
+        $tiempoActual = $tiempoActual +120;
+        $expireDate = gmdate("Y-m-d H:i:s", $tiempoActual);
+        // Recogemos el expireDate asociado al token que recibimos 
+        $query = "UPDATE session SET expireDate = '".$expireDate."' WHERE token LIKE '".$tokenUsuario."';";
+        $database = new Database();
+        $database->getConn()->query($query);
+    }
+
+
 }
 
 ?>

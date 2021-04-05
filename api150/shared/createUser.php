@@ -64,7 +64,7 @@
         $database = new Database();
         // Lanzamos la consulta para crear el user
         $query = "INSERT INTO user (idUser, userName, password, mail, idRol) VALUES (null, '".$username."', '".$password."', '".$mail."', ".$rol.");";
-        // echo "\nConsulta para insertar > ".$query."\n";
+        echo "\nConsulta para insertar > ".$query."\n";
         $stmt = $database->getConn()->prepare($query);
         // ejecutamos la inserción
         $stmt->execute();
