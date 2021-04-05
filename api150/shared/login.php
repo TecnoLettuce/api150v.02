@@ -106,24 +106,20 @@
     }
 
     function generateExpireDate() {
-        
-        $date = date("Y-m-d H:i:s"); //"Y-m-d"
-        // echo $date;
-        // Sacamos las horas 
-        $primeraParte = substr($date, 0,11);
-        // echo "Primera Parte > ".$primeraParte."\n";
-        $horas = substr($date, 11, 2);
-        // echo $horas."\n";
-        $segundaParte = substr($date, 13,6);
-        // echo "Segunda Parte > ".$segundaParte;
-        $horas = $horas+1;
-        $expireDate = $primeraParte.$horas.$segundaParte;
-        // echo "\nHora reconstruida > ".$expireDate;
-        /*
-        $expireDate=mktime(11, 14, 54, 8, 12, 2021);
-         */
-        // echo "\n\nCreated date is " .$expireDate."\n";
 
+        $tiempoUnix = time();
+        echo "El tiempo unix generado es ".$tiempoUnix;
+        // Sobre el unix, se le suma la cantidad que nosotros queramos 
+        /*
+         * 60 es un minuto
+         * 60 * 5 son 5 minutos 
+         * 3600 es una hora 
+         */
+         // Se dejan por defecto dos minutos de expiredate
+         $expire = $tiempoUnix + 120;
+
+        $expireDate = gmdate("Y-m-d H:i:s", $tiempoUnix);
+        echo "El expireDate Generado es ".$expireDate;
         return $expireDate; 
     }
 
