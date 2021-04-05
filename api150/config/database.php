@@ -1,11 +1,20 @@
 <?php
 class Database {
 
+    /*
+    Credenciales del servidor
+    usuario: app150
+
+    clave: %fSk69c7
+    */
+
     //region Atributos
     private $host  = "localhost";
-    private $dbName = "app150";
+    private $dbName = "app150"; // dbName desarrollo
+    //private $dbName = "app150_1.0"; // dbName Produccion 
     private $username = "app150";
-    private $password = "1234";
+    private $password = "1234"; // Contraseña desarrollo
+    //private $password = "TheBackenders123"; // Contraseña producción
     private $conn;
     //endregion
 
