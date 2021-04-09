@@ -4,7 +4,7 @@
  * Clase que contiene todos los parametros de una sesion
  * y sus metodos
  */
-include_once '../config/database.php';
+include_once '../../config/database.php';
 class Session {
 
     //region Atributos base de datos de la clase session

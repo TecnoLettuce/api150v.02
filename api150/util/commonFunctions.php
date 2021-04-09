@@ -1,7 +1,7 @@
 <?php
-    include_once '../config/database.php';
-    include_once '../objects/user.php';
-    include_once '../objects/session.php';
+    include_once '../../config/database.php';
+    include_once '../../objects/user.php';
+    include_once '../../objects/session.php';
 class CommonFunctions {
 
     // Atributos
@@ -111,7 +111,7 @@ class CommonFunctions {
         $tiempoActual = $tiempoActual +120;
         $expireDate = gmdate("Y-m-d H:i:s", $tiempoActual);
         // Recogemos el expireDate asociado al token que recibimos 
-        $query = "UPDATE session SET expireDate = '".$expireDate."' WHERE token LIKE '".$tokenUsuario."';";
+        $query = "UPDATE session SET expireDate = UNIX_TIMESTAMP(".$expireDate.") WHERE token LIKE '".$tokenUsuario."';";
         $database = new Database();
         $database->getConn()->query($query);
     }
