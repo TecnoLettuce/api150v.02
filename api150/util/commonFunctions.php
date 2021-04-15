@@ -100,7 +100,6 @@ class CommonFunctions {
     }
 
     /**
-     * TODO
      * Funcion que se llama cada vez que el usuario realiza una acción
      * Otorga 2 minutos más de login desde el momento en el que se realiza la acción
      * @param String Token
@@ -115,6 +114,384 @@ class CommonFunctions {
         $database = new Database();
         $database->getConn()->query($query);
     }
+
+
+    /**
+     * Recibe el titulo de un ambiente y devuelve si existe o no
+     * @param integer idAmbiente
+     * @return boolean
+     */
+    public function comprobarExisteAmbientePorTitulo($titulo) {
+        $database = new Database();
+        $query = "SELECT id_Ambiente FROM ambiente WHERE titulo LIKE '".$titulo."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Recibe el id de un ambiente y devuelve si existe o no
+     * @param integer idAmbiente
+     * @return boolean
+     */
+    public function comprobarExisteAmbientePorId($id) {
+        $database = new Database();
+        $query = "SELECT titulo FROM ambiente WHERE id_Ambiente LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+
+
+    /**
+     * Recibe el titulo de una historia y devuelve si existe o no
+     * @param integer tituloHistoria
+     * @return boolean
+     */
+    public function comprobarExisteHistoriaPorTitulo($titulo) {
+        $database = new Database();
+        $query = "SELECT id_Historia FROM historias WHERE titulo LIKE '".$titulo."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+     /**
+     * Recibe el id de una historia y devuelve si existe o no
+     * @param integer idHistoria
+     * @return boolean
+     */
+    public function comprobarExisteHistoriaPorId($id) {
+        $database = new Database();
+        $query = "SELECT titulo FROM historias WHERE id_Historia LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Introduce el titulo para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarTitulo($id, $titulo) {
+        $database = new Database();
+        $query = "UPDATE historias SET titulo = '".$titulo."' WHERE id_Historia LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+    /**
+     * Introduce el subtitulo para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarSubtitulo($id, $subtitulo) {
+        $database = new Database();
+        $query = "UPDATE historias SET subtitulo = '".$subtitulo."' WHERE id_Historia LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+    /**
+     * Introduce la descripcion para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarDescripcion($id, $descripcion) {
+        $database = new Database();
+        $query = "UPDATE historias SET descripcion = '".$descripcion."' WHERE id_Historia LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+
+
+
+    /*
+    $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."' WHERE id_Ambiente LIKE ".$idAmbienteRecibido.";";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+                echo json_encode("error : 0, message : Registro Actualizado");
+    */
+
+    /**
+     * Recibe el titulo de una historia y devuelve si existe o no
+     * @param string titulo
+     * @return boolean
+     */
+    public function comprobarExisteSaludoPorTitulo($titulo) {
+        $database = new Database();
+        $query = "SELECT id_Saludo FROM saludos WHERE titulo LIKE '".$titulo."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+     /**
+     * Recibe el id de un saludo y devuelve si existe o no
+     * @param integer id
+     * @return boolean
+     */
+    public function comprobarExisteSaludoPorId($id) {
+        $database = new Database();
+        $query = "SELECT titulo FROM saludos WHERE id_Saludo LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Introduce el titulo para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarTituloSaludo($id, $titulo) {
+        $database = new Database();
+        $query = "UPDATE saludos SET titulo = '".$titulo."' WHERE id_Saludo LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+    /**
+     * Introduce el subtitulo para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarTextoSaludo($id, $texto) {
+        $database = new Database();
+        $query = "UPDATE saludos SET texto = '".$texto."' WHERE id_Saludo LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+    /**
+     * Introduce la descripcion para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarDescripcionSaludo($id, $descripcion) {
+        $database = new Database();
+        $query = "UPDATE saludos SET descripcion = '".$descripcion."' WHERE id_Saludo LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+
+
+
+    /**
+     * Recibe el titulo de una oración y devuelve si existe o no
+     * @param string titulo
+     * @return boolean
+     */
+    public function comprobarExisteOracionPorTitulo($titulo) {
+        $database = new Database();
+        $query = "SELECT id_Oracion FROM oraciones WHERE titulo LIKE '".$titulo."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+     /**
+     * Recibe el id de una oración y devuelve si existe o no
+     * @param integer id
+     * @return boolean
+     */
+    public function comprobarExisteOracionPorId($id) {
+        $database = new Database();
+        $query = "SELECT titulo FROM oraciones WHERE id_Oracion LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Introduce el titulo para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarTituloOracion($id, $titulo) {
+        $database = new Database();
+        $query = "UPDATE oraciones SET titulo = '".$titulo."' WHERE id_Oracion LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+    /**
+     * Introduce el subtitulo para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarTextoOracion($id, $texto) {
+        $database = new Database();
+        $query = "UPDATE oraciones SET texto = '".$texto."' WHERE id_Oracion LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+
+
+
+    /**
+     * Recibe el titulo de una visita y devuelve si existe o no
+     * @param string titulo
+     * @return boolean
+     */
+    public function comprobarExisteVisitaPorTitulo($titulo) {
+        $database = new Database();
+        $query = "SELECT id_Visita FROM visitas WHERE titulo LIKE '".$titulo."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+     /**
+     * Recibe el id de una visita y devuelve si existe o no
+     * @param integer id
+     * @return boolean
+     */
+    public function comprobarExisteVisitaPorId($id) {
+        $database = new Database();
+        $query = "SELECT titulo FROM visitas WHERE id_Visita  LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Introduce el titulo para hacer el update en la tabla visitas
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarTituloVisita($id, $titulo) {
+        $database = new Database();
+        $query = "UPDATE visitas SET titulo = '".$titulo."' WHERE id_Visita LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+
+
+
+    /**
+     * Recibe el titulo de un acto y devuelve si existe o no
+     * @param string titulo
+     * @return boolean
+     */
+    public function comprobarExisteActoPorTitulo($titulo) {
+        $database = new Database();
+        $query = "SELECT id_Programa FROM programas WHERE titulo LIKE '".$titulo."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+     /**
+     * Recibe el id de una Acto y devuelve si existe o no
+     * @param integer id
+     * @return boolean
+     */
+    public function comprobarExisteActoPorId($id) {
+        $database = new Database();
+        $query = "SELECT titulo FROM programas WHERE id_Programa  LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+
+     /**
+     * Introduce el titulo para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarTituloActo($id, $titulo) {
+        $database = new Database();
+        $query = "UPDATE programas SET titulo = '".$titulo."' WHERE id_Programa LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+    /**
+     * Introduce el subtitulo para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarCategoriaActo($id, $categoria) {
+        $database = new Database();
+        $query = "UPDATE programas SET categoria = '".$categoria."' WHERE id_Programa LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+    /**
+     * Introduce la descripcion para hacer el update en la tabla historia
+     * @param integer, String 
+     * @return void
+     */
+    public function insertarFEchaActo($id, $fecha) {
+        $database = new Database();
+        $query = "UPDATE programas SET fecha = '".$fecha."' WHERE id_Programa LIKE ".$id.";";
+        $stmt = $database->getConn()->prepare($query);
+        $stmt->execute();
+    }
+
+
+
+
+
+
 
 
 }
