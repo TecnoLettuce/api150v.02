@@ -23,8 +23,9 @@
     $resultado = $database->getConn()->query($query);
     
     $arr = array();
-    $ambiente = new Ambiente();
+    
     while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+        $ambiente = new Ambiente();
         $ambiente->id=$row["id_Ambiente"];
         $ambiente->titulo=$row["titulo"];
         array_push($arr, $ambiente);

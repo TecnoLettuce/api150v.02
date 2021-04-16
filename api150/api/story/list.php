@@ -23,8 +23,8 @@
     $resultado = $database->getConn()->query($query);
     
     $arr = array();
-    $historia = new Historia();
     while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+        $historia = new Historia();
         $historia->idHistoria=$row["id_Historia"];
         $historia->titulo=$row["titulo"];
         $historia->subtitulo=$row["subtitulo"];
