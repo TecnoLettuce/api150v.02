@@ -11,12 +11,10 @@
      // Conexión con la base de datos 
      include_once '../../config/database.php';
      include_once '../../util/commonFunctions.php';
- 
      //Creación de la base de datos 
      $database = new Database();
      // Declaración de commonFunctions
-     $cf = new CommonFunctions();
- 
+    $cf = new CommonFunctions();
      //region Definicion de los datos que llegan
      $data = json_decode(file_get_contents("php://input"));
  
@@ -29,33 +27,21 @@
      //endregion
 
      // lo primero es comprobar que existe el elemento que se quiere modificar 
-     if (!empty($idSaludo)) {
+     if (!empty($idSaludo) && !empty($nuevoTitulo) && !empty($nuevaDescripcion) && !empty($nuevoTexto)) {
         // Tenemos todos los datos ok
         // Comprobamos que el id existe
         if ($cf->comprobarExisteSaludoPorId($idSaludo)) {
 
-            // Comporbar qué dato es el que se desea cambiar, mirando cuales están vacíos
-            if (!empty($nuevoTitulo)) {
-                $cf->insertarTituloSaludo($idSaludo, $nuevoTitulo);
-            }
-
-            if (!empty($nuevaDescripcion)) {
-                $cf->insertarDescripcionSaludo($idSaludo, $nuevaDescripcion);
-            }
-
-            if (!empty($nuevoTexto)) {
-                $cf->insertarTextoSaludo($idSaludo, $nuevoTexto);
-            }
-
-            echo json_encode("error : 0, message : Elemento actualizado");
-
+            $database = new Database();
+            $query = "UPDATE saludos SET titulo = '".$nuevoTitulo."', descripcion = '".$nuevaDescripcion."', texto = '".$nuevoTexto."' WHERE id_Saludo LIKE ".$idSaludo.";";
+            $stmt = $database->getConn()->prepare($query);
+            $stmt->execute();
+            echo json_encode(" error : 0, message : Elemento actualizado");
         } else {
             echo json_encode(" error : 2, message : El registro no existe");
         }
      } else {
          echo json_encode(" error : 1, message : Faltan uno o más datos");
      }
-
-
 
 ?>
