@@ -25,23 +25,33 @@
 
      
      //endregion
+     $token = htmlspecialchars($_GET["token"]);
+
+    // Comprobamos que tiene permisos de administrador
+    if ($cf->comprobarTokenAdmin($token) == 1) { 
+        if (!empty($idSaludo) && !empty($nuevoTitulo) && !empty($nuevaDescripcion) && !empty($nuevoTexto)) {
+            // Tenemos todos los datos ok
+            // Comprobamos que el id existe
+            if ($cf->comprobarExisteSaludoPorId($idSaludo)) {
+    
+                $database = new Database();
+                $query = "UPDATE saludos SET titulo = '".$nuevoTitulo."', descripcion = '".$nuevaDescripcion."', texto = '".$nuevoTexto."' WHERE id_Saludo LIKE ".$idSaludo.";";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+                echo json_encode(" error : 0, message : Elemento actualizado");
+            } else {
+                echo json_encode(" error : 2, message : El registro no existe");
+            }
+         } else {
+             echo json_encode(" error : 1, message : Faltan uno o más datos");
+         }
+    
+    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
+        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+    } else {
+        echo json_encode("error : 3, message : token no valido");
+    }
 
      // lo primero es comprobar que existe el elemento que se quiere modificar 
-     if (!empty($idSaludo) && !empty($nuevoTitulo) && !empty($nuevaDescripcion) && !empty($nuevoTexto)) {
-        // Tenemos todos los datos ok
-        // Comprobamos que el id existe
-        if ($cf->comprobarExisteSaludoPorId($idSaludo)) {
-
-            $database = new Database();
-            $query = "UPDATE saludos SET titulo = '".$nuevoTitulo."', descripcion = '".$nuevaDescripcion."', texto = '".$nuevoTexto."' WHERE id_Saludo LIKE ".$idSaludo.";";
-            $stmt = $database->getConn()->prepare($query);
-            $stmt->execute();
-            echo json_encode(" error : 0, message : Elemento actualizado");
-        } else {
-            echo json_encode(" error : 2, message : El registro no existe");
-        }
-     } else {
-         echo json_encode(" error : 1, message : Faltan uno o más datos");
-     }
-
+     
 ?>

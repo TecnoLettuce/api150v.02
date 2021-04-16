@@ -22,26 +22,38 @@
      $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
      $nuevaCategoria = htmlspecialchars($_GET["nuevaCategoria"]);
      $nuevaFecha = htmlspecialchars($_GET["nuevaFecha"]);
+     $token = htmlspecialchars($_GET["token"]);
+    //endregion
+    // Comprobamos que tiene permisos de administrador
+    if ($cf->comprobarTokenAdmin($token) == 1) { 
+        // lo primero es comprobar que existe el elemento que se quiere modificar 
+        if (!empty($idPrograma) && !empty($nuevoTitulo) && !empty($nuevaCategoria) && !empty($nuevaFecha)) {
+            // Tenemos todos los datos ok
+            // Comprobamos que el id existe
+            if ($cf->comprobarExisteActoPorId($idPrograma)) {
+
+                $database = new Database();
+                $query = "UPDATE programas SET titulo = '".$nuevoTitulo."', categoria = '".$nuevaCategoria."', fecha = '".$nuevaFecha."' WHERE id_Programa LIKE ".$idPrograma.";";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+                echo json_encode(" error : 0, message : Elemento actualizado");
+            } else {
+                echo json_encode(" error : 2, message : El registro no existe");
+            }
+        } else {
+            echo json_encode(" error : 1, message : Faltan uno o más datos");
+        }
+
+
+    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
+        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+    } else {
+        echo json_encode("error : 3, message : token no valido");
+    }
 
      
-     //endregion
+     
 
-     // lo primero es comprobar que existe el elemento que se quiere modificar 
-     if (!empty($idPrograma) && !empty($nuevoTitulo) && !empty($nuevaCategoria) && !empty($nuevaFecha)) {
-        // Tenemos todos los datos ok
-        // Comprobamos que el id existe
-        if ($cf->comprobarExisteActoPorId($idPrograma)) {
-
-            $database = new Database();
-            $query = "UPDATE programas SET titulo = '".$nuevoTitulo."', categoria = '".$nuevaCategoria."', fecha = '".$nuevaFecha."' WHERE id_Programa LIKE ".$idPrograma.";";
-            $stmt = $database->getConn()->prepare($query);
-            $stmt->execute();
-            echo json_encode(" error : 0, message : Elemento actualizado");
-        } else {
-            echo json_encode(" error : 2, message : El registro no existe");
-        }
-     } else {
-         echo json_encode(" error : 1, message : Faltan uno o más datos");
-     }
+     
 
 ?>
