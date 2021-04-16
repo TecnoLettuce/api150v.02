@@ -22,28 +22,41 @@
     $titulo = htmlspecialchars($_GET["titulo"]);
     $categoria = htmlspecialchars($_GET["categoria"]);
     $fecha = htmlspecialchars($_GET["fecha"]);
+    $token = htmlspecialchars($_GET["token"]);
     //endregion
 
-    // comprobamos que no faltan datos vitales
-    if (!empty($titulo) && !empty($categoria) && !empty($fecha) ) {
-        // Tenemos todos los datos
-        //Comprobamos que el registro no existe ya en la base de datos 
-        if ($cf->comprobarExisteActoPorTitulo($titulo)) {
-            // el programa ya existe
-            echo json_encode(array("error : 1, message : El acto ya existe" ));
+    // Comprobamos que tiene permisos de administrador
+    if ($cf->comprobarTokenAdmin($token) == 1) { 
+        // comprobamos que no faltan datos vitales
+        if (!empty($titulo) && !empty($categoria) && !empty($fecha) ) {
+            // Tenemos todos los datos
+            //Comprobamos que el registro no existe ya en la base de datos 
+            if ($cf->comprobarExisteActoPorTitulo($titulo)) {
+                // el programa ya existe
+                echo json_encode(array("error : 1, message : El acto ya existe" ));
+            } else {
+                // el programa no existe 
+                $query = "INSERT INTO programas (id_Programa, titulo, categoria, fecha) VALUES (null,'".$titulo."','".$categoria."','".$fecha."');";
+                // echo "La consulta para insertar un programa es ".$query;
+                $stmt = $database->getConn()->prepare($query);
+                // echo "La consulta para insertar el programa es ".$query;
+                
+                $stmt->execute();
+                echo json_encode(array("error : 0, message : Elemento creado"));
+            }
         } else {
-            // el programa no existe 
-            $query = "INSERT INTO programas (id_Programa, titulo, categoria, fecha) VALUES (null,'".$titulo."','".$categoria."','".$fecha."');";
-            // echo "La consulta para insertar un programa es ".$query;
-            $stmt = $database->getConn()->prepare($query);
-            // echo "La consulta para insertar el programa es ".$query;
-            
-            $stmt->execute();
-            echo json_encode(array("error : 0, message : Elemento creado"));
+            echo json_encode("error : 1, message : Faltan uno o más datos");
         }
+
+
+    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
+        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
     } else {
-        echo json_encode("error : 1, message : Faltan uno o más datos");
+        echo json_encode("error : 3, message : token no valido");
     }
+  
+
+    
 
     
 
