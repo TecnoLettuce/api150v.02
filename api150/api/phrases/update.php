@@ -18,11 +18,10 @@ $cf = new CommonFunctions();
 //region Definicion de los datos que llegan
 $data = json_decode(file_get_contents("php://input"));
 
-$idAmbiente = htmlspecialchars($_GET["idAmbiente"]);
+$idFrase = htmlspecialchars($_GET["idFrase"]);
 $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
-
-
-
+$nuevoTexto = htmlspecialchars($_GET["nuevoTexto"]);
+$nuevoAutor = htmlspecialchars($_GET["nuevoAutor"]);
 //endregion
 
 $token = htmlspecialchars($_GET["token"]);
@@ -30,13 +29,13 @@ $token = htmlspecialchars($_GET["token"]);
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // lo primero es comprobar que existe el elemento que se quiere modificar 
-        if (!empty($idAmbiente) && !empty($nuevoTitulo)) {
+        if (!empty($idFrase) && !empty($nuevoTitulo) && !empty($nuevoTexto) && !empty($nuevoAutor)) {
             // Tenemos todos los datos ok
             // Comprobamos que el id existe
-            if ($cf->comprobarExisteAmbientePorId($idAmbiente)) {
+            if ($cf->comprobarExisteFrasePorId($idFrase)) {
         
                 $database = new Database();
-                $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."' WHERE id_Ambiente LIKE ".$idAmbiente.";";
+                $query = "UPDATE frases SET titulo = '".$nuevoTitulo."',texto = '".$nuevoTexto."',autor = '".$nuevoAutor."' WHERE id_Frase LIKE ".$idFrase.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(" error : 0, message : Elemento actualizado");
@@ -46,6 +45,7 @@ $token = htmlspecialchars($_GET["token"]);
         } else {
             echo json_encode(" error : 1, message : Faltan uno o más datos");
         }
+
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
     } else {

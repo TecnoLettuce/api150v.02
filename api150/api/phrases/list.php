@@ -11,7 +11,7 @@
     // Conexión con la base de datos 
     include_once '../../config/database.php';
     include_once '../../util/commonFunctions.php';
-    include_once '../../util/ambiente.php';
+    include_once '../../util/phrase.php';
 
     //Creación de la base de datos 
     $database = new Database();
@@ -19,17 +19,18 @@
     $cf = new CommonFunctions();
 
     // No tiene que recibir parámetros es solo la consulta pelada
-    $query = "SELECT * FROM ambiente;";
+    $query = "SELECT * FROM frases;";
     $resultado = $database->getConn()->query($query);
     
     $arr = array();
     
     while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-        $ambiente = new Ambiente();
-        $ambiente->id=$row["id_Ambiente"];
-        $ambiente->titulo=$row["titulo"];
-        $ambiente->descripcion=$row["descripcion"];
-        array_push($arr, $ambiente);
+        $frase = new Frase();
+        $frase->id=$row["id_Frase"];
+        $frase->titulo=$row["titulo"];
+        $frase->texto=$row["texto"];
+        $frase->autor=$row["autor"];
+        array_push($arr, $frase);
     }
     echo json_encode($arr);
 ?>

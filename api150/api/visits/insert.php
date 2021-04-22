@@ -23,26 +23,37 @@
     $tituloVisita = htmlspecialchars($_GET["tituloVisita"]);
     //endregion
 
-    // comprobación de que los datos se reciben correctamente
-    if (!empty($tituloVisita)) {
-        // tengo todos los datos que necesito
-        //Comprobamos que el registro no existe ya en la base de datos 
-        if ($cf->comprobarExisteVisitaPorTitulo($tituloVisita)) {
-            // El visita ya existe
-            echo json_encode(array("error : 1, message : La visita ya existe" ));
-        } else {
-            // el visita no existe 
-            $query = "INSERT INTO visitas (id_Visita, titulo) VALUES (null,'".$tituloVisita."');";
-            // echo "La consulta para insertar un visita es ".$query;
-            $stmt = $database->getConn()->prepare($query);
-                
-            $stmt->execute();
+    $token = htmlspecialchars($_GET["token"]);
 
-            echo json_encode(array("error : 0, message : Elemento creado"));
+    // Comprobamos que tiene permisos de administrador
+    if ($cf->comprobarTokenAdmin($token) == 1) { 
+        // comprobación de que los datos se reciben correctamente
+        if (!empty($tituloVisita)) {
+            // tengo todos los datos que necesito
+            //Comprobamos que el registro no existe ya en la base de datos 
+            if ($cf->comprobarExisteVisitaPorTitulo($tituloVisita)) {
+                // El visita ya existe
+                echo json_encode(array("error : 1, message : La visita ya existe" ));
+            } else {
+                // el visita no existe 
+                $query = "INSERT INTO visitas (id_Visita, titulo) VALUES (null,'".$tituloVisita."');";
+                // echo "La consulta para insertar un visita es ".$query;
+                $stmt = $database->getConn()->prepare($query);
+                    
+                $stmt->execute();
+
+                echo json_encode(array("error : 0, message : Elemento creado"));
+            }
+
+        } else {
+            echo json_encode(" error : 1, message : Faltan uno o más datos");
         }
 
+    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
+        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
     } else {
-        echo json_encode(" error : 1, message : Faltan uno o más datos");
+        echo json_encode("error : 3, message : token no valido");
     }
+    
 
 ?>

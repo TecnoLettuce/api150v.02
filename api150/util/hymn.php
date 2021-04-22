@@ -1,10 +1,10 @@
 <?php 
 
-    class Ambiente {
+    class Himno {
         // Atributos 
         public $id;
         public $titulo;
-        public $descripcion;
+        public $letra;
 
         // Cosntructor
         public function __construct() {

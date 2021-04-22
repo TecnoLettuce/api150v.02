@@ -47,8 +47,6 @@
         } else {
             echo json_encode("error : 1, message : Faltan uno o más datos");
         }
-
-
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
     } else {

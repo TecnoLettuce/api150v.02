@@ -23,22 +23,34 @@ $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
 
 //endregion
 
-// lo primero es comprobar que existe el elemento que se quiere modificar 
-if (!empty($idVisita) && !empty($nuevoTitulo) ) {
-   // Tenemos todos los datos ok
-   // Comprobamos que el id existe
-   if ($cf->comprobarExisteVisitaPorId($idVisita)) {
+$token = htmlspecialchars($_GET["token"]);
 
-       $database = new Database();
-       $query = "UPDATE visitas SET titulo = '".$nuevoTitulo."' WHERE id_Visita LIKE ".$idVisita.";";
-       $stmt = $database->getConn()->prepare($query);
-       $stmt->execute();
-       echo json_encode(" error : 0, message : Elemento actualizado");
-   } else {
-       echo json_encode(" error : 2, message : El registro no existe");
-   }
-} else {
-    echo json_encode(" error : 1, message : Faltan uno o más datos");
-}
+    // Comprobamos que tiene permisos de administrador
+    if ($cf->comprobarTokenAdmin($token) == 1) { 
+        // lo primero es comprobar que existe el elemento que se quiere modificar 
+        if (!empty($idVisita) && !empty($nuevoTitulo) ) {
+            // Tenemos todos los datos ok
+            // Comprobamos que el id existe
+            if ($cf->comprobarExisteVisitaPorId($idVisita)) {
+        
+                $database = new Database();
+                $query = "UPDATE visitas SET titulo = '".$nuevoTitulo."' WHERE id_Visita LIKE ".$idVisita.";";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+                echo json_encode(" error : 0, message : Elemento actualizado");
+            } else {
+                echo json_encode(" error : 2, message : El registro no existe");
+            }
+        } else {
+            echo json_encode(" error : 1, message : Faltan uno o más datos");
+        }
+
+    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
+        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+    } else {
+        echo json_encode("error : 3, message : token no valido");
+    }
+
+
 
 ?>

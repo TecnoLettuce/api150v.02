@@ -340,6 +340,117 @@ class CommonFunctions {
 
     }
 
+
+    /**
+     * Recibe la url de un medio y devuelve si existe o no
+     * @param string url
+     * @return boolean
+     */
+    public function comprobarExisteMedioPorURL($url) {
+        $database = new Database();
+        $query = "SELECT id_Medio FROM medios WHERE url LIKE '".$url."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+     /**
+     * Recibe el id de un medio y devuelve si existe o no
+     * @param integer id
+     * @return boolean
+     */
+    public function comprobarExisteMedioPorId($id) {
+        $database = new Database();
+        $query = "SELECT url FROM medios WHERE id_Medio  LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * Recibe el titulo de una frase y devuelve si existe o no
+     * @param string titulo
+     * @return boolean
+     */
+    public function comprobarExisteFrasePortitulo($titulo) {
+        $database = new Database();
+        $query = "SELECT id_Frase FROM frases WHERE titulo LIKE '".$titulo."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+     /**
+     * Recibe el id de una frase y devuelve si existe o no
+     * @param integer id
+     * @return boolean
+     */
+    public function comprobarExisteFrasePorId($id) {
+        $database = new Database();
+        $query = "SELECT id_Frase FROM frases WHERE id_Frase  LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+    }
+
+    
+
+    /**
+     * Recibe el titulo de un himno y devuelve si existe o no
+     * @param string titulo
+     * @return boolean
+     */
+    public function comprobarExisteHimnoPortitulo($titulo) {
+        $database = new Database();
+        $query = "SELECT id_Himno FROM himnos WHERE titulo LIKE '".$titulo."';";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+
+    }
+
+     /**
+     * Recibe el id de un himno y devuelve si existe o no
+     * @param integer id
+     * @return boolean
+     */
+    public function comprobarExisteHimnoPorId($id) {
+        $database = new Database();
+        $query = "SELECT id_Himno FROM himnos WHERE id_Himno  LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+    }
+
+    
+
 }
 
 ?>

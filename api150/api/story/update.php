@@ -27,22 +27,34 @@ $nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
 
 //endregion
 
-// lo primero es comprobar que existe el elemento que se quiere modificar 
-if (!empty($idHistoria) && !empty($nuevoTitulo) && !empty($nuevoSubtitulo) && !empty($nuevaDescripcion)) {
-   // Tenemos todos los datos ok
-   // Comprobamos que el id existe
-   if ($cf->comprobarExisteHistoriaPorId($idHistoria)) {
+$token = htmlspecialchars($_GET["token"]);
 
-       $database = new Database();
-       $query = "UPDATE historias SET titulo = '".$nuevoTitulo."',subtitulo = '".$nuevoSubtitulo."',descripcion = '".$nuevaDescripcion."' WHERE id_Historia LIKE ".$idHistoria.";";
-       $stmt = $database->getConn()->prepare($query);
-       $stmt->execute();
-       echo json_encode(" error : 0, message : Elemento actualizado");
-   } else {
-       echo json_encode(" error : 2, message : El registro no existe");
-   }
-} else {
-    echo json_encode(" error : 1, message : Faltan uno o más datos");
-}
+    // Comprobamos que tiene permisos de administrador
+    if ($cf->comprobarTokenAdmin($token) == 1) { 
+        // lo primero es comprobar que existe el elemento que se quiere modificar 
+        if (!empty($idHistoria) && !empty($nuevoTitulo) && !empty($nuevoSubtitulo) && !empty($nuevaDescripcion)) {
+            // Tenemos todos los datos ok
+            // Comprobamos que el id existe
+            if ($cf->comprobarExisteHistoriaPorId($idHistoria)) {
+        
+                $database = new Database();
+                $query = "UPDATE historias SET titulo = '".$nuevoTitulo."',subtitulo = '".$nuevoSubtitulo."',descripcion = '".$nuevaDescripcion."' WHERE id_Historia LIKE ".$idHistoria.";";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+                echo json_encode(" error : 0, message : Elemento actualizado");
+            } else {
+                echo json_encode(" error : 2, message : El registro no existe");
+            }
+        } else {
+            echo json_encode(" error : 1, message : Faltan uno o más datos");
+        }
+
+    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
+        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+    } else {
+        echo json_encode("error : 3, message : token no valido");
+    }
+
+
 
 ?>

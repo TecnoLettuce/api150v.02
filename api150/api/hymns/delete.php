@@ -20,8 +20,8 @@
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
-    $idRecibida = htmlspecialchars($_GET["idVisita"]);
-
+    $idRecibida = htmlspecialchars($_GET["idHimno"]);
+    
     $token = htmlspecialchars($_GET["token"]);
 
     // Comprobamos que tiene permisos de administrador
@@ -29,9 +29,9 @@
         if (!empty($idRecibida)) {
             // Tengo todos los datos
             // Comprobamos que la id corresponde a un registro 
-            if ($cf->comprobarExisteVisitaPorId($idRecibida)) {
+            if ($cf->comprobarExisteHimnoPorId($idRecibida)) {
                 // Efectivamente existe y se puede eliminar
-                $query = "DELETE FROM visitas WHERE id_Visita like ".$idRecibida.";";
+                $query = "DELETE FROM himnos WHERE id_Himno like ".$idRecibida.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(array(" error : 0, message : Elemento eliminado"));
@@ -40,8 +40,9 @@
                 echo json_encode(array("error : 1, message : El registro no existe"));
             }
         } else {
-            echo json_encode("error : 1, message : faltan uno o más datos");
+            echo json_encode(" error : 1, message : faltan uno o más datos");
         }
+
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");

@@ -1,10 +1,11 @@
 <?php 
 
-    class Ambiente {
+    class Frase {
         // Atributos 
         public $id;
         public $titulo;
-        public $descripcion;
+        public $texto;
+        public $autor;
 
         // Cosntructor
         public function __construct() {
