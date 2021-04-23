@@ -33,7 +33,7 @@
         echo buscarPorTitulo($titulo);
     } else {
         // No hay ninguno
-        echo json_encode(" error : 1, message : Faltan uno o más datos");
+        echo json_encode(" status : 400, message : Faltan uno o más datos");
     }
 
    

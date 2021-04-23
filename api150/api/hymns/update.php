@@ -40,17 +40,17 @@ $token = htmlspecialchars($_GET["token"]);
                 $query = "UPDATE himnos SET titulo = '".$nuevoTitulo."', letra= '".$nuevaLetra."' WHERE id_Himno LIKE ".$idHimno.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
-                echo json_encode(" error : 0, message : Elemento actualizado");
+                echo json_encode(" status : 200, message : Elemento actualizado");
             } else {
-                echo json_encode(" error : 2, message : El registro no existe");
+                echo json_encode(" status : 406, message : El registro no existe");
             }
         } else {
-            echo json_encode(" error : 1, message : Faltan uno o más datos");
+            echo json_encode(" status : 400, message : Faltan uno o más datos");
         }
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+        echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {
-        echo json_encode("error : 3, message : token no valido");
+        echo json_encode("status : 403, message : token no valido");
     }
 
 

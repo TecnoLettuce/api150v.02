@@ -25,9 +25,9 @@
      * Aquí va la lógica de subir un archivo por url 
      */
 
-    $url = htmlspecialchars($_GET["url"]);
-    $tipo = htmlspecialchars($_GET["tipo"]);
-    $token = htmlspecialchars($_GET["token"]);
+    $url = $data->url;
+    $tipo = $data->tipo;
+    $token = $data->token;
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
@@ -37,7 +37,7 @@
             // Comprobar si existe el medio 
             if ($cf->comprobarExisteMedioPorURL($url)) {
                 // Ya existe 
-                echo json_encode("error : 4, message : El elemento que intenta insertar ya existe");
+                echo json_encode("status : 406, message : El elemento que intenta insertar ya existe");
             } else {
                 // No existe 
                 // lo insertamos 
@@ -49,15 +49,15 @@
                 // echo "La consulta para insertar el programa es ".$query;
                 
                 $stmt->execute();
-                echo json_encode(array("error : 0, message : Elemento creado"));
+                echo json_encode(array("status : 0, message : Elemento creado"));
             }
         } else {
-            echo json_encode("error : 1, message : Faltan uno o más datos");
+            echo json_encode("status : 400, message : Faltan uno o más datos");
         }
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+        echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {
-        echo json_encode("error : 3, message : token no valido");
+        echo json_encode("status : 403, message : token no valido");
     }
 
 

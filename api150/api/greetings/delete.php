@@ -20,8 +20,8 @@
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
-    $idRecibida = htmlspecialchars($_GET["idSaludo"]);
-    $token = htmlspecialchars($_GET["token"]);
+    $idRecibida = $data->idSaludo;
+    $token = $data->token;
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
@@ -34,20 +34,20 @@
                 $query = "DELETE FROM saludos WHERE id_Saludo like ".$idRecibida.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
-                echo json_encode(array(" error : 0, message : Elemento eliminado"));
+                echo json_encode(array(" status : 200, message : Elemento eliminado"));
             } else {
                 //No existe y por lo tanto no se puede eliminar 
-                echo json_encode(array("error : 1, message : El registro no existe"));
+                echo json_encode(array("status : 406, message : El registro no existe"));
             }
         } else {
-            echo json_encode("error : 1, message : faltan uno o más datos");
+            echo json_encode("status : 400, message : faltan uno o más datos");
         }
 
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+        echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {
-        echo json_encode("error : 3, message : token no valido");
+        echo json_encode("status : 403, message : token no valido");
     }
     
     

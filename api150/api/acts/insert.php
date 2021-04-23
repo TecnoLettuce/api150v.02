@@ -18,12 +18,12 @@
 
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
+    
+    $titulo = $data->titulo;
+    $categoria = $data->categoria;
+    $fecha = $data->fecha;
+    $token = $data->token;
 
-    $titulo = htmlspecialchars($_GET["titulo"]);
-    $categoria = htmlspecialchars($_GET["categoria"]);
-    $fecha = htmlspecialchars($_GET["fecha"]);
-    $token = htmlspecialchars($_GET["token"]);
-    //endregion
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
@@ -33,7 +33,7 @@
             //Comprobamos que el registro no existe ya en la base de datos 
             if ($cf->comprobarExisteActoPorTitulo($titulo)) {
                 // el programa ya existe
-                echo json_encode(array("error : 1, message : El acto ya existe" ));
+                echo json_encode(array("status : 406, message : El acto ya existe" ));
             } else {
                 // el programa no existe 
                 $query = "INSERT INTO programas (id_Programa, titulo, categoria, fecha) VALUES (null,'".$titulo."','".$categoria."','".$fecha."');";
@@ -42,15 +42,15 @@
                 // echo "La consulta para insertar el programa es ".$query;
                 
                 $stmt->execute();
-                echo json_encode(array("error : 0, message : Elemento creado"));
+                echo json_encode(array("status : 200, message : Elemento creado"));
             }
         } else {
-            echo json_encode("error : 1, message : Faltan uno o más datos");
+            echo json_encode("status : 400, message : Faltan uno o más datos");
         }
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+        echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {
-        echo json_encode("error : 3, message : token no valido");
+        echo json_encode("status : 403, message : token no valido");
     }
   
 

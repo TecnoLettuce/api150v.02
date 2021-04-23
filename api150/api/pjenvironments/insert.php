@@ -20,11 +20,11 @@
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
-    $tituloAmbienteRecibido = htmlspecialchars($_GET["tituloAmbiente"]);
-    $descripcionAmbienteRecibido = htmlspecialchars($_GET["descripcionAmbiente"]);
+    $tituloAmbienteRecibido = $data->tituloAmbiente;
+    $descripcionAmbienteRecibido = $data->descripcionAmbiente;
+    $token = $data->token;
     //endregion
 
-    $token = htmlspecialchars($_GET["token"]);
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
@@ -34,7 +34,7 @@
             //Comprobamos que el registro no existe ya en la base de datos 
             if ($cf->comprobarExisteAmbientePorTitulo($tituloAmbienteRecibido)) {
                 // El ambiente ya existe
-                echo json_encode(array("error : 1, message : El ambiente ya existe" ));
+                echo json_encode(array("status : 406, message : El ambiente ya existe" ));
             } else {
                 // el ambiente no existe 
                 $query = "INSERT INTO ambiente (id_Ambiente, titulo, descripcion) VALUES (null,'".$tituloAmbienteRecibido."', '".$descripcionAmbienteRecibido."');";
@@ -43,18 +43,18 @@
                     
                 $stmt->execute();
 
-                echo json_encode(array("error : 0, message : Elemento creado"));
+                echo json_encode(array("status : 200, message : Elemento creado"));
             }
 
         } else {
-            echo json_encode(" error : 1, message : Faltan uno o más datos");
+            echo json_encode(" status : 400, message : Faltan uno o más datos");
         }
 
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        echo json_encode("error : 2, message : no tiene permisos para realizar esta operación");
+        echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {
-        echo json_encode("error : 3, message : token no valido");
+        echo json_encode("status : 403, message : token no valido");
     }
 
     
