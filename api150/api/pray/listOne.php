@@ -61,6 +61,7 @@
             $pray->id=$row["id_Oracion"];
             $pray->titulo=$row["titulo"];
             $pray->texto=$row["texto"];
+            $pray->enUso=$row["enUso"];
             array_push($arr, $pray);
         }
         $paraDevolver = json_encode($arr);
@@ -79,10 +80,11 @@
         $arr = array();
         
         while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-            $pray = new pray();
+            $pray = new Pray();
             $pray->id=$row["id_Oracion"];
             $pray->titulo=$row["titulo"];
             $pray->texto=$row["texto"];
+            $pray->enUso=$row["enUso"];
             array_push($arr, $pray);
         }
         $paraDevolver = json_encode($arr);
@@ -103,10 +105,11 @@
         $arr = array();
         
         while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-            $pray = new pray();
+            $pray = new Pray();
             $pray->id=$row["id_Oracion"];
             $pray->titulo=$row["titulo"];
             $pray->texto=$row["texto"];
+            $pray->enUso=$row["enUso"];
             array_push($arr, $pray);
         }
         $paraDevolver = json_encode($arr);

@@ -382,9 +382,9 @@ class CommonFunctions {
      * @param string titulo
      * @return boolean
      */
-    public function comprobarExisteFrasePortitulo($titulo) {
+    public function comprobarExisteFrasePorFecha($fecha) {
         $database = new Database();
-        $query = "SELECT id_Frase FROM frases WHERE titulo LIKE '".$titulo."';";
+        $query = "SELECT id_Frase FROM frase_inicio WHERE fecha LIKE '".$fecha."';";
         $resultado = $database->getConn()->query($query);
 
         if ($resultado->rowCount() != 0) {
@@ -402,7 +402,7 @@ class CommonFunctions {
      */
     public function comprobarExisteFrasePorId($id) {
         $database = new Database();
-        $query = "SELECT id_Frase FROM frases WHERE id_Frase  LIKE ".$id.";";
+        $query = "SELECT id_Frase FROM frase_inicio WHERE id_Frase  LIKE ".$id.";";
         $resultado = $database->getConn()->query($query);
 
         if ($resultado->rowCount() != 0) {

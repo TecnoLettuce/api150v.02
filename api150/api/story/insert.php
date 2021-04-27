@@ -22,6 +22,7 @@
     $tituloHistoriaRecibido = $data->tituloHistoria;
     $subtituloHistoriaRecibido = $data->subtituloHistoria;
     $descripcionRecibida = $data->descripcion;
+    $boolEnUso = $data->enUso;
     $token = $data->token;
 
     //endregion
@@ -30,7 +31,7 @@
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // comprobamos que no faltan datos vitales
-        if (!empty($tituloHistoriaRecibido) && !empty($subtituloHistoriaRecibido) && !empty($descripcionRecibida) ) {
+        if (!empty($tituloHistoriaRecibido) && !empty($subtituloHistoriaRecibido) && !empty($descripcionRecibida) && $boolEnUso != null ) {
             // Tenemos todos los datos
             //Comprobamos que el registro no existe ya en la base de datos 
             if ($cf->comprobarExisteHistoriaPorTitulo($tituloHistoriaRecibido)) {
@@ -38,7 +39,7 @@
                 echo json_encode(array("status : 406, message : La historia ya existe" ));
             } else {
                 // la historia no existe 
-                $query = "INSERT INTO historias (id_Historia, titulo, subtitulo, descripcion) VALUES (null,'".$tituloHistoriaRecibido."','".$subtituloHistoriaRecibido."', '".$descripcionRecibida."');";
+                $query = "INSERT INTO historias (id_Historia, titulo, subtitulo, descripcion, enUso) VALUES (null,'".$tituloHistoriaRecibido."','".$subtituloHistoriaRecibido."', '".$descripcionRecibida."', ".$boolEnUso.");";
                 // echo "La consulta para insertar una historia es ".$query;
                 $stmt = $database->getConn()->prepare($query);
                 // echo "La consulta para insertar la historia es ".$query;

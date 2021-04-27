@@ -22,6 +22,7 @@
      $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
      $nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
      $nuevoTexto = htmlspecialchars($_GET["nuevoTexto"]);
+     $boolEnuso = htmlspecialchars($_GET["enUso"]);
 
      
      //endregion
@@ -35,7 +36,7 @@
             if ($cf->comprobarExisteSaludoPorId($idSaludo)) {
     
                 $database = new Database();
-                $query = "UPDATE saludos SET titulo = '".$nuevoTitulo."', descripcion = '".$nuevaDescripcion."', texto = '".$nuevoTexto."' WHERE id_Saludo LIKE ".$idSaludo.";";
+                $query = "UPDATE saludos SET titulo = '".$nuevoTitulo."', descripcion = '".$nuevaDescripcion."', texto = '".$nuevoTexto."', enUso = ".$boolEnuso." WHERE id_Saludo LIKE ".$idSaludo.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(" status : 200, message : Elemento actualizado");

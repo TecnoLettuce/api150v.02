@@ -21,23 +21,24 @@ $data = json_decode(file_get_contents("php://input"));
 $idHimno = htmlspecialchars($_GET["idHimno"]);
 $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
 $nuevaLetra = htmlspecialchars($_GET["nuevaLetra"]);
-
+$boolEnUso = htmlspecialchars($_GET["enUso"]);
 
 
 //endregion
+
 
 $token = htmlspecialchars($_GET["token"]);
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // lo primero es comprobar que existe el elemento que se quiere modificar 
-        if (!empty($idHimno) && !empty($nuevoTitulo) && !empty($nuevaLetra)) {
+        if (!empty($idHimno) && !empty($nuevoTitulo) && !empty($nuevaLetra) && $boolEnUso != null) {
             // Tenemos todos los datos ok
             // Comprobamos que el id existe
             if ($cf->comprobarExisteHimnoPorId($idHimno)) {
         
                 $database = new Database();
-                $query = "UPDATE himnos SET titulo = '".$nuevoTitulo."', letra= '".$nuevaLetra."' WHERE id_Himno LIKE ".$idHimno.";";
+                $query = "UPDATE himnos SET titulo = '".$nuevoTitulo."', letra= '".$nuevaLetra."', enUso = ".$boolEnUso." WHERE id_Himno LIKE ".$idHimno.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(" status : 200, message : Elemento actualizado");

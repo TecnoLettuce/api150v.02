@@ -21,6 +21,7 @@ $data = json_decode(file_get_contents("php://input"));
 $idOracion = htmlspecialchars($_GET["idOracion"]);
 $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
 $nuevoTexto = htmlspecialchars($_GET["nuevoTexto"]);
+$boolEnUso = htmlspecialchars($_GET["enUso"]);
 //endregion
 
 $token = htmlspecialchars($_GET["token"]);
@@ -28,13 +29,13 @@ $token = htmlspecialchars($_GET["token"]);
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // lo primero es comprobar que existe el elemento que se quiere modificar 
-        if (!empty($idOracion) && !empty($nuevoTitulo) && !empty($nuevoTexto)) {
+        if (!empty($idOracion) && !empty($nuevoTitulo) && !empty($nuevoTexto) && $boolEnUso != null) {
             // Tenemos todos los datos ok
             // Comprobamos que el id existe
             if ($cf->comprobarExisteOracionPorId($idOracion)) {
         
                 $database = new Database();
-                $query = "UPDATE oraciones SET titulo = '".$nuevoTitulo."',texto = '".$nuevoTexto."' WHERE id_Oracion LIKE ".$idOracion.";";
+                $query = "UPDATE oraciones SET titulo = '".$nuevoTitulo."',texto = '".$nuevoTexto."', enUso = ".$boolEnUso." WHERE id_Oracion LIKE ".$idOracion.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(" status : 200, message : Elemento actualizado");

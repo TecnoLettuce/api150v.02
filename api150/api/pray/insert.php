@@ -21,6 +21,7 @@
 
     $titulo = $data->titulo;
     $texto = $data->texto;
+    $boolEnUso = $data->enUso;
     $token = $data->token;
     //endregion
 
@@ -28,7 +29,7 @@
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // comprobamos que no faltan datos vitales
-        if (!empty($titulo) && !empty($texto) ) {
+        if (!empty($titulo) && !empty($texto) && $boolEnUso != null) {
             // Tenemos todos los datos
             //Comprobamos que el registro no existe ya en la base de datos 
             if ($cf->comprobarExisteOracionPorTitulo($titulo)) {
@@ -36,7 +37,7 @@
                 echo json_encode(array("status : 406, message : La oración ya existe" ));
             } else {
                 // la oración no existe 
-                $query = "INSERT INTO oraciones (id_Oracion, titulo, texto) VALUES (null,'".$titulo."','".$texto."');";
+                $query = "INSERT INTO oraciones (id_Oracion, titulo, texto, enUso) VALUES (null,'".$titulo."','".$texto."', ".$boolEnUso.");";
                 // echo "La consulta para insertar una oración es ".$query;
                 $stmt = $database->getConn()->prepare($query);
                 // echo "La consulta para insertar la oración es ".$query;

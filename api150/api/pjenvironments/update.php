@@ -20,6 +20,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 $idAmbiente = htmlspecialchars($_GET["idAmbiente"]);
 $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
+$boolEnUso = htmlspecialchars($_GET["enUso"]);
 
 
 
@@ -30,13 +31,13 @@ $token = htmlspecialchars($_GET["token"]);
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // lo primero es comprobar que existe el elemento que se quiere modificar 
-        if (!empty($idAmbiente) && !empty($nuevoTitulo)) {
+        if (!empty($idAmbiente) && !empty($nuevoTitulo) && $boolEnUso!=null) {
             // Tenemos todos los datos ok
             // Comprobamos que el id existe
             if ($cf->comprobarExisteAmbientePorId($idAmbiente)) {
         
                 $database = new Database();
-                $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."' WHERE id_Ambiente LIKE ".$idAmbiente.";";
+                $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."', enUso = ".$boolEnUso." WHERE id_Ambiente LIKE ".$idAmbiente.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(" status : 200, message : Elemento actualizado");

@@ -4,8 +4,9 @@
         // Atributos 
         public $id;
         public $titulo;
-        public $categoria;
         public $fecha;
+        public $enUso;
+        public $categoria;
 
         // Cosntructor
         public function __construct() {

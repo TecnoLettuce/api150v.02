@@ -3,9 +3,8 @@
     class Frase {
         // Atributos 
         public $id;
-        public $titulo;
         public $texto;
-        public $autor;
+        public $fecha;
 
         // Cosntructor
         public function __construct() {

@@ -29,6 +29,7 @@
         $pray->id=$row["id_Oracion"];
         $pray->titulo=$row["titulo"];
         $pray->texto=$row["texto"];
+        $pray->enUso=$row["enUso"];
         array_push($arr, $pray);
     }
     echo json_encode($arr);

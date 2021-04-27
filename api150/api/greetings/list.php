@@ -30,6 +30,7 @@
         $saludo->titulo=$row["titulo"];
         $saludo->descripcion=$row["descripcion"];
         $saludo->texto=$row["texto"];
+        $saludo->enUso=$row["enUso"];
         array_push($arr, $saludo);
     }
     echo json_encode($arr);

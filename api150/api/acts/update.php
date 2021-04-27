@@ -20,20 +20,22 @@
  
      $idPrograma = htmlspecialchars($_GET["idPrograma"]);
      $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
-     $nuevaCategoria = htmlspecialchars($_GET["nuevaCategoria"]);
      $nuevaFecha = htmlspecialchars($_GET["nuevaFecha"]);
+     $boolEnUso = htmlspecialchars($_GET["enUso"]);
+     // $nuevaCategoria = htmlspecialchars($_GET["nuevaCategoria"]); // La categoría se suprime para coincidir con las restricciones de la base de datos 
      $token = htmlspecialchars($_GET["token"]);
     //endregion
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // lo primero es comprobar que existe el elemento que se quiere modificar 
-        if (!empty($idPrograma) && !empty($nuevoTitulo) && !empty($nuevaCategoria) && !empty($nuevaFecha)) {
+        if (!empty($idPrograma) && !empty($nuevoTitulo) && !empty($nuevaFecha) && $boolEnUso!=null) {
             // Tenemos todos los datos ok
             // Comprobamos que el id existe
             if ($cf->comprobarExisteActoPorId($idPrograma)) {
 
                 $database = new Database();
-                $query = "UPDATE programas SET titulo = '".$nuevoTitulo."', categoria = '".$nuevaCategoria."', fecha = '".$nuevaFecha."' WHERE id_Programa LIKE ".$idPrograma.";";
+                $query = "UPDATE programas SET titulo = '".$nuevoTitulo."', fecha = '".$nuevaFecha."', enUso = ".$boolEnUso." WHERE id_Programa LIKE ".$idPrograma.";";
+                echo "consulta > ".$query;
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(" status : 200, message : Elemento actualizado");

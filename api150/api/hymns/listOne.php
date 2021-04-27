@@ -61,6 +61,7 @@
             $himno->id=$row["id_Himno"];
             $himno->titulo=$row["titulo"];
             $himno->letra=$row["letra"];
+            $himno->enUso=$row["enUso"];
             array_push($arr, $himno);
         }
         $paraDevolver = json_encode($arr);
@@ -83,6 +84,8 @@
             $himno->id=$row["id_Himno"];
             $himno->titulo=$row["titulo"];
             $himno->letra=$row["letra"];
+            $himno->enUso=$row["enUso"];
+
             array_push($arr, $himno);
         }
         $paraDevolver = json_encode($arr);
@@ -107,6 +110,8 @@
             $himno->id=$row["id_Himno"];
             $himno->titulo=$row["titulo"];
             $himno->letra=$row["letra"];
+            $himno->enUso=$row["enUso"];
+
             array_push($arr, $himno);
         }
         $paraDevolver = json_encode($arr);

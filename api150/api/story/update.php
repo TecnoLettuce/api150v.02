@@ -22,6 +22,7 @@ $idHistoria = htmlspecialchars($_GET["idHistoria"]);
 $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
 $nuevoSubtitulo = htmlspecialchars($_GET["nuevoSubtitulo"]);
 $nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
+$boolEnUso = htmlspecialchars($_GET["enUso"]);
 
 
 
@@ -32,13 +33,13 @@ $token = htmlspecialchars($_GET["token"]);
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // lo primero es comprobar que existe el elemento que se quiere modificar 
-        if (!empty($idHistoria) && !empty($nuevoTitulo) && !empty($nuevoSubtitulo) && !empty($nuevaDescripcion)) {
+        if (!empty($idHistoria) && !empty($nuevoTitulo) && !empty($nuevoSubtitulo) && !empty($nuevaDescripcion) && $boolEnUso != null) {
             // Tenemos todos los datos ok
             // Comprobamos que el id existe
             if ($cf->comprobarExisteHistoriaPorId($idHistoria)) {
         
                 $database = new Database();
-                $query = "UPDATE historias SET titulo = '".$nuevoTitulo."',subtitulo = '".$nuevoSubtitulo."',descripcion = '".$nuevaDescripcion."' WHERE id_Historia LIKE ".$idHistoria.";";
+                $query = "UPDATE historias SET titulo = '".$nuevoTitulo."',subtitulo = '".$nuevoSubtitulo."',descripcion = '".$nuevaDescripcion."', enUso = ".$boolEnUso." WHERE id_Historia LIKE ".$idHistoria.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(" status : 200, message : Elemento actualizado");

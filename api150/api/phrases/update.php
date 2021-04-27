@@ -19,9 +19,8 @@ $cf = new CommonFunctions();
 $data = json_decode(file_get_contents("php://input"));
 
 $idFrase = htmlspecialchars($_GET["idFrase"]);
-$nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
 $nuevoTexto = htmlspecialchars($_GET["nuevoTexto"]);
-$nuevoAutor = htmlspecialchars($_GET["nuevoAutor"]);
+$nuevaFecha = htmlspecialchars($_GET["nuevaFecha"]);
 //endregion
 
 $token = htmlspecialchars($_GET["token"]);
@@ -29,13 +28,13 @@ $token = htmlspecialchars($_GET["token"]);
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // lo primero es comprobar que existe el elemento que se quiere modificar 
-        if (!empty($idFrase) && !empty($nuevoTitulo) && !empty($nuevoTexto) && !empty($nuevoAutor)) {
+        if (!empty($idFrase) && !empty($nuevoTexto) && !empty($nuevaFecha)) {
             // Tenemos todos los datos ok
             // Comprobamos que el id existe
             if ($cf->comprobarExisteFrasePorId($idFrase)) {
         
                 $database = new Database();
-                $query = "UPDATE frases SET titulo = '".$nuevoTitulo."',texto = '".$nuevoTexto."',autor = '".$nuevoAutor."' WHERE id_Frase LIKE ".$idFrase.";";
+                $query = "UPDATE frase_inicio SET texto = '".$nuevoTexto."',fecha = '".$nuevaFecha."' WHERE id_Frase LIKE ".$idFrase.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(" status : 200, message : Elemento actualizado");

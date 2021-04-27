@@ -5,6 +5,7 @@
         public $id;
         public $titulo;
         public $texto;
+        public $enUso;
 
         // Cosntructor
         public function __construct() {

@@ -28,8 +28,9 @@
         $programa = new Programa();
         $programa->id=$row["id_Programa"];
         $programa->titulo=$row["titulo"];
-        $programa->categoria=$row["categoria"];
         $programa->fecha=$row["fecha"];
+        $programa->enUso=$row["enUso"];
+        $programa->categoria=$row["id_Categoria"];
         array_push($arr, $programa);
     }
     echo json_encode($arr);

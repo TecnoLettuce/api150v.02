@@ -61,6 +61,7 @@
             $ambiente->id=$row["id_Ambiente"];
             $ambiente->titulo=$row["titulo"];
             $ambiente->descripcion=$row["descripcion"];
+            $ambiente->enUso=$row["enUso"];
             array_push($arr, $ambiente);
         }
         $paraDevolver = json_encode($arr);
@@ -83,6 +84,8 @@
             $ambiente->id=$row["id_Ambiente"];
             $ambiente->titulo=$row["titulo"];
             $ambiente->descripcion=$row["descripcion"];
+            $ambiente->enUso=$row["enUso"];
+
             array_push($arr, $ambiente);
         }
         $paraDevolver = json_encode($arr);
@@ -107,6 +110,8 @@
             $ambiente->id=$row["id_Ambiente"];
             $ambiente->titulo=$row["titulo"];
             $ambiente->descripcion=$row["descripcion"];
+            $ambiente->enUso=$row["enUso"];
+
             array_push($arr, $ambiente);
         }
         $paraDevolver = json_encode($arr);

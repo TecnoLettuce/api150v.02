@@ -62,6 +62,7 @@
             $saludo->titulo=$row["titulo"];
             $saludo->descripcion=$row["descripcion"];
             $saludo->texto=$row["texto"];
+            $saludo->enUso=$row["enUso"];
             array_push($arr, $saludo);
         }
         $paraDevolver = json_encode($arr);
@@ -85,6 +86,7 @@
             $saludo->titulo=$row["titulo"];
             $saludo->descripcion=$row["descripcion"];
             $saludo->texto=$row["texto"];
+            $saludo->enUso=$row["enUso"];
             array_push($arr, $saludo);
         }
         $paraDevolver = json_encode($arr);
@@ -110,6 +112,7 @@
             $saludo->titulo=$row["titulo"];
             $saludo->descripcion=$row["descripcion"];
             $saludo->texto=$row["texto"];
+            $saludo->enUso=$row["enUso"];
             array_push($arr, $saludo);
         }
         $paraDevolver = json_encode($arr);

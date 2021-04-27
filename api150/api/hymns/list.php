@@ -29,6 +29,7 @@
         $himno->id=$row["id_Himno"];
         $himno->titulo=$row["titulo"];
         $himno->letra=$row["letra"];
+        $himno->enUso=$row["enUso"];
         array_push($arr, $himno);
     }
     echo json_encode($arr);

@@ -19,7 +19,7 @@
     $cf = new CommonFunctions();
 
     // No tiene que recibir parámetros es solo la consulta pelada
-    $query = "SELECT * FROM frases;";
+    $query = "SELECT * FROM frase_inicio;";
     $resultado = $database->getConn()->query($query);
     
     $arr = array();
@@ -27,9 +27,8 @@
     while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         $frase = new Frase();
         $frase->id=$row["id_Frase"];
-        $frase->titulo=$row["titulo"];
         $frase->texto=$row["texto"];
-        $frase->autor=$row["autor"];
+        $frase->fecha=$row["fecha"];
         array_push($arr, $frase);
     }
     echo json_encode($arr);

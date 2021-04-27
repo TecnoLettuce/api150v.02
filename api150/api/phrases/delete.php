@@ -30,7 +30,7 @@
             // Comprobamos que la id corresponde a un registro 
             if ($cf->comprobarExisteFrasePorId($id)) {
                 // Efectivamente existe y se puede eliminar
-                $query = "DELETE FROM frases WHERE id_Frase like ".$id.";";
+                $query = "DELETE FROM frase_inicio WHERE id_Frase like ".$id.";";
                 $stmt = $database->getConn()->prepare($query);
                 $stmt->execute();
                 echo json_encode(array(" status : 200, message : Elemento eliminado"));

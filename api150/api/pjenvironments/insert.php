@@ -22,6 +22,7 @@
 
     $tituloAmbienteRecibido = $data->tituloAmbiente;
     $descripcionAmbienteRecibido = $data->descripcionAmbiente;
+    $boolEnUso = $data->enUso;
     $token = $data->token;
     //endregion
 
@@ -29,7 +30,7 @@
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // comprobación de que los datos se reciben correctamente
-        if (!empty($tituloAmbienteRecibido) && !empty($descripcionAmbienteRecibido)) {
+        if (!empty($tituloAmbienteRecibido) && !empty($descripcionAmbienteRecibido) && $boolEnUso!=null) {
             // tengo todos los datos que necesito
             //Comprobamos que el registro no existe ya en la base de datos 
             if ($cf->comprobarExisteAmbientePorTitulo($tituloAmbienteRecibido)) {
@@ -37,7 +38,7 @@
                 echo json_encode(array("status : 406, message : El ambiente ya existe" ));
             } else {
                 // el ambiente no existe 
-                $query = "INSERT INTO ambiente (id_Ambiente, titulo, descripcion) VALUES (null,'".$tituloAmbienteRecibido."', '".$descripcionAmbienteRecibido."');";
+                $query = "INSERT INTO ambiente (id_Ambiente, titulo, descripcion, enUso) VALUES (null,'".$tituloAmbienteRecibido."', '".$descripcionAmbienteRecibido."', ".$boolEnUso.");";
                 // echo "La consulta para insertar un ambiente es ".$query;
                 $stmt = $database->getConn()->prepare($query);
                     
