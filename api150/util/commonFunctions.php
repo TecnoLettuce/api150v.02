@@ -99,18 +99,21 @@ class CommonFunctions {
 
     }
 
-    /**
+    /** NO FUNCIONA!!!
      * Funcion que se llama cada vez que el usuario realiza una acción
      * Otorga 2 minutos más de login desde el momento en el que se realiza la acción
      * @param String Token
      * @return Void
      */
-    public function ActualizarExpireDate($tokenUsuario) {
+    public function actualizarExpireDate($tokenUsuario) {
         $tiempoActual = time();
-        $tiempoActual = $tiempoActual +120;
-        $expireDate = gmdate("Y-m-d H:i:s", $tiempoActual);
+        echo "primer tiempo ".$tiempoActual;
+        $tiempoActual = $tiempoActual +240;
+        echo "Segundo tiempo ".$tiempoActual;
+        $expireDate = $tiempoActual;     
         // Recogemos el expireDate asociado al token que recibimos 
         $query = "UPDATE session SET expireDate = UNIX_TIMESTAMP(".$expireDate.") WHERE token LIKE '".$tokenUsuario."';";
+        echo "CF -> ".$query;
         $database = new Database();
         $database->getConn()->query($query);
     }

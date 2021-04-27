@@ -39,7 +39,7 @@
         // echo "La contraseña cifrada es --> ".$passwordRecibidaPorGet;
         // Consultamos a ver si el usuario existe 
         $query = "SELECT idUser FROM user WHERE username LIKE '".$nombreRecibidoPorGet."' AND password LIKE '".$passwordRecibidaPorGet."';";
-        //echo "\nLOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
+        // echo "\nLOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
         // declarar la query
         $resultado = $database->getConn()->query($query);
         //Esto debe devolver un ID de usuario, si es correcto, se crea la sesion 

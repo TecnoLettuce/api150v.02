@@ -26,26 +26,33 @@
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        // comprobamos que no faltan datos vitales
-        if (!empty($texto) && !empty($fecha) ) {
-            // Tenemos todos los datos
-            //Comprobamos que el registro no existe ya en la base de datos 
-            if ($cf->comprobarExisteFrasePorFecha($fecha)) { 
-                // el programa ya existe
-                echo json_encode(array("status : 406, message : La frase ya existe" ));
+
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión es válida
+            // comprobamos que no faltan datos vitales
+            if (!empty($texto) && !empty($fecha) ) {
+                // Tenemos todos los datos
+                //Comprobamos que el registro no existe ya en la base de datos 
+                if ($cf->comprobarExisteFrasePorFecha($fecha)) { 
+                    // el programa ya existe
+                    echo json_encode(array("status : 406, message : La frase ya existe" ));
+                } else {
+                    // el programa no existe 
+                    $query = "INSERT INTO frase_inicio (id_Frase, texto, fecha) VALUES (null,'".$texto."','".$fecha."');"; 
+                    // echo "La consulta para insertar un programa es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                    // echo "La consulta para insertar el programa es ".$query;
+                    
+                    $stmt->execute();
+                    echo json_encode(array("status : 200, message : Elemento creado"));
+                }
             } else {
-                // el programa no existe 
-                $query = "INSERT INTO frase_inicio (id_Frase, texto, fecha) VALUES (null,'".$texto."','".$fecha."');"; 
-                // echo "La consulta para insertar un programa es ".$query;
-                $stmt = $database->getConn()->prepare($query);
-                // echo "La consulta para insertar el programa es ".$query;
-                
-                $stmt->execute();
-                echo json_encode(array("status : 200, message : Elemento creado"));
+                echo json_encode("status : 400, message : Faltan uno o más datos");
             }
         } else {
-            echo json_encode("status : 400, message : Faltan uno o más datos");
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
         }
+        
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {

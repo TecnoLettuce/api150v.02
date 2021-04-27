@@ -28,25 +28,33 @@
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        if (!empty($titulo) && !empty($descripcion) && !empty($texto) && $boolEnUso != null) {
-            // Tenemos todos los datos
-            //Comprobamos que el registro no existe ya en la base de datos 
-            if ($cf->comprobarExisteSaludoPorTitulo($titulo)) {
-                // la Historia ya existe
-                echo json_encode(array("status : 406, message : El saludo ya existe" ));
+
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión es válida
+            if (!empty($titulo) && !empty($descripcion) && !empty($texto) && $boolEnUso != null) {
+                // Tenemos todos los datos
+                //Comprobamos que el registro no existe ya en la base de datos 
+                if ($cf->comprobarExisteSaludoPorTitulo($titulo)) {
+                    // la Historia ya existe
+                    echo json_encode(array("status : 406, message : El saludo ya existe" ));
+                } else {
+                    // la historia no existe 
+                    $query = "INSERT INTO saludos (id_Saludo, titulo, descripcion, texto, enUso) VALUES (null,'".$titulo."','".$descripcion."', '".$texto."', ".$boolEnUso.");";
+                    // echo "La consulta para insertar una historia es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                    // echo "La consulta para insertar la historia es ".$query;
+                    
+                    $stmt->execute();
+                    echo json_encode(array("status : 200, message : Elemento creado"));
+                }
             } else {
-                // la historia no existe 
-                $query = "INSERT INTO saludos (id_Saludo, titulo, descripcion, texto, enUso) VALUES (null,'".$titulo."','".$descripcion."', '".$texto."', ".$boolEnUso.");";
-                // echo "La consulta para insertar una historia es ".$query;
-                $stmt = $database->getConn()->prepare($query);
-                // echo "La consulta para insertar la historia es ".$query;
-                
-                $stmt->execute();
-                echo json_encode(array("status : 200, message : Elemento creado"));
+                echo json_encode("status : 400, message : Faltan uno o más datos");
             }
+
         } else {
-            echo json_encode("status : 400, message : Faltan uno o más datos");
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
         }
+
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {

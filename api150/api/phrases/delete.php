@@ -25,21 +25,28 @@
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        if (!empty($id)) {
-            // Tengo todos los datos
-            // Comprobamos que la id corresponde a un registro 
-            if ($cf->comprobarExisteFrasePorId($id)) {
-                // Efectivamente existe y se puede eliminar
-                $query = "DELETE FROM frase_inicio WHERE id_Frase like ".$id.";";
-                $stmt = $database->getConn()->prepare($query);
-                $stmt->execute();
-                echo json_encode(array(" status : 200, message : Elemento eliminado"));
+
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión es válida
+            if (!empty($id)) {
+                // Tengo todos los datos
+                // Comprobamos que la id corresponde a un registro 
+                if ($cf->comprobarExisteFrasePorId($id)) {
+                    // Efectivamente existe y se puede eliminar
+                    $query = "DELETE FROM frase_inicio WHERE id_Frase like ".$id.";";
+                    $stmt = $database->getConn()->prepare($query);
+                    $stmt->execute();
+                    echo json_encode(array(" status : 200, message : Elemento eliminado"));
+                } else {
+                    //No existe y por lo tanto no se puede eliminar 
+                    echo json_encode(array("status : 406, message : El registro no existe"));
+                }
             } else {
-                //No existe y por lo tanto no se puede eliminar 
-                echo json_encode(array("status : 406, message : El registro no existe"));
+                echo json_encode(" status : 400, message : faltan uno o más datos");
             }
+
         } else {
-            echo json_encode(" status : 400, message : faltan uno o más datos");
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
         }
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
