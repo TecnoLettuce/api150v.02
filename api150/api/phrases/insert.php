@@ -21,6 +21,7 @@
     
     $texto = $data->texto;
     $fecha = $data->fecha;
+    $boolEnUso = $data->enUso;
     $token = $data->token;
     //endregion
 
@@ -30,7 +31,7 @@
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida
             // comprobamos que no faltan datos vitales
-            if (!empty($texto) && !empty($fecha) ) {
+            if (!empty($texto) && !empty($fecha) && $boolEnUso!=null ) {
                 // Tenemos todos los datos
                 //Comprobamos que el registro no existe ya en la base de datos 
                 if ($cf->comprobarExisteFrasePorFecha($fecha)) { 
@@ -38,7 +39,7 @@
                     echo json_encode(array("status : 406, message : La frase ya existe" ));
                 } else {
                     // el programa no existe 
-                    $query = "INSERT INTO frase_inicio (id_Frase, texto, fecha) VALUES (null,'".$texto."','".$fecha."');"; 
+                    $query = "INSERT INTO frase_inicio (id_Frase, texto, fecha, enUso) VALUES (null,'".$texto."','".$fecha."', ".$boolEnUso.");"; 
                     // echo "La consulta para insertar un programa es ".$query;
                     $stmt = $database->getConn()->prepare($query);
                     // echo "La consulta para insertar el programa es ".$query;

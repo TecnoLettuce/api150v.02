@@ -29,6 +29,7 @@
         $frase->id=$row["id_Frase"];
         $frase->texto=$row["texto"];
         $frase->fecha=$row["fecha"];
+        $frase->enUso=$row["enUso"];
         array_push($arr, $frase);
     }
     echo json_encode($arr);

@@ -21,7 +21,8 @@
 
 
     // Recogida de datos 
-    $tokenRecibido = htmlspecialchars($_GET["token"]);
+    $tokenRecibido = $data->token;
+
 
     // Comprobar que el token no esta vacío
     if (!empty($tokenRecibido)) {

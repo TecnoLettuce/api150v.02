@@ -25,11 +25,8 @@
     // recoger los datos que se pasan por post 
     $data = json_decode(file_get_contents("php://input"));
 
-    // Pruebas
-    $nombreRecibidoPorGet = htmlspecialchars($_GET["username"]);
-    $passwordRecibidaPorGet = htmlspecialchars($_GET["password"]);
-    //echo "\nRecibo por get > ".$nombreRecibidoPorGet;
-    //echo "\nRecibo por get > ".$passwordRecibidaPorGet;
+    $nombreRecibidoPorGet = $data->username;
+    $passwordRecibidaPorGet = $data->password;
 
     // Mirar a ver si hay datos 
     if (!empty($nombreRecibidoPorGet) && !empty($passwordRecibidaPorGet)) {
