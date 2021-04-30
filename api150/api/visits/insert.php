@@ -27,27 +27,35 @@
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        // comprobación de que los datos se reciben correctamente
-        if (!empty($tituloVisita)) {
-            // tengo todos los datos que necesito
-            //Comprobamos que el registro no existe ya en la base de datos 
-            if ($cf->comprobarExisteVisitaPorTitulo($tituloVisita)) {
-                // El visita ya existe
-                echo json_encode(array("status : 406, message : La visita ya existe" ));
-            } else {
-                // el visita no existe 
-                $query = "INSERT INTO visitas (id_Visita, titulo) VALUES (null,'".$tituloVisita."');";
-                // echo "La consulta para insertar un visita es ".$query;
-                $stmt = $database->getConn()->prepare($query);
-                    
-                $stmt->execute();
 
-                echo json_encode(array("status : 200, message : Elemento creado"));
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión es válida
+            // comprobación de que los datos se reciben correctamente
+            if (!empty($tituloVisita)) {
+                // tengo todos los datos que necesito
+                //Comprobamos que el registro no existe ya en la base de datos 
+                if ($cf->comprobarExisteVisitaPorTitulo($tituloVisita)) {
+                    // El visita ya existe
+                    echo json_encode(array("status : 406, message : La visita ya existe" ));
+                } else {
+                    // el visita no existe 
+                    $query = "INSERT INTO visitas (id_Visita, titulo) VALUES (null,'".$tituloVisita."');";
+                    // echo "La consulta para insertar un visita es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                        
+                    $stmt->execute();
+
+                    echo json_encode(array("status : 200, message : Elemento creado"));
+                }
+
+            } else {
+                echo json_encode(" status : 400, message : Faltan uno o más datos");
             }
 
         } else {
-            echo json_encode(" status : 400, message : Faltan uno o más datos");
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
         }
+
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");

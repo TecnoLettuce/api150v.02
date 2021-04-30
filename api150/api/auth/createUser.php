@@ -22,11 +22,11 @@
     // Aqui tengo que recibir usuario, contraseña, mail, el rol (opcional), y el token de quien crea el user
     // La logica es que si el token no coincide, no se puede crear un usuario
 
-    $userNameRecibido = htmlspecialchars($_GET["username"]);
-    $passwordRecibida = htmlspecialchars($_GET["password"]);
-    $mailRecibido = htmlspecialchars($_GET["mail"]);
-    $rolRecibido = htmlspecialchars($_GET["rol"]);
-    $tokenRecibido = htmlspecialchars($_GET["token"]);
+    $userNameRecibido = $data->username;
+    $passwordRecibida = $data->password;
+    $mailRecibido = $data->mail;
+    $rolRecibido = $data->rol;
+    $tokenRecibido = $data->token;
     
 
     // Comprobamos que todo esta en orden 

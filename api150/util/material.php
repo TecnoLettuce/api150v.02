@@ -1,11 +1,11 @@
 <?php 
 
-    class Frase {
+    class Medio {
         // Atributos 
         public $id;
-        public $texto;
-        public $fecha;
-        public $enUso;
+        public $url;
+        public $tipo;
+        
 
         // Cosntructor
         public function __construct() {

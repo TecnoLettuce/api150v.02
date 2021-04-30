@@ -26,7 +26,10 @@
     // Comprobamos que el token es de admin
     if ($cf->comprobarTokenAdmin($token) == 1) {
         // Token de admin
-        if (!empty($idRecibida)) {
+
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión es válida
+            if (!empty($idRecibida)) {
                 // Tengo todos los datos
                 // Comprobamos que la id corresponde a un registro 
                 if ($cf->comprobarExisteActoPorId($idRecibida)) {
@@ -43,6 +46,9 @@
                 echo json_encode("status : 400, message : faltan uno o más datos");
             }
 
+        } else {
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
+        }
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");

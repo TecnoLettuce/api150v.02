@@ -30,23 +30,31 @@ $token = htmlspecialchars($_GET["token"]);
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        // lo primero es comprobar que existe el elemento que se quiere modificar 
-        if (!empty($idAmbiente) && !empty($nuevoTitulo) && $boolEnUso!=null) {
-            // Tenemos todos los datos ok
-            // Comprobamos que el id existe
-            if ($cf->comprobarExisteAmbientePorId($idAmbiente)) {
-        
-                $database = new Database();
-                $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."', enUso = ".$boolEnUso." WHERE id_Ambiente LIKE ".$idAmbiente.";";
-                $stmt = $database->getConn()->prepare($query);
-                $stmt->execute();
-                echo json_encode(" status : 200, message : Elemento actualizado");
+
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión es válida
+            // lo primero es comprobar que existe el elemento que se quiere modificar 
+            if (!empty($idAmbiente) && !empty($nuevoTitulo) && $boolEnUso!=null) {
+                // Tenemos todos los datos ok
+                // Comprobamos que el id existe
+                if ($cf->comprobarExisteAmbientePorId($idAmbiente)) {
+            
+                    $database = new Database();
+                    $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."', enUso = ".$boolEnUso." WHERE id_Ambiente LIKE ".$idAmbiente.";";
+                    $stmt = $database->getConn()->prepare($query);
+                    $stmt->execute();
+                    echo json_encode(" status : 200, message : Elemento actualizado");
+                } else {
+                    echo json_encode(" status : 406, message : El registro no existe");
+                }
             } else {
-                echo json_encode(" status : 406, message : El registro no existe");
+                echo json_encode(" status : 400, message : Faltan uno o más datos");
             }
+
         } else {
-            echo json_encode(" status : 400, message : Faltan uno o más datos");
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
         }
+
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {

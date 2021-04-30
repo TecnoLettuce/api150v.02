@@ -29,29 +29,35 @@
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        // comprobación de que los datos se reciben correctamente
-        if (!empty($letraRecibida) && !empty($tituloRecibido) && $boolEnUso != null) {
-            // tengo todos los datos que necesito
-            //Comprobamos que el registro no existe ya en la base de datos 
-            if ($cf->comprobarExisteHimnoPorTitulo($tituloRecibido)) {
-                // El ambiente ya existe
-                echo json_encode(array("status : 406, message : El himno ya existe" ));
-            } else {
-                // el ambiente no existe 
-                $query = "INSERT INTO himnos (id_Himno, titulo, letra, enUso) VALUES (null,'".$tituloRecibido."', '".$letraRecibida."', ".$boolEnUso.");";
-                // echo "La consulta para insertar un ambiente es ".$query;
-                $stmt = $database->getConn()->prepare($query);
-                    
-                $stmt->execute();
 
-                echo json_encode(array("status : 200, message : Elemento creado"));
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión es válida
+            // comprobación de que los datos se reciben correctamente
+            if (!empty($letraRecibida) && !empty($tituloRecibido) && $boolEnUso != null) {
+                // tengo todos los datos que necesito
+                //Comprobamos que el registro no existe ya en la base de datos 
+                if ($cf->comprobarExisteHimnoPorTitulo($tituloRecibido)) {
+                    // El ambiente ya existe
+                    echo json_encode(array("status : 406, message : El himno ya existe" ));
+                } else {
+                    // el ambiente no existe 
+                    $query = "INSERT INTO himnos (id_Himno, titulo, letra, enUso) VALUES (null,'".$tituloRecibido."', '".$letraRecibida."', ".$boolEnUso.");";
+                    // echo "La consulta para insertar un ambiente es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                        
+                    $stmt->execute();
+
+                    echo json_encode(array("status : 200, message : Elemento creado"));
+                }
+
+            } else {
+                echo "Datos > ".$tituloRecibido." > ".$letraRecibida." > ".$boolEnUso." | ";
+                echo json_encode(" status : 400, message : Faltan uno o más datos");
             }
 
         } else {
-            echo "Datos > ".$tituloRecibido." > ".$letraRecibida." > ".$boolEnUso." | ";
-            echo json_encode(" status : 400, message : Faltan uno o más datos");
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
         }
-
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");

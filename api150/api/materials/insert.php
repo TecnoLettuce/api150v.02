@@ -26,34 +26,41 @@
      */
 
     $url = $data->url;
-    $tipo = $data->tipo;
+    $tipo = $data->id_Tipo;
     $token = $data->token;
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        // comprobamos que no faltan datos vitales
-        if (!empty($url) && !empty($tipo)) {
-            // Tenemos todos los datos 
-            // Comprobar si existe el medio 
-            if ($cf->comprobarExisteMedioPorURL($url)) {
-                // Ya existe 
-                echo json_encode("status : 406, message : El elemento que intenta insertar ya existe");
+
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión es válida
+            // comprobamos que no faltan datos vitales
+            if (!empty($url) && !empty($tipo)) {
+                // Tenemos todos los datos 
+                // Comprobar si existe el medio 
+                if ($cf->comprobarExisteMedioPorURL($url)) {
+                    // Ya existe 
+                    echo json_encode("status : 406, message : El elemento que intenta insertar ya existe");
+                } else {
+                    // No existe 
+                    // lo insertamos 
+                    // el programa no existe 
+                    $query = "INSERT INTO medios (id_Medio, url, id_Tipo) VALUES (null,'".$url."',".$tipo.");";
+                    // echo $query;
+                    // echo "La consulta para insertar un programa es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                    // echo "La consulta para insertar el programa es ".$query;
+                    
+                    $stmt->execute();
+                    echo json_encode(array("status : 0, message : Elemento creado"));
+                }
             } else {
-                // No existe 
-                // lo insertamos 
-                // el programa no existe 
-                $query = "INSERT INTO medios (id_Medio, url, id_Tipo) VALUES (null,'".$url."',".$tipo.");";
-                // echo $query;
-                // echo "La consulta para insertar un programa es ".$query;
-                $stmt = $database->getConn()->prepare($query);
-                // echo "La consulta para insertar el programa es ".$query;
-                
-                $stmt->execute();
-                echo json_encode(array("status : 0, message : Elemento creado"));
+                echo json_encode("status : 400, message : Faltan uno o más datos");
             }
         } else {
-            echo json_encode("status : 400, message : Faltan uno o más datos");
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
         }
+        
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
     } else {

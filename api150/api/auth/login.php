@@ -25,11 +25,8 @@
     // recoger los datos que se pasan por post 
     $data = json_decode(file_get_contents("php://input"));
 
-    // Pruebas
-    $nombreRecibidoPorGet = htmlspecialchars($_GET["username"]);
-    $passwordRecibidaPorGet = htmlspecialchars($_GET["password"]);
-    //echo "\nRecibo por get > ".$nombreRecibidoPorGet;
-    //echo "\nRecibo por get > ".$passwordRecibidaPorGet;
+    $nombreRecibidoPorGet = $data->username;
+    $passwordRecibidaPorGet = $data->password;
 
     // Mirar a ver si hay datos 
     if (!empty($nombreRecibidoPorGet) && !empty($passwordRecibidaPorGet)) {
@@ -70,7 +67,6 @@
         // si faltan datos, se comunica 
         http_response_code(400);
         echo json_encode(array("token : "));
-        
     }
 
     /**
@@ -84,46 +80,26 @@
     }
 
     /**
-     * Función que genera una sesion con los datos disponibles 
+     * Función que genera una sesion con los datos disponibles  NO FUNCIONA 
      */
     function crearSesion($tokenGenerado, $idObtenido, $expireDate, $database) {
         
         // Lanzamos la consulta para crear la sesion
-        $query = "INSERT INTO session (idSession, idUser, token, expireDate) VALUES (null,".$idObtenido.",'".$tokenGenerado."',UNIX_TIMESTAMP(".$expireDate."));";
-        // echo "LOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
+        $query = "INSERT INTO session (idSession, idUser, token, expireDate) VALUES (null,".$idObtenido.",'".$tokenGenerado."',".$expireDate.");";
+        echo "LOG > Class LOGIN > esta es la consulta que estoy enviando al SQL para loguear --> ".$query;
         // declarar la query
         $stmt = $database->getConn()->prepare($query);
         // ejecutamos la inserción
         $stmt->execute();
-
-        /*
-        // Pruebas
-        echo "\n\n He llegado hasta aqui en la consulta de insertar la session"; 
-        $queryConfirmar = "SELECT * FROM session WHERE token LIKE 'sampletoken'";
-        echo "\n".$queryConfirmar;
-        $stmt = $database->getConn()->prepare($queryConfirmar);
-        echo "\n\nDEVUELTO > ".$stmt->execute()."\n";
-        */
-
 
     }
 
     function generateExpireDate() {
 
         $tiempoUnix = time();
-        // echo "El tiempo unix generado es ".$tiempoUnix;
-        // Sobre el unix, se le suma la cantidad que nosotros queramos 
-        /*
-        * 60 es un minuto
-        * 60 * 5 son 5 minutos 
-        * 3600 es una hora 
-        */
-        // Se dejan por defecto dos minutos de expiredate
-        $expireDate = $tiempoUnix + 120;
+        $expireDate = $tiempoUnix + 240;
 
         // echo "El expireDate Generado es ".$expireDate;
         return $expireDate; 
     }
-
-
 ?>

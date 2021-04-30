@@ -28,25 +28,37 @@
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        // comprobamos que no faltan datos vitales
-        if (!empty($titulo) && !empty($categoria) && !empty($fecha) && $boolEnUso!=null) {
-            // Tenemos todos los datos
-            //Comprobamos que el registro no existe ya en la base de datos 
-            if ($cf->comprobarExisteActoPorTitulo($titulo)) {
-                // el programa ya existe
-                echo json_encode(array("status : 406, message : El acto ya existe" ));
+        // Comprobamos que su sesión no ha caducado
+        if ($cf->comprobarExpireDate($token)) {
+            // La sesión no ha caducado, por lo que seguimos adelante y le otorgamos 2 minutos más
+            
+
+            $cf->actualizarExpireDate($token); // NO FUNCIONA
+
+
+            // comprobamos que no faltan datos vitales
+            if (!empty($titulo) && !empty($categoria) && !empty($fecha) && $boolEnUso!=null) {
+                // Tenemos todos los datos
+                //Comprobamos que el registro no existe ya en la base de datos 
+                if ($cf->comprobarExisteActoPorTitulo($titulo)) {
+                    // el programa ya existe
+                    echo json_encode(array("status : 406, message : El acto ya existe" ));
+                } else {
+                    // el programa no existe 
+                    $query = "INSERT INTO programas (id_Programa, titulo, fecha, enUso, id_Categoria) VALUES (null,'".$titulo."','".$fecha."',".$boolEnUso.", '".$categoria."');";
+                    // echo "La consulta para insertar un programa es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                    // echo "La consulta para insertar el programa es ".$query;
+                    
+                    $stmt->execute();
+                    echo json_encode(array("status : 200, message : Elemento creado"));
+                }
             } else {
-                // el programa no existe 
-                $query = "INSERT INTO programas (id_Programa, titulo, fecha, enUso, id_Categoria) VALUES (null,'".$titulo."','".$fecha."',".$boolEnUso.", '".$categoria."');";
-                // echo "La consulta para insertar un programa es ".$query;
-                $stmt = $database->getConn()->prepare($query);
-                // echo "La consulta para insertar el programa es ".$query;
-                
-                $stmt->execute();
-                echo json_encode(array("status : 200, message : Elemento creado"));
+                echo json_encode("status : 400, message : Faltan uno o más datos");
             }
+
         } else {
-            echo json_encode("status : 400, message : Faltan uno o más datos");
+            echo json_encode("status : 401, message : Tiempo de sesión excedido");
         }
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
