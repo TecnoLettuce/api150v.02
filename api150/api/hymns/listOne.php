@@ -18,30 +18,34 @@
     // Declaración de commonFunctions
     $cf = new CommonFunctions();
 
-    // Recibe el titulo o el ID de un ambiente y lo busca en la base de datos 
-    $id = htmlspecialchars($_GET["idHimno"]);
-    $titulo = htmlspecialchars($_GET["titulo"]);
 
-    // echo "Valores recogidos > id -> ".$id." | titulo -> ".$titulo; 
+    if (isset($_GET["idHimno"]) && isset($_GET["titulo"]) ) {
 
-    if (!empty($id) && !empty($titulo)) {
-        // echo "Estoy en la rama de las 2 recogidas";
-        // Están ambos valores
+        // Recibe el titulo o el ID de un historia y lo busca en la base de datos 
+        $id = htmlspecialchars($_GET["idHimno"]);
+        $titulo = htmlspecialchars($_GET["titulo"]);
         echo buscarPorAmbos($id, $titulo);
-    } elseif (!empty($id) && empty($titulo)) {
-        // echo "Estoy en la rama de solo la id";
 
-        // Está solo el id
+    } else if (isset($_GET["idHimno"])) {
+
+        $id = htmlspecialchars($_GET["idHimno"]);
         echo buscarPorId($id);
-    } elseif (empty($id) && !empty($titulo)) {
-        // echo "Estoy en la rama de solo titulo";
+        
+    } else if (isset($_GET["titulo"])) {
 
-        // Está solo el titulo
+        $titulo = htmlspecialchars($_GET["titulo"]);
         echo buscarPorTitulo($titulo);
+        
     } else {
-        // No hay ninguno
-        echo json_encode(" error : 400, message : Faltan uno o más datos");
+
+        $log = new Logger();
+        $log->incomplete_data();
+        
     }
+
+
+
+
 
    
     /**

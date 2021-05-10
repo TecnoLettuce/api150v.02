@@ -49,7 +49,6 @@
 
     //endregion
 
-
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
         // comprobamos que no faltan datos vitales
@@ -108,12 +107,12 @@
                                     $stmt->execute();
                                     array_push($relacionesInsertadas, $logger->created_element());
                                 } // Salida del for
-                                echo json_encode($relacionesInsertadas);
+                                $logger->created_element();
                             }
 
                         } else {
                             // Ha dado fallo
-                            echo $resultado;
+                            echo json_encode(array("status" => 418, "message" => "El servidor se rehúsa a intentar hacer café con una tetera"));
                         }
                     } else {
                         // No hay medios para insertar

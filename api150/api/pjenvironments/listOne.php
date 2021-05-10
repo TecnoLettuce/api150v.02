@@ -18,34 +18,33 @@
     // Declaración de commonFunctions
     $cf = new CommonFunctions();
 
-    // Recibe el titulo o el ID de un ambiente y lo busca en la base de datos 
-    $id = htmlspecialchars($_GET["idAmbiente"]);
-    $titulo = htmlspecialchars($_GET["titulo"]);
+    if (isset($_GET["idAmbiente"]) && isset($_GET["titulo"]) ) {
 
-    // echo "Valores recogidos > id -> ".$id." | titulo -> ".$titulo; 
-
-    if (!empty($id) && !empty($titulo)) {
-        // echo "Estoy en la rama de las 2 recogidas";
-        // Están ambos valores
+        // Recibe el titulo o el ID de un historia y lo busca en la base de datos 
+        $id = htmlspecialchars($_GET["idAmbiente"]);
+        $titulo = htmlspecialchars($_GET["titulo"]);
         echo buscarPorAmbos($id, $titulo);
-    } elseif (!empty($id) && empty($titulo)) {
-        // echo "Estoy en la rama de solo la id";
 
-        // Está solo el id
+    } else if (isset($_GET["idAmbiente"])) {
+
+        $id = htmlspecialchars($_GET["idAmbiente"]);
         echo buscarPorId($id);
-    } elseif (empty($id) && !empty($titulo)) {
-        // echo "Estoy en la rama de solo titulo";
+        
+    } else if (isset($_GET["titulo"])) {
 
-        // Está solo el titulo
+        $titulo = htmlspecialchars($_GET["titulo"]);
         echo buscarPorTitulo($titulo);
+        
     } else {
-        // No hay ninguno
-        echo json_encode(" status : 400, message : Faltan uno o más datos");
+
+        $log = new Logger();
+        $log->incomplete_data();
+        
     }
 
    
     /**
-     * Recibe la id de un acto y busca por ella en la base de datos 
+     * Recibe la id de un ambiente y busca por ella en la base de datos 
      * @param integer $id
      * @return Result Object
      */
@@ -68,7 +67,7 @@
         return $paraDevolver;
     }
     /**
-     * Recibe el titulo de un acto y busca por el en la base de datos 
+     * Recibe el titulo de un ambiente y busca por el en la base de datos 
      * @param string $titulo
      * @return Result Object
      */
@@ -94,7 +93,7 @@
     }
 
     /**
-     * Recibe la id y el título de un acto y busca por ellos en la base de datos 
+     * Recibe la id y el título de un ambiente y busca por ellos en la base de datos 
      * @param integer $id string $titulo
      * @return Result Object
      */

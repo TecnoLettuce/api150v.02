@@ -18,24 +18,29 @@
     // Declaración de commonFunctions
     $cf = new CommonFunctions();
 
-    // Recibe el titulo o el ID de un programa y lo busca en la base de datos 
-    $id = htmlspecialchars($_GET["idPrograma"]);
-    $titulo = htmlspecialchars($_GET["titulo"]);
+    if (isset($_GET["idPrograma"]) && isset($_GET["titulo"]) ) {
 
-    if (!empty($id) && !empty($titulo)) {
-        // Están ambos valores
+        // Recibe el titulo o el ID de un historia y lo busca en la base de datos 
+        $id = htmlspecialchars($_GET["idPrograma"]);
+        $titulo = htmlspecialchars($_GET["titulo"]);
         echo buscarPorAmbos($id, $titulo);
-    } elseif (!empty($id) && empty($titulo)) {
-        // Está solo el id
-        echo buscarPorId($id);
-    } elseif (empty($id) && !empty($titulo)) {
-        // Está solo el titulo
-        echo buscarPorTitulo($titulo);
-    } else {
-        // No hay ninguno
-        echo json_encode(" status : 400, message : Faltan uno o más datos");
-    }
 
+    } else if (isset($_GET["idPrograma"])) {
+
+        $id = htmlspecialchars($_GET["idPrograma"]);
+        echo buscarPorId($id);
+        
+    } else if (isset($_GET["titulo"])) {
+
+        $titulo = htmlspecialchars($_GET["titulo"]);
+        echo buscarPorTitulo($titulo);
+        
+    } else {
+
+        $log = new Logger();
+        $log->incomplete_data();
+        
+    }
    
     /**
      * Recibe la id de un acto y busca por ella en la base de datos 

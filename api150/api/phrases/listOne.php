@@ -18,30 +18,28 @@
     // Declaración de commonFunctions
     $cf = new CommonFunctions();
 
-    // Recibe el fecha o el ID de una frase y lo busca en la base de datos 
-    $id = htmlspecialchars($_GET["idFrase"]);
-    $fecha = htmlspecialchars($_GET["fecha"]);
-    
+    if (isset($_GET["idFrase"]) && isset($_GET["fecha"]) ) {
 
-    // echo "Valores recogidos > id -> ".$id." | fecha -> ".$fecha; 
-
-    if (!empty($id) && !empty($fecha)) {
-        // echo "Estoy en la rama de las 2 recogidas";
-        // Están ambos valores
+        // Recibe el titulo o el ID de una frase y lo busca en la base de datos 
+        $id = htmlspecialchars($_GET["idFrase"]);
+        $fecha = htmlspecialchars($_GET["fecha"]);
         echo buscarPorAmbos($id, $fecha);
-    } elseif (!empty($id) && empty($fecha)) {
-        // echo "Estoy en la rama de solo la id";
 
-        // Está solo el id
+    } else if (isset($_GET["idFrase"])) {
+
+        $id = htmlspecialchars($_GET["idFrase"]);
         echo buscarPorId($id);
-    } elseif (empty($id) && !empty($fecha)) {
-        // echo "Estoy en la rama de solo fecha";
+        
+    } else if (isset($_GET["fecha"])) {
 
-        // Está solo el fecha
+        $fecha = htmlspecialchars($_GET["fecha"]);
         echo buscarPorFecha($fecha);
+        
     } else {
-        // No hay ninguno
-        echo json_encode(" error : 400, message : Faltan uno o más datos");
+
+        $log = new Logger();
+        $log->incomplete_data();
+        
     }
 
    

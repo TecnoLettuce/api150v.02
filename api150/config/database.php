@@ -16,7 +16,7 @@ class Database {
     //private $dbName = "app150"; // dbName Produccion 
     private $username = "app150";
     private $password = "1234"; // Contraseña desarrollo
-    // private $password = "TheBackenders123"; // Contraseña producción
+    //private $password = "TheBackenders123"; // Contraseña producción
     private $conn;
     //endregion
 
