@@ -12,11 +12,15 @@
     include_once '../../config/database.php';
     include_once '../../util/commonFunctions.php';
     include_once '../../util/visit.php';
+    include_once '../../objects/DAO.php';
+    include_once '../../util/logger.php';
 
     //Creación de la base de datos 
     $database = new Database();
     // Declaración de commonFunctions
     $cf = new CommonFunctions();
+    $logger = new Logger();
+    $dao = new Dao();
 
 
     if (isset($_GET["idVisita"]) && isset($_GET["titulo"])) {
@@ -24,87 +28,16 @@
         $id = htmlspecialchars($_GET["idVisita"]);
         $titulo = htmlspecialchars($_GET["titulo"]);
 
-        echo buscarPorAmbos($id, $titulo);
+        echo $dao->listarVisitaPorIdyTitulo($id,$titulo);
 
     } else if (isset($_GET["idVisita"])) {
         $id = htmlspecialchars($_GET["idVisita"]);
-        echo buscarPorId($id);
+        echo $dao->listarVisitaPorId($id);
     } else if (isset($_GET["titulo"])) {
         $titulo = htmlspecialchars($_GET["titulo"]);
-        echo buscarPorTitulo($titulo);
+        echo $dao->listarVisitaPorTitulo($titulo);
     } else {
-        $logger = new Logger();
         $logger->incomplete_data();
     }
    
-    /**
-     * Recibe la id de una visita y busca por ella en la base de datos 
-     * @param integer $id
-     * @return Result Object
-     */
-    function buscarPorId($id) {
-        $query = "SELECT * FROM visitas WHERE id_Visita LIKE ".$id.";";
-        $database = new Database();
-        $resultado = $database->getConn()->query($query);
-        
-        $arr = array();
-        
-        while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-            $visita = new Visit();
-            $visita->id=$row["id_Visita"];
-            $visita->titulo=$row["titulo"];
-            
-            array_push($arr, $visita);
-        }
-        $paraDevolver = json_encode($arr);
-        return $paraDevolver;
-    }
-    /**
-     * Recibe el titulo de una visita y busca por el en la base de datos 
-     * @param string $titulo
-     * @return Result Object
-     */
-    function buscarPorTitulo($titulo) {
-        $query = "SELECT * FROM visitas WHERE titulo LIKE '".$titulo."';";
-        $database = new Database();
-        $resultado = $database->getConn()->query($query);
-        
-        $arr = array();
-        
-        while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-            $visita = new Visit();
-            $visita->id=$row["id_Visita"];
-            $visita->titulo=$row["titulo"];
-            
-            array_push($arr, $visita);
-        }
-        $paraDevolver = json_encode($arr);
-        return $paraDevolver;
-
-    }
-
-    /**
-     * Recibe la id y el título de una visita y busca por ellos en la base de datos 
-     * @param integer $id string $titulo
-     * @return Result Object
-     */
-    function buscarPorAmbos($id, $titulo) {
-        $query = "SELECT * FROM visitas WHERE id_Visita LIKE ".$id." AND titulo LIKE '".$titulo."';";
-        $database = new Database();
-        $resultado = $database->getConn()->query($query);
-        
-        $arr = array();
-        
-        while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-            $visita = new Visit();
-            $visita->id=$row["id_Visita"];
-            $visita->titulo=$row["titulo"];
-            
-            array_push($arr, $visita);
-        }
-        $paraDevolver = json_encode($arr);
-        return $paraDevolver;
-
-    }
-
 ?>

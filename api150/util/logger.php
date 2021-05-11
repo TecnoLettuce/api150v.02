@@ -40,6 +40,21 @@
             echo json_encode(array("status" => 201, "message" => "Elemento creado"));
         }
 
+        // Elemento borrado
+        function deleted_element() {
+            echo json_encode(array("status" => 200, "message" => "Elemento borrado"));
+        }
+
+        // Elemento actualizado
+        function updated_element() {
+            echo json_encode(array("status" => 200, "message" => "Elemento actualizado"));
+        }
+
+        // Elemento a borrar no existe
+        function not_exists($element) {
+            echo json_encode(array("status" => 406, "message" => $element." no existe" ));
+        }
+
     }
 
     /**
