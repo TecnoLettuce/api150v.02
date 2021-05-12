@@ -1,4 +1,5 @@
 <?php 
+/*
     include_once '../config/database.php';
     include_once '../util/act.php';
     include_once '../util/ambiente.php';
@@ -13,7 +14,7 @@
     include_once '../util/uploadFilesByURL.php';
     include_once '../util/visit.php';
     include_once '../objects/session.php';
-
+*/
     class Dao {
 
         public function __construct() {

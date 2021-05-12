@@ -20,12 +20,28 @@
     $cf = new CommonFunctions();
     $logger = new Logger();
     $dao = new Dao();
+    $ucf = new UploadCommonFunctions();
 
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
     $tituloVisita = $data->tituloVisita;
     $token = $data->token;
+
+    // Datos de los medios
+
+    $arrayMedios = array();
+    $arrayMedios = $data->medios;
+    
+    $mediosAInsertar = array();
+    $tiposAInsertar = array();
+    
+    
+    
+    for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
+        array_push($mediosAInsertar, $arrayMedios[$i]->url);
+        array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
+    }
     //endregion
 
 
@@ -34,6 +50,7 @@
 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida
+            $cf->actualizarExpireDate($token);
             // comprobación de que los datos se reciben correctamente
             if (!empty($tituloVisita)) {
                 // tengo todos los datos que necesito
@@ -44,9 +61,56 @@
                     echo $logger->already_exists("visita");
                 } else {
                     // el visita no existe 
-                    $dao->insertarVisita($tituloVisita);
-                    http_response_code(201);
-                    echo $logger->created_element();
+
+                    // Hay medios para insertar? 
+                    if (!empty($mediosAInsertar) && !empty($tiposAInsertar) && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
+                        // Hay medios
+                        $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+
+                        // Comprobamos el resultado 
+                        if (is_array($resultadoMedios)) {
+                            // Tenemos array de ids
+                            // Insertamos la visita
+                            $dao->insertarVisita($tituloVisita);
+
+                            // Consultamos el elemento que acabamos de insertar
+                            $query = "SELECT id_Visita FROM visitas WHERE titulo LIKE '".$tituloVisita."';";
+                            $resultado = $database->getConn()->query($query);
+                            $idObtenida = -1;
+                            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                                $idObtenida = $row["id_Visita"];
+                            }
+
+                            // Comprobamos si la id obtenida es válida
+                            if ($idObtenida < 0 ) {
+                                // no es válida
+                                http_response_code(503);
+                                $logger->fatal_error("Algo ha ido mal extrayendo la id");
+                            } else {
+                                // Tenemos la id y los medios insertados
+                                // Insertamos las relaciones
+                                $relacionesInsertadas = array();
+                                for ($i=0; $i < count($resultadoMedios, COUNT_NORMAL); $i++) { 
+                                    $query = "INSERT INTO rel_visita( id_Medio, id_Visita) VALUES (".$resultadoMedios[$i].",".$idObtenida.");";
+                                    // echo "La consulta para insertar las relaciones es es ".$query;
+                                    $stmt = $database->getConn()->prepare($query);
+                                    $stmt->execute();
+                                    array_push($relacionesInsertadas, $logger->created_element());
+                                } // Salida del for
+                                http_response_code(201);
+                                $logger->created_element();
+                            }
+                        } else {
+                            echo json_encode(array("status" => 418, "message" => "El servidor se rehúsa a intentar hacer café con una tetera"));
+                        }
+                        
+                    } else {
+                        // No hay medios
+                        // Insertamos solamente la visita
+                        $dao->insertarVisita($tituloVisita);
+                        http_response_code(201);
+                        echo $logger->created_element();
+                    }
                 }
 
             } else {

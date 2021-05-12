@@ -21,6 +21,7 @@
     $cf = new CommonFunctions();
     $logger = new Logger();
     $dao = new Dao();
+    $ucf = new UploadCommonFunctions();
 
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
@@ -29,6 +30,21 @@
     $descripcionAmbienteRecibido = $data->descripcionAmbiente;
     $boolEnUso = $data->enUso;
     $token = $data->token;
+
+    // Datos de los medios
+
+    $arrayMedios = array();
+    $arrayMedios = $data->medios;
+    
+    $mediosAInsertar = array();
+    $tiposAInsertar = array();
+    
+    
+    
+    for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
+        array_push($mediosAInsertar, $arrayMedios[$i]->url);
+        array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
+    }
     //endregion
 
 
@@ -37,6 +53,7 @@
 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida
+            $cf->actualizarExpireDate($token);
             // comprobación de que los datos se reciben correctamente
             if (!empty($tituloAmbienteRecibido) && !empty($descripcionAmbienteRecibido) && $boolEnUso!=null) {
                 // tengo todos los datos que necesito
@@ -47,9 +64,59 @@
                     echo $logger->already_exists("ambiente");
                 } else {
                     // el ambiente no existe 
-                    $dao->insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $boolEnUso);
-                    http_response_code(201);
-                    echo $logger->created_element();
+
+                    // Hay medios para insertar? 
+                    if (!empty($mediosAInsertar) && !empty($tiposAInsertar) && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
+                        // Hay medios
+                        $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+
+                        // Comprobamos el resultado 
+                        if (is_array($resultadoMedios)) {
+                            // tenemos array de ids
+
+                            // Insertamos el ambiente 
+                            $dao->insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $boolEnUso);
+
+                            // consultamos el elemento que acabamos de insertar 
+                            $query = "SELECT id_Ambiente FROM ambiente WHERE titulo LIKE '".$tituloAmbienteRecibido."';";
+                            $resultado = $database->getConn()->query($query);
+                            $idObtenida = -1;
+                            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                                $idObtenida = $row["id_Ambiente"];
+                            }
+
+                            // Comprobamos que la id obtenida es válida
+                            if ($idObtenida < 0) {
+                                // No es válida
+                                http_response_code(503);
+                                $logger->fatal_error("Algo ha ido mal extrayendo la id");
+                            } else {
+                                // Es válida
+                                // Insertamos las relaciones
+                                $relacionesInsertadas = array();
+                                for ($i=0; $i < count($resultadoMedios, COUNT_NORMAL); $i++) { 
+                                    $query = "INSERT INTO rel_ambiente( id_Medio, id_Ambiente) VALUES (".$resultadoMedios[$i].",".$idObtenida.");";
+                                    // echo "La consulta para insertar las relaciones es es ".$query;
+                                    $stmt = $database->getConn()->prepare($query);
+                                    $stmt->execute();
+                                    array_push($relacionesInsertadas, $logger->created_element());
+                                } // Salida del for
+                                http_response_code(200);
+                                $logger->created_element();
+                            }
+                        } else {
+                            http_response_code(418);
+                            echo json_encode(array("status" => 418, "message" => "El servidor se rehúsa a intentar hacer café con una tetera"));
+
+                        }
+                        
+                    } else {
+                        // No hay medios para insertar, se inserta el ambiente 
+                        $dao->insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $boolEnUso);
+                        http_response_code(201);
+                        echo $logger->created_element();
+                    }
+                    
                 }
 
             } else {

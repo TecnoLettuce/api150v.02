@@ -19,6 +19,7 @@
     $cf = new CommonFunctions();
     $dao = new Dao(); 
     $logger = new Logger();
+    $ucf = new UploadCommonFunctions();
 
 
     //region Definicion de los datos que llegan
@@ -31,11 +32,28 @@
     $token = $data->token;
     //endregion
 
+    $arrayMedios = array();
+    $arrayMedios = $data->medios;
+
+    $mediosAInsertar = array();
+    $tiposAInsertar = array();
+
+
+
+    for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
+        array_push($mediosAInsertar, $arrayMedios[$i]->url);
+        array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
+    }
+
+
+
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida
+            $cf->actualizarExpireDate($token);
+
             if (!empty($titulo) && !empty($descripcion) && !empty($texto) && $boolEnUso != null) {
                 // Tenemos todos los datos
                 //Comprobamos que el registro no existe ya en la base de datos 
@@ -45,9 +63,57 @@
                     echo $logger->already_exists("saludo");
                 } else {
                     // El saludo no existe 
-                    $dao->insertarSaludo($titulo, $descripcion, $texto, $boolEnUso);
-                    http_response_code(201);
-                    echo $logger->created_element();
+
+                    // Hay medios para insertar?
+                    if (!empty($mediosAInsertar) && !empty($tiposAInsertar) && ( count($mediosAInsertar, COUNT_NORMAL) == count($tiposAInsertar, COUNT_NORMAL))) {
+                        $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+
+                        // Comprobamos el resultado 
+                        if (is_array($resultadoMedios)) {
+                            // Tenemos array de URLs
+
+                            // insertamos el saludo
+                            $dao->insertarSaludo($titulo, $descripcion, $texto, $boolEnUso);
+
+                            // Consultamos el elemento que acabamos de insertar
+                            $query = "SELECT id_Saludo FROM saludos WHERE titulo LIKE '".$titulo."';";
+                            $resultado = $database->getConn()->query($query);
+                            $idObtenida = -1;
+                            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                                $idObtenida = $row["id_Saludo"];
+                            }
+
+                            // comprobamos que la id obtenida es válida
+                            if ($idObtenida < 0) {
+                                http_response_code(503);
+                                $logger->fatal_error("Algo ha ido mal extrayendo la id");
+                            } else {
+                                
+                                // Tenemos la id y los medios insertados 
+                                // Insertamos las relaciones
+                                $relacionesInsertadas = array();
+                                for ($i=0; $i < count($resultadoMedios, COUNT_NORMAL); $i++) { 
+                                    $query = "INSERT INTO rel_saludo( id_Medio, id_Saludo) VALUES (".$resultadoMedios[$i].",".$idObtenida.");";
+                                    // echo "La consulta para insertar las relaciones es es ".$query;
+                                    $stmt = $database->getConn()->prepare($query);
+                                    $stmt->execute();
+                                    array_push($relacionesInsertadas, $logger->created_element());
+                                } // Salida del for
+                                http_response_code(200);
+                                $logger->created_element();
+                            }
+
+
+                        } else {
+                            echo json_encode(array("status" => 418, "message" => "El servidor se rehúsa a intentar hacer café con una tetera"));
+                        }
+                    } else {
+                        // No hay medios para insertar
+                        // Insertamos solo el saludo
+                        $dao->insertarSaludo($titulo, $descripcion, $texto, $boolEnUso);
+                        http_response_code(201);
+                        echo $logger->created_element();
+                    }
                 }
             } else {
                 http_response_code(400);

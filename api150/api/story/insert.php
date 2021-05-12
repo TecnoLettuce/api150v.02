@@ -57,10 +57,11 @@
 
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) == 1) { 
-        // comprobamos que no faltan datos vitales
+        // comprobamos que la sesión no ha caducado
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida
             $cf->actualizarExpireDate($token);
+
             if (!empty($tituloHistoriaRecibido) && !empty($subtituloHistoriaRecibido) && !empty($descripcionRecibida) && $boolEnUso != null ) {
                 // Tenemos todos los datos
                 //Comprobamos que el registro no existe ya en la base de datos 
@@ -75,7 +76,7 @@
                     if (!empty($mediosAInsertar) && !empty($tiposAInsertar) && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
                         // Hay medios para insertar 
                         // Insertamos los medios
-                        $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar, $token);
+                        $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
                         
 
                         // Comprobamos el resultado
