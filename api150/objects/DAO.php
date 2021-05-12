@@ -676,10 +676,114 @@
         //endregion
 
         //region historias
-        /**
-         * FALTA ESTA ADAPTACIÓN POR HACER, A LA ESPERA DE QUE SE CONFIRME EL FUNCIONAMIENTO
-         * EN PRODUCCIÓN.
-         */
+        public function insertarHistoria($tituloHistoriaRecibido, $subtituloHistoriaRecibido, $descripcionRecibida, $boolEnUso) {
+            $database = new Database();
+            $query = "INSERT INTO historias (id_Historia, titulo, subtitulo, descripcion, enUso) VALUES (null,'".$tituloHistoriaRecibido."','".$subtituloHistoriaRecibido."', '".$descripcionRecibida."', ".$boolEnUso.");";
+            // echo "La consulta para insertar una historia es ".$query;
+            $stmt = $database->getConn()->prepare($query);
+            // echo "La consulta para insertar la historia es ".$query;
+            $stmt->execute();
+        }
+
+        public function borrarHistoria($idRecibida) {
+            $database = new Database();
+            $query = "DELETE FROM historias WHERE id_Historia like ".$idRecibida.";";
+            $stmt = $database->getConn()->prepare($query);
+            $stmt->execute();
+        }
+
+        public function listarHistoria() {
+            $database = new Database();
+            $query = "SELECT * FROM historias;";
+            $resultado = $database->getConn()->query($query);
+            
+            $arr = array();
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $historia = new Historia();
+                $historia->idHistoria=$row["id_Historia"];
+                $historia->titulo=$row["titulo"];
+                $historia->subtitulo=$row["subtitulo"];
+                $historia->descripcion=$row["descripcion"];
+                $historia->enUso=$row["enUso"];
+                array_push($arr, $historia);
+            }
+            return $arr;
+        }
+
+        public function listarUnaHistoriaPorId($id) {
+            $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.id_Historia LIKE ".$id.";";
+
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $arrayMedios = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $historia = new Historia();
+                $historia->idHistoria=$row["id_Historia"];
+                $historia->titulo=$row["titulo"];
+                $historia->subtitulo=$row["subtitulo"];
+                $historia->descripcion=$row["Desc_Historia"];
+                $historia->enUso=$row["enUso"];
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+            }
+            $historia->medios = $arrayMedios;
+            $paraDevolver = json_encode($historia);
+            return $paraDevolver;
+        }
+
+        public function listarUnaHistoriaPorTitulo($titulo) {
+            $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.titulo LIKE '".$titulo."';";
+
+
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $arrayMedios = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $historia = new Historia();
+                $historia->idHistoria=$row["id_Historia"];
+                $historia->titulo=$row["titulo"];
+                $historia->subtitulo=$row["subtitulo"];
+                $historia->descripcion=$row["Desc_Historia"];
+                $historia->enUso=$row["enUso"];
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+            }
+            $historia->medios = $arrayMedios;
+            $paraDevolver = json_encode($historia);
+            return $paraDevolver;
+        }
+
+        public function listarUnaHistoriaPorIdyTitulo($id, $titulo) {
+            $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.titulo LIKE '".$titulo."' AND historias.id_Historia LIKE ".$id.";";
+
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $arrayMedios = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $historia = new Historia();
+                $historia->idHistoria=$row["id_Historia"];
+                $historia->titulo=$row["titulo"];
+                $historia->subtitulo=$row["subtitulo"];
+                $historia->descripcion=$row["Desc_Historia"];
+                $historia->enUso=$row["enUso"];
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+            }
+            $historia->medios = $arrayMedios;
+            $paraDevolver = json_encode($historia);
+            return $paraDevolver;
+        }
+
+        public function actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion,$boolEnUso) {
+            $database = new Database();
+            $database = new Database();
+            $query = "UPDATE historias SET titulo = '".$nuevoTitulo."',subtitulo = '".$nuevoSubtitulo."',descripcion = '".$nuevaDescripcion."', enUso = ".$boolEnUso." WHERE id_Historia LIKE ".$idHistoria.";";
+            $stmt = $database->getConn()->prepare($query);
+            $stmt->execute();
+        }
         //endregion
 
         //region visitas
@@ -789,5 +893,4 @@
     
     } // Salida de la clase
     
-
 ?>

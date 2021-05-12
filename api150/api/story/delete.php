@@ -21,6 +21,10 @@
     // Conexión con la base de datos 
     include_once '../../config/database.php';
     include_once '../../util/commonFunctions.php';
+    include_once '../../objects/DAO.php';
+    include_once '../../util/logger.php';
+    $logger = new Logger();
+    $dao = new Dao();
 
     //Creación de la base de datos 
     $database = new Database();
@@ -42,32 +46,30 @@
                 // Comprobamos que la id corresponde a un registro 
                 if ($cf->comprobarExisteHistoriaPorId($idRecibida)) {
                     // Efectivamente existe y se puede eliminar
-                    $query = "DELETE FROM historias WHERE id_Historia like ".$idRecibida.";";
-                    $stmt = $database->getConn()->prepare($query);
-                    $stmt->execute();
+                    $dao->borrarHistoria($idRecibida);
                     http_response_code(200);
-                    echo json_encode(array(" status : 200, message : Elemento eliminado"));
+                    echo $logger->deleted_element();
                 } else {
                     //No existe y por lo tanto no se puede eliminar 
                     http_response_code(406);
-                    echo json_encode(array("status : 406, message : El registro no existe"));
+                    echo $logger->not_exists("historia");
                 }
             } else {
                 http_response_code(400);
-                echo json_encode("status : 400, message : faltan uno o más datos");
+                echo $logger->incomplete_data();
             }
 
         } else {
             http_response_code(401);
-            echo json_encode("status : 401, message : Tiempo de sesión excedido");
+            echo $logger->expired_session();
         }
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         http_response_code(403);
-        echo json_encode("status : 403, message : no tiene permisos para realizar esta operación");
+        echo $logger->not_permission();
     } else {
         http_response_code(403);
-        echo json_encode("status : 403, message : token no valido");
+        echo $logger->invalid_token();
     }
     
     

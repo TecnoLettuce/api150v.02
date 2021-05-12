@@ -21,6 +21,7 @@
     include_once '../../util/commonFunctions.php';
     include_once '../../util/uploadFilesByURL.php';
     include_once '../../util/logger.php';
+    include_once '../../objects/DAO.php';
 
     //Creación de la base de datos 
     $database = new Database();
@@ -28,6 +29,7 @@
     $cf = new CommonFunctions();
     $ucf = new UploadCommonFunctions();
     $logger = new Logger();
+    $dao = new Dao();
 
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
@@ -84,11 +86,7 @@
                             // Tenemos array de ids
 
                             // Insertamos la historia
-                            $query = "INSERT INTO historias (id_Historia, titulo, subtitulo, descripcion, enUso) VALUES (null,'".$tituloHistoriaRecibido."','".$subtituloHistoriaRecibido."', '".$descripcionRecibida."', ".$boolEnUso.");";
-                            // echo "La consulta para insertar una historia es ".$query;
-                            $stmt = $database->getConn()->prepare($query);
-                            // echo "La consulta para insertar la historia es ".$query;
-                            $stmt->execute();
+                            $dao->insertarHistoria($tituloHistoriaRecibido, $subtituloHistoriaRecibido, $descripcionRecibida, $boolEnUso);
         
                             
                             // Consultar el elemento que se acaba de insertar
@@ -128,11 +126,7 @@
                         // No hay medios para insertar
                         // Insertamos solo la historia
                         // Insertamos la historia
-                        $query = "INSERT INTO historias (id_Historia, titulo, subtitulo, descripcion, enUso) VALUES (null,'".$tituloHistoriaRecibido."','".$subtituloHistoriaRecibido."', '".$descripcionRecibida."', ".$boolEnUso.");";
-                        // echo "La consulta para insertar una historia es ".$query;
-                        $stmt = $database->getConn()->prepare($query);
-                        // echo "La consulta para insertar la historia es ".$query;
-                        $stmt->execute();
+                        $dao->insertarHistoria($tituloHistoriaRecibido, $subtituloHistoriaRecibido, $descripcionRecibida, $boolEnUso);
                         http_response_code(200);
                         $logger->created_element();
                     }                        

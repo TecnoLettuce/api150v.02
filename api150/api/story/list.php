@@ -22,6 +22,10 @@
     include_once '../../config/database.php';
     include_once '../../util/commonFunctions.php';
     include_once '../../util/historia.php';
+    include_once '../../objects/DAO.php';
+    include_once '../../util/logger.php';
+    $logger = new Logger();
+    $dao = new Dao();
 
     //Creación de la base de datos 
     $database = new Database();
@@ -29,18 +33,5 @@
     $cf = new CommonFunctions();
 
     // No tiene que recibir parámetros es solo la consulta pelada
-    $query = "SELECT * FROM historias;";
-    $resultado = $database->getConn()->query($query);
-    
-    $arr = array();
-    while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-        $historia = new Historia();
-        $historia->idHistoria=$row["id_Historia"];
-        $historia->titulo=$row["titulo"];
-        $historia->subtitulo=$row["subtitulo"];
-        $historia->descripcion=$row["descripcion"];
-        $historia->enUso=$row["enUso"];
-        array_push($arr, $historia);
-    }
-    echo json_encode($arr);
+    echo json_encode($dao->listarHistoria());
 ?>

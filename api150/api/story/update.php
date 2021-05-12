@@ -21,6 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 // Conexión con la base de datos 
 include_once '../../config/database.php';
 include_once '../../util/commonFunctions.php';
+include_once '../../objects/DAO.php';
+include_once '../../util/logger.php';
+$logger = new Logger();
+$dao = new Dao();
 //Creación de la base de datos 
 $database = new Database();
 // Declaración de commonFunctions
@@ -50,31 +54,28 @@ $token = htmlspecialchars($_GET["token"]);
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteHistoriaPorId($idHistoria)) {
             
-                    $database = new Database();
-                    $query = "UPDATE historias SET titulo = '".$nuevoTitulo."',subtitulo = '".$nuevoSubtitulo."',descripcion = '".$nuevaDescripcion."', enUso = ".$boolEnUso." WHERE id_Historia LIKE ".$idHistoria.";";
-                    $stmt = $database->getConn()->prepare($query);
-                    $stmt->execute();
+                    $dao->actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion, $boolEnUso);
                     http_response_code(200);
-                    echo json_encode(" status : 200, message : Elemento actualizado");
+                    echo $logger->created_element();
                 } else {
                     http_response_code(406);
-                    echo json_encode(" status : 406, message : El registro no existe");
+                    echo $logger->not_exists("historia");
                 }
             } else {
                 http_response_code(400);
-                echo json_encode(" status : 400, message : Faltan uno o más datos");
+                echo $logger->incomplete_data();
             }
         } else {
             http_response_code(401);
-            echo json_encode("status : 401, message : Tiempo de sesión excedido");
+            echo $logger->expired_session();
         }
 
     } elseif ($cf->comprobarTokenAdmin($token) == 0) {
         http_response_code(401);
-        echo json_encode("status : 401, message : no tiene permisos para realizar esta operación");
+        echo $logger->not_permission();
     } else {
         http_response_code(403);
-        echo json_encode("status : 403, message : token no valido");
+        echo $logger->invalid_token();
     }
 
 
