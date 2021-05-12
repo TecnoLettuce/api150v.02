@@ -38,6 +38,19 @@ $nuevoSubtitulo = htmlspecialchars($_GET["nuevoSubtitulo"]);
 $nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
 $boolEnUso = htmlspecialchars($_GET["enUso"]);
 
+$arrayMedios = array();
+$arrayMedios = $data->medios;
+
+$mediosAInsertar = array();
+$tiposAInsertar = array();
+
+
+
+for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
+    array_push($mediosAInsertar, $arrayMedios[$i]->url);
+    array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
+}
+
 
 
 //endregion
@@ -49,12 +62,21 @@ $token = htmlspecialchars($_GET["token"]);
         // lo primero es comprobar que existe el elemento que se quiere modificar 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida
-            if (!empty($idHistoria) && !empty($nuevoTitulo) && !empty($nuevoSubtitulo) && !empty($nuevaDescripcion) && $boolEnUso != null) {
+            if (
+                !empty($idHistoria) 
+                && !empty($nuevoTitulo) 
+                && !empty($nuevoSubtitulo) 
+                && !empty($nuevaDescripcion) 
+                && $boolEnUso != null 
+                && !empty($mediosAInsertar) 
+                && !empty($tiposAInsertar) 
+                && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
                 // Tenemos todos los datos ok
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteHistoriaPorId($idHistoria)) {
-            
-                    $dao->actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion, $boolEnUso);
+                    // efectivamente existe 
+
+                    $dao->actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion, $boolEnUso, $mediosAInsertar, $tiposAInsertar);
                     http_response_code(200);
                     echo $logger->created_element();
                 } else {

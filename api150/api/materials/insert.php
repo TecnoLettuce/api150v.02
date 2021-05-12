@@ -11,12 +11,16 @@
     // Conexión con la base de datos 
     include_once '../../config/database.php';
     include_once '../../util/commonFunctions.php';
- 
+    include_once '../../objects/DAO.php';
+    include_once '../../util/logger.php';
+
     //Creación de la base de datos 
     $database = new Database();
     // Declaración de commonFunctions
     $cf = new CommonFunctions();
- 
+    $logger = new Logger();
+    $dao = new Dao();
+  
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 

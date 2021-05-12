@@ -11,10 +11,12 @@
     include_once '../util/material.php';
     include_once '../util/phrase.php';
     include_once '../util/pray.php';
-    include_once '../util/uploadFilesByURL.php';
     include_once '../util/visit.php';
     include_once '../objects/session.php';
+    include_once '../util/uploadFilesByURL.php';
+
 */
+
     class Dao {
 
         public function __construct() {
@@ -777,12 +779,36 @@
             return $paraDevolver;
         }
 
-        public function actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion,$boolEnUso) {
+        public function actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion,$boolEnUso, $mediosAInsertar, $tiposAInsertar) {
+            // Hay que borrar las relaciones de la tabla de relaciones 
             $database = new Database();
-            $database = new Database();
-            $query = "UPDATE historias SET titulo = '".$nuevoTitulo."',subtitulo = '".$nuevoSubtitulo."',descripcion = '".$nuevaDescripcion."', enUso = ".$boolEnUso." WHERE id_Historia LIKE ".$idHistoria.";";
+            $query = "DELETE FROM rel_historia WHERE id_Historia LIKE ".$idHistoria.";"; 
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
+            // Insertamos los medios
+            $ucf = new UploadCommonFunctions();
+            $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+                   
+            // Comprobamos el resultado
+            if (is_array($resultadoMedios)) {
+                // Tenemos array de ids
+                // Actualizar
+                $query = "UPDATE historias SET titulo = '".$nuevoTitulo."',subtitulo = '".$nuevoSubtitulo."',descripcion = '".$nuevaDescripcion."', enUso = ".$boolEnUso." WHERE id_Historia LIKE ".$idHistoria.";";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+                // Actualizar las relaciones 
+                for ($i=0; $i < count($resultadoMedios, COUNT_NORMAL); $i++) { 
+                    $query = "INSERT INTO rel_historia( id_Medio, id_Historia) VALUES (".$resultadoMedios[$i].",".$idHistoria.");";
+                    // echo "La consulta para insertar las relaciones es es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                    $stmt->execute();
+                } // Salida del for
+
+            } else {
+                // Algo ha ido mal al insertar los medios 
+                echo "Algo ha ido mal al actualizar los medios desde el endpoint historia";
+            }
         }
         //endregion
 
@@ -891,6 +917,94 @@
         }
         //endregion
     
+        //region Medios
+
+         public function borrarMedio($id) {
+            $database = new Database();
+            $query = "DELETE FROM medios WHERE id_Medio like ".$id.";";
+            $stmt = $database->getConn()->prepare($query);
+            $stmt->execute();
+        }
+
+        public function listarMedio() {
+            $database = new Database();
+            $query = "SELECT * FROM medios;";
+            $resultado = $database->getConn()->query($query);
+            
+            $arr = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $medio = new Medio();
+                $medio->id=$row["id_Medio"];
+                $medio->url=$row["url"];
+                $medio->tipo=$row["id_Tipo"];
+                array_push($arr, $medio);
+            }
+            return $arr;
+        }
+
+        public function listarMedioPorIdyURL($id, $url) {
+            $query = "SELECT * FROM medios WHERE id_Medio LIKE ".$id." AND url LIKE '".$url."';";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $arr = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $medio = new Medio();
+                $medio->id=$row["id_Medio"];
+                $medio->url=$row["url"];
+                $medio->tipo=$row["id_Tipo"];
+                array_push($arr, $medio);
+            }
+            $paraDevolver = json_encode($arr);
+            return $paraDevolver;
+        }
+
+        public function listarMedioPorId($id) {
+            $query = "SELECT * FROM medios WHERE id_Medio LIKE ".$id.";";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $arr = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $medio = new Medio();
+                $medio->id=$row["id_Medio"];
+                $medio->url=$row["url"];
+                $medio->tipo=$row["id_Tipo"];
+                array_push($arr, $medio);
+            }
+            $paraDevolver = json_encode($arr);
+            return $paraDevolver;
+        }
+
+        public function listarMedioPorURL($url) {
+            $query = "SELECT * FROM medios WHERE url LIKE '".$url."';";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $arr = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $medio = new Medio();
+                $medio->id=$row["id_Medio"];
+                $medio->url=$row["url"];
+                $medio->tipo=$row["id_Tipo"];
+                array_push($arr, $medio);
+            }
+            $paraDevolver = json_encode($arr);
+            return $paraDevolver;
+        }
+
+        public function actualizarMedio($nuevaURL, $idMedio) {
+            $database = new Database();
+            $query = "UPDATE medios SET url = '".$nuevaURL."' WHERE id_Medio LIKE ".$idMedio.";";
+            $stmt = $database->getConn()->prepare($query);
+            $stmt->execute();
+        }
+        //endregion
+
     } // Salida de la clase
     
 ?>

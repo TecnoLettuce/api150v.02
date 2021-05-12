@@ -12,24 +12,17 @@
     include_once '../../config/database.php';
     include_once '../../util/commonFunctions.php';
     include_once '../../util/material.php';
+    include_once '../../objects/DAO.php';
+    include_once '../../util/logger.php';
 
     //Creación de la base de datos 
     $database = new Database();
     // Declaración de commonFunctions
     $cf = new CommonFunctions();
+    $logger = new Logger();
+    $dao = new Dao();
 
     // No tiene que recibir parámetros es solo la consulta pelada
-    $query = "SELECT * FROM medios;";
-    $resultado = $database->getConn()->query($query);
-    
-    $arr = array();
-    
-    while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-        $medio = new Medio();
-        $medio->id=$row["id_Medio"];
-        $medio->url=$row["url"];
-        $medio->tipo=$row["id_Tipo"];
-        array_push($arr, $medio);
-    }
-    echo json_encode($arr);
+
+    echo json_encode($dao->listarMedio());
 ?>
