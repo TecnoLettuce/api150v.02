@@ -54,11 +54,13 @@
 
         // Listar acto por id + titulo
         function listarUnActoPorIdyTitulo($id, $titulo) {
-            $query = "SELECT * FROM programas WHERE id_Programa LIKE ".$id." AND titulo LIKE '".$titulo."';";
+            $query = "SELECT programas.id_Programa, programas.titulo, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+                    FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+                    WHERE programas.id_Programa LIKE ".$id." AND programas.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $programa = new Programa();
@@ -67,18 +69,21 @@
                 $programa->fecha=$row["fecha"];
                 $programa->enUso=$row["enUso"];
                 $programa->categoria=$row["id_Categoria"];
-                array_push($arr, $programa);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $programa->medios = $arrayMedios;
+            $paraDevolver = json_encode($programa);
             return $paraDevolver;
         }
         // Listar acto por id
         function listarUnActoPorId($id) {
-            $query = "SELECT * FROM programas WHERE id_Programa LIKE ".$id.";";
+            $query = "SELECT programas.id_Programa, programas.titulo, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+                    FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+                    WHERE programas.id_Programa LIKE ".$id.";";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $programa = new Programa();
@@ -87,19 +92,22 @@
                 $programa->fecha=$row["fecha"];
                 $programa->enUso=$row["enUso"];
                 $programa->categoria=$row["id_Categoria"];
-                array_push($arr, $programa);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $programa->medios = $arrayMedios;
+            $paraDevolver = json_encode($programa);
             return $paraDevolver;
             
         }
         // Listar acto por titulo
         function listarUnActoPorTitulo($titulo) {
-            $query = "SELECT * FROM programas WHERE titulo LIKE '".$titulo."';";
+            $query = "SELECT programas.id_Programa, programas.titulo, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+                    FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+                    WHERE programas.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $programa = new Programa();
@@ -108,11 +116,11 @@
                 $programa->fecha=$row["fecha"];
                 $programa->enUso=$row["enUso"];
                 $programa->categoria=$row["id_Categoria"];
-                array_push($arr, $programa);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $programa->medios = $arrayMedios;
+            $paraDevolver = json_encode($programa);
             return $paraDevolver;
-            
         }
 
         // Métodos para el endpoint de update Actos 
@@ -167,62 +175,68 @@
 
         // Métodos para el endpoint de listar un saludo
         function listarUnSaludoPorId($id) {
-            $query = "SELECT * FROM saludos WHERE id_Saludo LIKE ".$id.";";
+            $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.id_Saludo LIKE ".$id.";";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
+            
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $saludo = new Saludo();
                 $saludo->id=$row["id_Saludo"];
                 $saludo->titulo=$row["titulo"];
-                $saludo->descripcion=$row["descripcion"];
+                $saludo->descripcion=$row["saludosDesc"];
                 $saludo->texto=$row["texto"];
                 $saludo->enUso=$row["enUso"];
-                array_push($arr, $saludo);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $saludo->medios = $arrayMedios;
+            $paraDevolver = json_encode($saludo);
             return $paraDevolver;
         }
 
         function listarUnSaludoPorIdyTitulo($id, $titulo) {
-            $query = "SELECT * FROM saludos WHERE id_Saludo LIKE ".$id." AND titulo LIKE '".$titulo."';";
+            $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.id_Saludo LIKE ".$id." AND saludos.titulo LIKE '".$titulo."'";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
+            
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $saludo = new Saludo();
                 $saludo->id=$row["id_Saludo"];
                 $saludo->titulo=$row["titulo"];
-                $saludo->descripcion=$row["descripcion"];
+                $saludo->descripcion=$row["saludosDesc"];
                 $saludo->texto=$row["texto"];
                 $saludo->enUso=$row["enUso"];
-                array_push($arr, $saludo);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $saludo->medios = $arrayMedios;
+            $paraDevolver = json_encode($saludo);
             return $paraDevolver;
         }
 
         function listarUnSaludoPorTitulo($titulo) {
-            $query = "SELECT * FROM saludos WHERE titulo LIKE '".$titulo."';";
+            $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
+            
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $saludo = new Saludo();
                 $saludo->id=$row["id_Saludo"];
                 $saludo->titulo=$row["titulo"];
-                $saludo->descripcion=$row["descripcion"];
+                $saludo->descripcion=$row["saludosDesc"];
                 $saludo->texto=$row["texto"];
                 $saludo->enUso=$row["enUso"];
-                array_push($arr, $saludo);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $saludo->medios = $arrayMedios;
+            $paraDevolver = json_encode($saludo);
             return $paraDevolver;
         }
 
@@ -273,11 +287,13 @@
         }
 
         public function listarUnHimnoPorId($id) {
-            $query = "SELECT * FROM himnos WHERE id_Himno LIKE ".$id.";";
+            $query = "SELECT himnos.id_Himno, himnos.titulo, himnos.letra, himnos.enUso, medios.url, tipos.descripcion 
+            FROM himnos INNER JOIN rel_himno ON himnos.id_Himno=rel_himno.id_Himno INNER JOIN medios ON rel_himno.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE himnos.id_Himno LIKE ".$id.";";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $himno = new Himno();
@@ -285,19 +301,21 @@
                 $himno->titulo=$row["titulo"];
                 $himno->letra=$row["letra"];
                 $himno->enUso=$row["enUso"];
-                array_push($arr, $himno);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $himno->medios = $arrayMedios;
+            $paraDevolver = json_encode($himno);
             return $paraDevolver;
-
         }
 
         public function listarUnHimnoPorIdyTitulo($id, $titulo){
-            $query = "SELECT * FROM himnos WHERE id_Himno LIKE ".$id." AND titulo LIKE '".$titulo."';";
+            $query = "SELECT himnos.id_Himno, himnos.titulo, himnos.letra, himnos.enUso, medios.url, tipos.descripcion 
+            FROM himnos INNER JOIN rel_himno ON himnos.id_Himno=rel_himno.id_Himno INNER JOIN medios ON rel_himno.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE himnos.id_Himno LIKE ".$id." AND himnos.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $himno = new Himno();
@@ -305,19 +323,21 @@
                 $himno->titulo=$row["titulo"];
                 $himno->letra=$row["letra"];
                 $himno->enUso=$row["enUso"];
-
-                array_push($arr, $himno);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $himno->medios = $arrayMedios;
+            $paraDevolver = json_encode($himno);
             return $paraDevolver;
         }
 
         public function listarUnHimnoPorTitulo($titulo){
-            $query = "SELECT * FROM himnos WHERE titulo LIKE '".$titulo."';";
+            $query = "SELECT himnos.id_Himno, himnos.titulo, himnos.letra, himnos.enUso, medios.url, tipos.descripcion 
+            FROM himnos INNER JOIN rel_himno ON himnos.id_Himno=rel_himno.id_Himno INNER JOIN medios ON rel_himno.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE himnos.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $himno = new Himno();
@@ -325,10 +345,10 @@
                 $himno->titulo=$row["titulo"];
                 $himno->letra=$row["letra"];
                 $himno->enUso=$row["enUso"];
-
-                array_push($arr, $himno);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $himno->medios = $arrayMedios;
+            $paraDevolver = json_encode($himno);
             return $paraDevolver;
         }
 
@@ -478,61 +498,68 @@
         }
 
         public function ListarUnAmbientePorId($id) {
-            $query = "SELECT * FROM ambiente WHERE id_Ambiente LIKE ".$id.";";
+            $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.url, tipos.descripcion 
+            FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente=rel_ambiente.id_Ambiente INNER JOIN medios ON rel_ambiente.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE ambiente.id_Ambiente LIKE ".$id.";";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $ambiente = new ambiente();
                 $ambiente->id=$row["id_Ambiente"];
                 $ambiente->titulo=$row["titulo"];
-                $ambiente->descripcion=$row["descripcion"];
+                $ambiente->descripcion=$row["ambienteDesc"];
                 $ambiente->enUso=$row["enUso"];
-                array_push($arr, $ambiente);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $ambiente->medios = $arrayMedios;
+            $paraDevolver = json_encode($ambiente);
             return $paraDevolver;
         }
 
         public function ListarUnAmbientePorIdyTitulo($id, $titulo) {
-            $query = "SELECT * FROM ambiente WHERE id_Ambiente LIKE ".$id." AND titulo LIKE '".$titulo."';";
+            $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.url, tipos.descripcion 
+            FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente=rel_ambiente.id_Ambiente INNER JOIN medios ON rel_ambiente.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE ambiente.id_Ambiente LIKE ".$id." AND ambiente.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $ambiente = new ambiente();
                 $ambiente->id=$row["id_Ambiente"];
                 $ambiente->titulo=$row["titulo"];
-                $ambiente->descripcion=$row["descripcion"];
+                $ambiente->descripcion=$row["ambienteDesc"];
                 $ambiente->enUso=$row["enUso"];
-    
-                array_push($arr, $ambiente);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $ambiente->medios = $arrayMedios;
+            $paraDevolver = json_encode($ambiente);
             return $paraDevolver;
         }
 
         public function ListarUnAmbientePorTitulo($titulo) {
-            $query = "SELECT * FROM ambiente WHERE titulo LIKE '".$titulo."';";
+            $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.url, tipos.descripcion 
+            FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente=rel_ambiente.id_Ambiente INNER JOIN medios ON rel_ambiente.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE ambiente.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $ambiente = new ambiente();
                 $ambiente->id=$row["id_Ambiente"];
                 $ambiente->titulo=$row["titulo"];
-                $ambiente->descripcion=$row["descripcion"];
+                $ambiente->descripcion=$row["ambienteDesc"];
                 $ambiente->enUso=$row["enUso"];
-    
-                array_push($arr, $ambiente);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $ambiente->medios = $arrayMedios;
+            $paraDevolver = json_encode($ambiente);
             return $paraDevolver;
         }
         
@@ -690,56 +717,65 @@
         }
 
         public function listarVisitaPorId ($id) {
-            $query = "SELECT * FROM visitas WHERE id_Visita LIKE ".$id.";";
+            $query = "SELECT visitas.id_Visita, visitas.titulo, medios.url, tipos.descripcion 
+            FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE visitas.id_Visita LIKE ".$id.";";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $visita = new Visit();
                 $visita->id=$row["id_Visita"];
                 $visita->titulo=$row["titulo"];
                 
-                array_push($arr, $visita);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $visita->medios = $arrayMedios;
+            $paraDevolver = json_encode($visita);
             return $paraDevolver;
         }
 
         public function listarVisitaPorTitulo ($titulo) {
-            $query = "SELECT * FROM visitas WHERE titulo LIKE '".$titulo."';";
+            $query = "SELECT visitas.id_Visita, visitas.titulo, medios.url, tipos.descripcion 
+            FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE visitas.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $visita = new Visit();
                 $visita->id=$row["id_Visita"];
                 $visita->titulo=$row["titulo"];
                 
-                array_push($arr, $visita);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $visita->medios = $arrayMedios;
+            $paraDevolver = json_encode($visita);
             return $paraDevolver;
         }
 
         public function listarVisitaPorIdyTitulo ($id, $titulo) {
-            $query = "SELECT * FROM visitas WHERE id_Visita LIKE ".$id." AND titulo LIKE '".$titulo."';";
+            $query = "SELECT visitas.id_Visita, visitas.titulo, medios.url, tipos.descripcion 
+            FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            WHERE visitas.id_Visita LIKE ".$id." AND visitas.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
+            $arrayMedios = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $visita = new Visit();
                 $visita->id=$row["id_Visita"];
                 $visita->titulo=$row["titulo"];
                 
-                array_push($arr, $visita);
+                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $paraDevolver = json_encode($arr);
+            $visita->medios = $arrayMedios;
+            $paraDevolver = json_encode($visita);
             return $paraDevolver;
         }
 

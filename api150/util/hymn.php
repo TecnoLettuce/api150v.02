@@ -6,6 +6,7 @@
         public $titulo;
         public $letra;
         public $enUso;
+        public $medios = array();
 
         // Cosntructor
         public function __construct() {
