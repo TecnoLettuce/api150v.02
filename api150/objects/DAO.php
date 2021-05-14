@@ -565,13 +565,38 @@
             return $paraDevolver;
         }
         
-        public function actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente) {
-            
+        public function actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente, $mediosAInsertar, $tiposAInsertar) {
             $database = new Database();
+            $query = "DELETE FROM rel_ambiente WHERE id_Ambiente LIKE ".$idAmbiente.";";
+            $stmt = $database->getConn()->prepare($query);
+            $stmt->execute();
+            // Insertamos los medios
+            $ucf = new UploadCommonFunctions();
+            $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+
+            // Comprobamos el resultado
+            if (is_array($resultadoMedios)) {
+            // Tenemos array de ids
+            // Actualizar   
             $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."', enUso = ".$boolEnUso." WHERE id_Ambiente LIKE ".$idAmbiente.";";
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
-        }
+
+            for ($i=0; $i < count($resultadoMedios, COUNT_NORMAL); $i++) { 
+                    $query = "INSERT INTO rel_ambiente( id_Medio, id_Ambiente) VALUES (".$resultadoMedios[$i].",".$idAmbiente.");";
+                    // echo "La consulta para insertar las relaciones es es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                    $stmt->execute();
+                } 
+            }else{
+                // Algo ha ido mal al insertar los medios
+                echo "Algo ha ido mal al actualizar los medios desde el endpoint visita";
+            }
+           
+        }            
+           
+           
+        
         //endregion
 
         //region Oraciones
@@ -909,11 +934,35 @@
             return $paraDevolver;
         }
 
-        public function actualizarVisita ($nuevoTitulo, $idVisita) {
+        public function actualizarVisita ($nuevoTitulo, $idVisita, $mediosAInsertar, $tiposAInsertar) {
+        	// Hay que borrar las relaciones de la tabla de relaciones
             $database = new Database();
-            $query = "UPDATE visitas SET titulo = '".$nuevoTitulo."' WHERE id_Visita LIKE ".$idVisita.";";
+            $query = "DELETE FROM rel_visita WHERE id_Visita LIKE ".$idVisita.";";
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
+            // Insertamos los medios
+            $ucf = new UploadCommonFunctions();
+           	$resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+
+           	// Comprobamos el resultado
+           	if (is_array($resultadoMedios)) {
+           	// Tenemos array de ids
+           	// Actualizar	
+           	$query = "UPDATE visitas SET titulo = '".$nuevoTitulo."' WHERE id_Visita LIKE ".$idVisita.";";
+            $stmt = $database->getConn()->prepare($query);
+            $stmt->execute();
+
+            for ($i=0; $i < count($resultadoMedios, COUNT_NORMAL); $i++) { 
+                    $query = "INSERT INTO rel_visita( id_Medio, id_Visita) VALUES (".$resultadoMedios[$i].",".$idVisita.");";
+                    // echo "La consulta para insertar las relaciones es es ".$query;
+                    $stmt = $database->getConn()->prepare($query);
+                    $stmt->execute();
+                } 
+           	}else{
+           		// Algo ha ido mal al insertar los medios
+           		echo "Algo ha ido mal al actualizar los medios desde el endpoint visita";
+           	}
+           
         }
         //endregion
     
