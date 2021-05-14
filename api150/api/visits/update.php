@@ -6,7 +6,7 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Access-Control-Allow-Headers, Authorization, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEAD');
 header("Access-Control-Max-Age: 3600");
-//endregion
+
 
 /* cosa de la que no me fio */
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     header('Access-Control-Allow-Headers: Authorization');
     http_response_code(204);
 }
+//endregion
 
 // Conexión con la base de datos 
 include_once '../../config/database.php';
@@ -69,7 +70,7 @@ $token = htmlspecialchars($_GET["token"]);
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteVisitaPorId($idVisita)) {
                     
-                    $dao->actualizarVisita($nuevoTitulo, $idVisita); 
+                    $dao->actualizarVisita($nuevoTitulo, $idVisita, $mediosAInsertar, $tiposAInsertar); 
 
                     http_response_code(200);
                     echo $logger->updated_element();
