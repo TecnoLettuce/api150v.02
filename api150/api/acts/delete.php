@@ -28,7 +28,7 @@
     $token = $data->token;
 
     // Comprobamos que el token es de admin
-    if ($cf->comprobarTokenAdmin($token) == 1) {
+    if ($cf->comprobarTokenAdmin($token) >= 0) {
         // Token de admin
 
         if ($cf->comprobarExpireDate($token)) {
@@ -57,9 +57,6 @@
             echo $logger->expired_session();
         }
 
-    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        http_response_code(403);
-        echo $logger->not_permission();
     } else {
         http_response_code(403);
         echo $logger->invalid_token();

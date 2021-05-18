@@ -34,15 +34,23 @@
     $tipo = $data->tipo; 
     $token = $data->token;
     $ucf = new UploadCommonFunctions();
+    $cf = new CommonFunctions();
 
-    $result = array();
-    $result = $ucf->insertarMedios($url, $tipo, $token);
+    if ($cf->comprobarTokenAdmin($token) >= 0) {
+        $result = array();
+        $result = $ucf->insertarMedios($url, $tipo, $token);
 
-    // Comprobar si ha devuelto fallo o acierto 
-    if (count($result, COUNT_NORMAL) > 0) {
-        // Es un array y tenemos resultados 
-        echo json_encode($result);
+        // Comprobar si ha devuelto fallo o acierto 
+        if (count($result, COUNT_NORMAL) > 0) {
+            // Es un array y tenemos resultados 
+            echo json_encode($result);
+        } else {
+            // Es un código de error
+            echo $result;
+        }
     } else {
-        // Es un código de error
-        echo $result;
+        http_response_code(403);
+        $logger->not_permission();
     }
+
+    

@@ -54,7 +54,7 @@
 
 
     // Comprobamos que tiene permisos de administrador
-    if ($cf->comprobarTokenAdmin($token) == 1) { 
+    if ($cf->comprobarTokenAdmin($token) >= 0) { 
         // Comprobamos que su sesión no ha caducado
         if ($cf->comprobarExpireDate($token)) {
             // La sesión no ha caducado, por lo que seguimos adelante y le otorgamos 2 minutos más
@@ -136,9 +136,6 @@
             http_response_code(401);
             echo $logger->expired_session();
         }
-    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        http_response_code(403);
-        echo $logger->not_permission();
     } else {
         http_response_code(403);
         echo $logger->invalid_token();

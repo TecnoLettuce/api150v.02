@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
      $token = htmlspecialchars($_GET["token"]);
     //endregion
     // Comprobamos que tiene permisos de administrador
-    if ($cf->comprobarTokenAdmin($token) == 1) { 
+    if ($cf->comprobarTokenAdmin($token) >= 0) { 
 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
                 if ($cf->comprobarExisteActoPorId($idPrograma)) {
                     // efectivamente existe 
                     
-                	$dao->actualizarActo($idPrograma, $nuevoTitulo, $nuevaFecha,  $mediosAInsertar, $tiposAInsertar);
+                	$dao->actualizarActo($nuevoTitulo, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar);
                     http_response_code(200);
                     echo $logger->updated_element();
                     
@@ -88,9 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
             echo $logger->expired_session();
         }
 
-    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        http_response_code(403);
-        echo $logger->not_permission();
     } else {
         http_response_code(403);
         echo $logger->invalid_token();

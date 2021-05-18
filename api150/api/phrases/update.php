@@ -32,7 +32,7 @@ $boolEnUso = htmlspecialchars($_GET["enUso"]);
 $token = htmlspecialchars($_GET["token"]);
 
     // Comprobamos que tiene permisos de administrador
-    if ($cf->comprobarTokenAdmin($token) == 1) { 
+    if ($cf->comprobarTokenAdmin($token) >= 0) { 
 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida
@@ -60,9 +60,6 @@ $token = htmlspecialchars($_GET["token"]);
             echo $logger->expired_session();
         }
 
-    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        http_response_code(403);
-        echo $logger->not_permission();
     } else {
         http_response_code(403);
         echo $logger->invalid_token();

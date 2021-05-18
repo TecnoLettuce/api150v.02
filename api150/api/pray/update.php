@@ -33,7 +33,7 @@ $boolEnUso = htmlspecialchars($_GET["enUso"]);
 $token = htmlspecialchars($_GET["token"]);
 
     // Comprobamos que tiene permisos de administrador
-    if ($cf->comprobarTokenAdmin($token) == 1) { 
+    if ($cf->comprobarTokenAdmin($token) >= 0) { 
         // lo primero es comprobar que existe el elemento que se quiere modificar 
 
         if ($cf->comprobarExpireDate($token)) {
@@ -55,8 +55,6 @@ $token = htmlspecialchars($_GET["token"]);
             echo $logger->expired_session();
         }
 
-    } elseif ($cf->comprobarTokenAdmin($token) == 0) {
-        echo $logger->not_permission();
     } else {
         echo $logger->invalid_token();
     }
