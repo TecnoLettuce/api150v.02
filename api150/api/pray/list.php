@@ -15,6 +15,8 @@
     include_once '../../objects/DAO.php';
     include_once '../../util/logger.php';
 
+    include_once '../../DTO/prayDTO.php';
+
 
     //Creación de la base de datos 
     $database = new Database();
@@ -25,5 +27,5 @@
 
     // No tiene que recibir parámetros es solo la consulta pelada
     
-    echo json_encode($dao->listarOracion());
+    echo json_encode($dao->listarOracionDTO());
 ?>

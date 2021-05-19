@@ -14,6 +14,8 @@
     include_once '../../objects/DAO.php';
     include_once '../../util/logger.php';
     include_once '../../util/act.php';
+
+    include_once '../../DTO/actDTO.php';
     
     //Creación de la base de datos 
     $database = new Database();
@@ -26,12 +28,12 @@
     $arr = array();
     
     while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-        $programa = new Programa();
+        $programa = new ProgramaDTO();
         $programa->id=$row["id_Programa"];
         $programa->titulo=$row["titulo"];
-        $programa->fecha=$row["fecha"];
-        $programa->enUso=$row["enUso"];
-        $programa->categoria=$row["id_Categoria"];
+        // $programa->fecha=$row["fecha"];
+        // $programa->enUso=$row["enUso"];
+        // $programa->categoria=$row["id_Categoria"];
         array_push($arr, $programa);
     }
     echo json_encode($arr);

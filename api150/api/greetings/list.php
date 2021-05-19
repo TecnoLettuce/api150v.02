@@ -15,6 +15,8 @@
     include_once '../../objects/DAO.php';
     include_once '../../util/logger.php';
 
+    include_once '../../DTO/greetingsDTO.php';
+
     //Creación de la base de datos 
     $database = new Database();
     // Declaración de commonFunctions

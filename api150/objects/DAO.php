@@ -125,6 +125,47 @@
             return $paraDevolver;
         }
 
+        public function listarCadaActo() {
+            $database = new Database();
+            $query = "SELECT * FROM programas INNER JOIN rel_programa ON programas.id_Programa = rel_programa.id_Programa LEFT JOIN medios ON medios.id_Medio = rel_programa.id_Medio";
+            $resultado = $database->getConn()->query($query);
+            $arr = array();
+            
+            $idsYaListadas = -1;
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $programa = new Programa();
+                $programa->id=$row["id_Programa"];
+
+                if ($programa->id != $idsYaListadas) {
+                    // Hace la segunda consulta
+                    $query = "SELECT programas.id_Programa, programas.titulo, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+                    FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+                    WHERE programas.id_Programa LIKE ".$programa->id.";";
+
+                    $database = new Database();
+                    $resultado2 = $database->getConn()->query($query);
+                    
+                    $arrayMedios = array();
+                    
+                    while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
+                        $programa = new Programa();
+                        $programa->id=$row2["id_Programa"];
+                        $programa->titulo=$row2["titulo"];
+                        $programa->fecha=$row2["fecha"];
+                        $programa->enUso=$row2["enUso"];
+                        $programa->categoria=$row2["id_Categoria"];
+                        array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
+                    }
+                    $programa->medios = $arrayMedios;
+                    array_push($arr, $programa);
+                } else {
+                    // No se lista
+                }
+                $idsYaListadas = $programa->id;
+            }
+            return $arr;
+        }
+
         // Métodos para el endpoint de update Actos 
         function actualizarActo ($nuevoTitulo, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar) {
             $database = new Database();
@@ -190,12 +231,12 @@
             $arr = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $saludo = new Saludo();
+                $saludo = new SaludoDTO();
                 $saludo->id=$row["id_Saludo"];
                 $saludo->titulo=$row["titulo"];
-                $saludo->descripcion=$row["descripcion"];
-                $saludo->texto=$row["texto"];
-                $saludo->enUso=$row["enUso"];
+                // $saludo->descripcion=$row["descripcion"];
+                // $saludo->texto=$row["texto"];
+                // $saludo->enUso=$row["enUso"];
                 array_push($arr, $saludo);
             }
             return $arr;
@@ -222,6 +263,45 @@
             $saludo->medios = $arrayMedios;
             $paraDevolver = json_encode($saludo);
             return $paraDevolver;
+        }
+
+        public function listarCadaSaludo() {
+            $database = new Database();
+            $query = "SELECT * FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo = rel_saludo.id_Saludo LEFT JOIN medios ON medios.id_Medio = rel_saludo.id_Medio";
+            $resultado = $database->getConn()->query($query);
+            $arr = array();
+            
+            $idsYaListadas = -1;
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $saludo = new Saludo();
+                $saludo->id=$row["id_Saludo"];
+
+                if ($saludo->id != $idsYaListadas) {
+                    // Hace la segunda consulta
+                    $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.id_Saludo LIKE ".$saludo->id.";";
+
+                    $database = new Database();
+                    $resultado2 = $database->getConn()->query($query);
+                    
+                    $arrayMedios = array();
+                    
+                    while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
+                        $saludo = new Saludo();
+                        $saludo->id=$row2["id_Saludo"];
+                        $saludo->titulo=$row2["titulo"];
+                        $saludo->descripcion=$row2["saludosDesc"];
+                        $saludo->texto=$row2["texto"];
+                        $saludo->enUso=$row2["enUso"];
+                        array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
+                    }
+                    $saludo->medios = $arrayMedios;
+                    array_push($arr, $saludo);
+                } else {
+                    // No se lista
+                }
+                $idsYaListadas = $saludo->id;
+            }
+            return $arr;
         }
 
         function listarUnSaludoPorIdyTitulo($id, $titulo) {
@@ -328,11 +408,11 @@
             $arr = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $himno = new Himno();
+                $himno = new HimnoDTO();
                 $himno->id=$row["id_Himno"];
                 $himno->titulo=$row["titulo"];
-                $himno->letra=$row["letra"];
-                $himno->enUso=$row["enUso"];
+                // $himno->letra=$row["letra"];
+                // $himno->enUso=$row["enUso"];
                 array_push($arr, $himno);
             }
             return $arr;
@@ -358,6 +438,46 @@
             $himno->medios = $arrayMedios;
             $paraDevolver = json_encode($himno);
             return $paraDevolver;
+        }
+
+        public function listarCadaHimno() {
+            $database = new Database();
+            $query = "SELECT * FROM himnos INNER JOIN rel_himno ON himnos.id_Himno = rel_himno.id_Himno LEFT JOIN medios ON medios.id_Medio = rel_himno.id_Medio";
+            $resultado = $database->getConn()->query($query);
+            $arr = array();
+            
+            $idsYaListadas = -1;
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $himno = new Himno();
+                $himno->id=$row["id_Himno"];
+
+                if ($himno->id != $idsYaListadas) {
+                    // Hace la segunda consulta
+                    $query = "SELECT himnos.id_Himno, himnos.titulo, himnos.letra, himnos.enUso, medios.url, tipos.descripcion 
+                    FROM himnos INNER JOIN rel_himno ON himnos.id_Himno=rel_himno.id_Himno INNER JOIN medios ON rel_himno.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+                    WHERE himnos.id_Himno LIKE ".$himno->id.";";
+
+                    $database = new Database();
+                    $resultado2 = $database->getConn()->query($query);
+                    
+                    $arrayMedios = array();
+                    
+                    while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
+                        $himno = new Himno();
+                        $himno->id=$row2["id_Himno"];
+                        $himno->titulo=$row2["titulo"];
+                        $himno->letra=$row2["letra"];
+                        $himno->enUso=$row2["enUso"];
+                        array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
+                    }
+                    $himno->medios = $arrayMedios;
+                    array_push($arr, $himno);
+                } else {
+                    // No se lista
+                }
+                $idsYaListadas = $himno->id;
+            }
+            return $arr;
         }
 
         public function listarUnHimnoPorIdyTitulo($id, $titulo){
@@ -470,7 +590,23 @@
                 array_push($arr, $frase);
             }
             return $arr;
-        }   
+        }  
+        
+        public function listarFrasesDTO () {
+            $database = new Database();
+            $query = "SELECT * FROM frase_inicio;";
+            $resultado = $database->getConn()->query($query);
+            
+            $arr = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $frase = new FraseDTO();
+                $frase->id=$row["id_Frase"];
+                $frase->texto=$row["texto"];
+                array_push($arr, $frase);
+            }
+            return $arr;
+        }  
 
         public function listarUnaFrasePorId ($id){
             $query = "SELECT * FROM frase_inicio WHERE id_Frase LIKE ".$id.";";
@@ -563,11 +699,11 @@
             $arr = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $ambiente = new Ambiente();
+                $ambiente = new AmbienteDTO();
                 $ambiente->id=$row["id_Ambiente"];
                 $ambiente->titulo=$row["titulo"];
-                $ambiente->descripcion=$row["descripcion"];
-                $ambiente->enUso=$row["enUso"];
+                // $ambiente->descripcion=$row["descripcion"];
+                // $ambiente->enUso=$row["enUso"];
                 array_push($arr, $ambiente);
             }
             return $arr;
@@ -593,6 +729,46 @@
             $ambiente->medios = $arrayMedios;
             $paraDevolver = json_encode($ambiente);
             return $paraDevolver;
+        }
+
+        public function listarCadaAmbiente() {
+            $database = new Database();
+            $query = "SELECT * FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente = rel_ambiente.id_Ambiente LEFT JOIN medios ON medios.id_Medio = rel_ambiente.id_Medio";
+            $resultado = $database->getConn()->query($query);
+            $arr = array();
+            
+            $idsYaListadas = -1;
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $ambiente = new Ambiente();
+                $ambiente->id=$row["id_Ambiente"];
+
+                if ($ambiente->id != $idsYaListadas) {
+                    // Hace la segunda consulta
+                    $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.url, tipos.descripcion 
+                    FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente=rel_ambiente.id_Ambiente INNER JOIN medios ON rel_ambiente.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+                    WHERE ambiente.id_Ambiente LIKE ".$ambiente->id.";";
+
+                    $database = new Database();
+                    $resultado2 = $database->getConn()->query($query);
+                    
+                    $arrayMedios = array();
+                    
+                    while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
+                        $ambiente = new Ambiente();
+                        $ambiente->id=$row2["id_Ambiente"];
+                        $ambiente->titulo=$row2["titulo"];
+                        $ambiente->descripcion=$row2["ambienteDesc"];
+                        $ambiente->enUso=$row2["enUso"];
+                        array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
+                    }
+                    $ambiente->medios = $arrayMedios;
+                    array_push($arr, $ambiente);
+                } else {
+                    // No se lista
+                }
+                $idsYaListadas = $ambiente->id;
+            }
+            return $arr;
         }
 
         public function ListarUnAmbientePorIdyTitulo($id, $titulo) {
@@ -707,6 +883,24 @@
             return $arr;
         }
 
+        public function listarOracionDTO(){
+            $database = new Database();
+            $query = "SELECT * FROM oraciones;";
+            $resultado = $database->getConn()->query($query);
+            
+            $arr = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $pray = new PrayDTO();
+                $pray->id=$row["id_Oracion"];
+                $pray->titulo=$row["titulo"];
+                // $pray->texto=$row["texto"];
+                // $pray->enUso=$row["enUso"];
+                array_push($arr, $pray);
+            }
+            return $arr;
+        }
+
         public function listarUnaOracionPorId($id){
             $query = "SELECT * FROM oraciones WHERE id_Oracion LIKE ".$id.";";
             $database = new Database();
@@ -726,6 +920,7 @@
             return $paraDevolver;
 
         }
+
 
         public function listarUnaOracionPorIdyTitulo($id, $titulo){
             $query = "SELECT * FROM oraciones WHERE id_Oracion LIKE ".$id." AND titulo LIKE '".$titulo."';";
@@ -800,16 +995,57 @@
             
             $arr = array();
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $historia = new Historia();
+                $historia = new HistoriaDTO();
                 $historia->idHistoria=$row["id_Historia"];
                 $historia->titulo=$row["titulo"];
-                $historia->subtitulo=$row["subtitulo"];
-                $historia->descripcion=$row["descripcion"];
-                $historia->enUso=$row["enUso"];
+                // $historia->subtitulo=$row["subtitulo"];
+                // $historia->descripcion=$row["descripcion"];
+                // $historia->enUso=$row["enUso"];
                 array_push($arr, $historia);
             }
             return $arr;
         }
+
+        public function listarCadaHistoria() {
+            $database = new Database();
+            $query = "SELECT * FROM `historias` INNER JOIN rel_historia ON historias.id_Historia = rel_historia.id_Historia LEFT JOIN medios ON medios.id_Medio = rel_historia.id_Medio;";
+            $resultado = $database->getConn()->query($query);
+            $arr = array();
+            
+            $idsYaListadas = -1;
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $historia = new Historia();
+                $historia->idHistoria=$row["id_Historia"];
+
+                if ($historia->idHistoria != $idsYaListadas) {
+                    // Hace la segunda consulta
+                    $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.id_Historia LIKE ".$historia->idHistoria.";";
+
+                    $database = new Database();
+                    $resultado2 = $database->getConn()->query($query);
+                    
+                    $arrayMedios = array();
+                    
+                    while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
+                        $historia = new Historia();
+                        $historia->idHistoria=$row["id_Historia"];
+                        $historia->titulo=$row["titulo"];
+                        $historia->subtitulo=$row["subtitulo"];
+                        $historia->descripcion=$row["descripcion"];
+                        $historia->enUso=$row["enUso"];
+                        array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                    }
+                    $historia->medios = $arrayMedios;
+                    array_push($arr, $historia);
+                } else {
+                    // No se lista
+                }
+                $idsYaListadas = $historia->idHistoria;
+            }
+            return $arr;
+        }
+
+
 
         public function listarUnaHistoriaPorId($id) {
             $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.id_Historia LIKE ".$id.";";
@@ -937,7 +1173,7 @@
             $arr = array();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $visita = new Visit();
+                $visita = new VisitDTO();
                 $visita->id=$row["id_Visita"];
                 $visita->titulo=$row["titulo"];
                 array_push($arr, $visita);
@@ -964,6 +1200,44 @@
             $visita->medios = $arrayMedios;
             $paraDevolver = json_encode($visita);
             return $paraDevolver;
+        }
+
+        public function listarCadaVisita() {
+            $database = new Database();
+            $query = "SELECT * FROM visitas INNER JOIN rel_visita ON visitas.id_Visita = rel_visita.id_Visita LEFT JOIN medios ON medios.id_Medio = rel_visita.id_Medio";
+            $resultado = $database->getConn()->query($query);
+            $arr = array();
+            
+            $idsYaListadas = -1;
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $visita = new Visit();
+                $visita->id=$row["id_Visita"];
+
+                if ($visita->id != $idsYaListadas) {
+                    // Hace la segunda consulta
+                    $query = "SELECT visitas.id_Visita, visitas.titulo, medios.url, tipos.descripcion 
+                    FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+                    WHERE visitas.id_Visita LIKE ".$visita->id.";";
+
+                    $database = new Database();
+                    $resultado2 = $database->getConn()->query($query);
+                    
+                    $arrayMedios = array();
+                    
+                    while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
+                        $visita = new Visit();
+                        $visita->id=$row2["id_Visita"];
+                        $visita->titulo=$row2["titulo"];
+                        array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
+                    }
+                    $visita->medios = $arrayMedios;
+                    array_push($arr, $visita);
+                } else {
+                    // No se lista
+                }
+                $idsYaListadas = $visita->id;
+            }
+            return $arr;
         }
 
         public function listarVisitaPorTitulo ($titulo) {

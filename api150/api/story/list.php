@@ -24,6 +24,7 @@
     include_once '../../util/historia.php';
     include_once '../../objects/DAO.php';
     include_once '../../util/logger.php';
+    include_once '../../DTO/historiaDTO.php';
     $logger = new Logger();
     $dao = new Dao();
 

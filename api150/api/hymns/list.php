@@ -14,6 +14,7 @@
     include_once '../../util/hymn.php';
     include_once '../../objects/DAO.php';
     include_once '../../util/logger.php';
+    include_once '../../DTO/hymnDTO.php';
     
     //Creación de la base de datos 
     $database = new Database();
