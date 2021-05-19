@@ -26,6 +26,7 @@
     $data = json_decode(file_get_contents("php://input"));
 
     $tituloVisita = $data->tituloVisita;
+    $descripcion = $data->descripcion;
     $token = $data->token;
 
     // Datos de los medios
@@ -71,7 +72,7 @@
                         if (is_array($resultadoMedios)) {
                             // Tenemos array de ids
                             // Insertamos la visita
-                            $dao->insertarVisita($tituloVisita);
+                            $dao->insertarVisita($tituloVisita, $descripcion);
 
                             // Consultamos el elemento que acabamos de insertar
                             $query = "SELECT id_Visita FROM visitas WHERE titulo LIKE '".$tituloVisita."';";
@@ -107,7 +108,7 @@
                     } else {
                         // No hay medios
                         // Insertamos solamente la visita
-                        $dao->insertarVisita($tituloVisita);
+                        $dao->insertarVisita($tituloVisita, $descripcion);
                         http_response_code(201);
                         echo $logger->created_element();
                     }

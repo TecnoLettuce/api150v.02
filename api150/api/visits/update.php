@@ -36,6 +36,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 $idVisita = htmlspecialchars($_GET["idVisita"]);
 $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
+$nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
 
 $arrayMedios = array();
 $arrayMedios = $data->medios;
@@ -63,6 +64,7 @@ $token = htmlspecialchars($_GET["token"]);
             // lo primero es comprobar que existe el elemento que se quiere modificar 
             if (!empty($idVisita)
                 && !empty($nuevoTitulo)
+                && !empty($nuevaDescripcion)
                 && !empty($mediosAInsertar) 
                 && !empty($tiposAInsertar)
                 && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
@@ -70,7 +72,7 @@ $token = htmlspecialchars($_GET["token"]);
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteVisitaPorId($idVisita)) {
                     
-                    $dao->actualizarVisita($nuevoTitulo, $idVisita, $mediosAInsertar, $tiposAInsertar); 
+                    $dao->actualizarVisita($nuevoTitulo, $idVisita, $nuevaDescripcion, $mediosAInsertar, $tiposAInsertar); 
 
                     http_response_code(200);
                     echo $logger->updated_element();

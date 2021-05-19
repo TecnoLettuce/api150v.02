@@ -4,6 +4,7 @@
         // Atributos 
         public $id;
         public $titulo;
+        public $descripcion;
         public $medios = array();
 
         // Cosntructor

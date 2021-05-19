@@ -35,6 +35,8 @@
     $data = json_decode(file_get_contents("php://input"));
     
     $titulo = $data->titulo;
+    $descripcion = $data->descripcion;
+    $ubicacion = $data->$ubicacion;
     $fecha = $data->fecha;
     $boolEnUso = $data->enUso;
     $categoria = $data->categoria;
@@ -64,7 +66,7 @@
 
 
             // comprobamos que no faltan datos vitales
-            if (!empty($titulo) && !empty($categoria) && !empty($fecha) && $boolEnUso!=null) {
+            if (!empty($titulo) && !empty($descripcion) && !empty($ubicacion) &&!empty($categoria) && !empty($fecha) && $boolEnUso!=null) {
                 // Tenemos todos los datos
                 //Comprobamos que el registro no existe ya en la base de datos 
                 if ($cf->comprobarExisteActoPorTitulo($titulo)) {
@@ -83,7 +85,7 @@
                         if (is_array($resultadoMedios)) {
                             // tenemos el array de ids
                             // insertamos el acto 
-                            $dao->insertarActo( $titulo, $fecha, $boolEnUso, $categoria);
+                            $dao->insertarActo( $titulo, $descripcion, $ubicacion, $fecha, $boolEnUso, $categoria);
 
                             // Consultamos la id del elemento que acabamos de insertar
                             // Consultar el elemento que se acaba de insertar
@@ -122,7 +124,7 @@
 
                     } else {
                         // No hay medios para insertar, insertamos solo el acto
-                        $dao->insertarActo( $titulo, $fecha, $boolEnUso, $categoria);
+                        $dao->insertarActo( $titulo, $descripcion, $ubicacion, $fecha, $boolEnUso, $categoria);
                         http_response_code(201);
                         echo $logger->created_element();
                     }

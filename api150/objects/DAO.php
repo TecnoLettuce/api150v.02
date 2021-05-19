@@ -28,9 +28,10 @@
 
         //region Actos
         // Métodos para el endpoint de insertar actos 
-        function insertarActo ($titulo, $fecha, $boolEnUso, $categoria) {
+        function insertarActo ($titulo, $descripcion, $ubicacion, $fecha, $boolEnUso, $categoria) {
             $database = new Database();
-            $query = "INSERT INTO programas (id_Programa, titulo, fecha, enUso, id_Categoria) VALUES (null,'".$titulo."','".$fecha."',".$boolEnUso.", '".$categoria."');";
+            $timestamp = strtotime($fecha);
+            $query = "INSERT INTO programas (id_Programa, titulo, descripcion, ubicacion, fecha, enUso, id_Categoria) VALUES (null,'".$titulo."', '".$descripcion."','".$ubicacion."', ".$timestamp.",".$boolEnUso.", '".$categoria."');";
             // echo "La consulta para insertar un programa es ".$query;
             $stmt = $database->getConn()->prepare($query);
             // echo "La consulta para insertar el programa es ".$query;
@@ -56,7 +57,7 @@
 
         // Listar acto por id + titulo
         function listarUnActoPorIdyTitulo($id, $titulo) {
-            $query = "SELECT programas.id_Programa, programas.titulo, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+            $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
                     FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
                     WHERE programas.id_Programa LIKE ".$id." AND programas.titulo LIKE '".$titulo."';";
             $database = new Database();
@@ -68,6 +69,8 @@
                 $programa = new Programa();
                 $programa->id=$row["id_Programa"];
                 $programa->titulo=$row["titulo"];
+                $programa->descripcion=$row["descPrograma"];
+                $programa->ubicacion=$row["ubicacion"];
                 $programa->fecha=$row["fecha"];
                 $programa->enUso=$row["enUso"];
                 $programa->categoria=$row["id_Categoria"];
@@ -79,7 +82,7 @@
         }
         // Listar acto por id
         function listarUnActoPorId($id) {
-            $query = "SELECT programas.id_Programa, programas.titulo, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+            $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
                     FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
                     WHERE programas.id_Programa LIKE ".$id.";";
             $database = new Database();
@@ -91,6 +94,8 @@
                 $programa = new Programa();
                 $programa->id=$row["id_Programa"];
                 $programa->titulo=$row["titulo"];
+                $programa->descripcion=$row["descPrograma"];
+                $programa->ubicacion=$row["ubicacion"];
                 $programa->fecha=$row["fecha"];
                 $programa->enUso=$row["enUso"];
                 $programa->categoria=$row["id_Categoria"];
@@ -103,7 +108,7 @@
         }
         // Listar acto por titulo
         function listarUnActoPorTitulo($titulo) {
-            $query = "SELECT programas.id_Programa, programas.titulo, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+            $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
                     FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
                     WHERE programas.titulo LIKE '".$titulo."';";
             $database = new Database();
@@ -115,6 +120,8 @@
                 $programa = new Programa();
                 $programa->id=$row["id_Programa"];
                 $programa->titulo=$row["titulo"];
+                $programa->descripcion=$row["descPrograma"];
+                $programa->ubicacion=$row["ubicacion"];
                 $programa->fecha=$row["fecha"];
                 $programa->enUso=$row["enUso"];
                 $programa->categoria=$row["id_Categoria"];
@@ -138,7 +145,7 @@
 
                 if ($programa->id != $idsYaListadas) {
                     // Hace la segunda consulta
-                    $query = "SELECT programas.id_Programa, programas.titulo, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+                    $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
                     FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
                     WHERE programas.id_Programa LIKE ".$programa->id.";";
 
@@ -151,6 +158,8 @@
                         $programa = new Programa();
                         $programa->id=$row2["id_Programa"];
                         $programa->titulo=$row2["titulo"];
+                        $programa->descripcion=$row2["descPrograma"];
+                        $programa->ubicacion=$row2["ubicacion"];
                         $programa->fecha=$row2["fecha"];
                         $programa->enUso=$row2["enUso"];
                         $programa->categoria=$row2["id_Categoria"];
@@ -167,7 +176,7 @@
         }
 
         // Métodos para el endpoint de update Actos 
-        function actualizarActo ($nuevoTitulo, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar) {
+        function actualizarActo ($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar) {
             $database = new Database();
             $query = "DELETE FROM rel_programa WHERE id_Programa LIKE ".$idPrograma.";"; 
             $stmt = $database->getConn()->prepare($query);
@@ -180,12 +189,12 @@
             if (is_array($resultadoMedios)) {
                 // Tenemos array de ids
                 // Actualizar
-               $query = "UPDATE programas SET titulo = '".$nuevoTitulo."', fecha = '".$nuevaFecha."', enUso = ".$boolEnUso." WHERE id_Programa LIKE ".$idPrograma.";";
-            echo "consulta > ".$query;
-            $stmt = $database->getConn()->prepare($query);
-            $stmt->execute();
+                $timestamp = strtotime($nuevaFecha);
+               $query = "UPDATE programas SET titulo = '".$nuevoTitulo."', descripcion = '".$nuevaDescripcion."', ubicacion = '".$nuevaUbicacion."' , fecha = ".$timestamp.", enUso = ".$boolEnUso." WHERE id_Programa LIKE ".$idPrograma.";";
+                //echo "consulta > ".$query;
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
         
-
                 // Actualizar las relaciones 
                 for ($i=0; $i < count($resultadoMedios, COUNT_NORMAL); $i++) { 
                     $query = "INSERT INTO rel_programa( id_Medio, id_Programa) VALUES (".$resultadoMedios[$i].",".$idPrograma.");";
@@ -1149,9 +1158,9 @@
 
         //region visitas
 
-        public function insertarVisita ($tituloVisita) {
+        public function insertarVisita ($tituloVisita, $descripcion) {
             $database = new Database();
-            $query = "INSERT INTO visitas (id_Visita, titulo) VALUES (null,'".$tituloVisita."');";
+            $query = "INSERT INTO visitas (id_Visita, titulo, descripcion) VALUES (null,'".$tituloVisita."', '".$descripcion."');";
             // echo "La consulta para insertar un visita es ".$query;
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
@@ -1182,7 +1191,7 @@
         }
 
         public function listarVisitaPorId ($id) {
-            $query = "SELECT visitas.id_Visita, visitas.titulo, medios.url, tipos.descripcion 
+            $query = "SELECT visitas.id_Visita, visitas.titulo, visitas.descripcion AS 'descVisita',  medios.url, tipos.descripcion 
             FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
             WHERE visitas.id_Visita LIKE ".$id.";";
             $database = new Database();
@@ -1194,6 +1203,7 @@
                 $visita = new Visit();
                 $visita->id=$row["id_Visita"];
                 $visita->titulo=$row["titulo"];
+                $visita->descripcion=$row["descVisita"];
                 
                 array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
@@ -1228,6 +1238,7 @@
                         $visita = new Visit();
                         $visita->id=$row2["id_Visita"];
                         $visita->titulo=$row2["titulo"];
+                        $visita->descripcion=$row2["descripcion"];
                         array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
                     }
                     $visita->medios = $arrayMedios;
@@ -1241,7 +1252,7 @@
         }
 
         public function listarVisitaPorTitulo ($titulo) {
-            $query = "SELECT visitas.id_Visita, visitas.titulo, medios.url, tipos.descripcion 
+            $query = "SELECT visitas.id_Visita, visitas.titulo, visitas.descripcion AS 'descVisita', medios.url, tipos.descripcion 
             FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
             WHERE visitas.titulo LIKE '".$titulo."';";
             $database = new Database();
@@ -1253,6 +1264,7 @@
                 $visita = new Visit();
                 $visita->id=$row["id_Visita"];
                 $visita->titulo=$row["titulo"];
+                $visita->descripcion=$row["descVisita"];
                 
                 array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
@@ -1262,7 +1274,7 @@
         }
 
         public function listarVisitaPorIdyTitulo ($id, $titulo) {
-            $query = "SELECT visitas.id_Visita, visitas.titulo, medios.url, tipos.descripcion 
+            $query = "SELECT visitas.id_Visita, visitas.titulo, visitas.descripcion AS 'descVisita', medios.url, tipos.descripcion 
             FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
             WHERE visitas.id_Visita LIKE ".$id." AND visitas.titulo LIKE '".$titulo."';";
             $database = new Database();
@@ -1274,6 +1286,7 @@
                 $visita = new Visit();
                 $visita->id=$row["id_Visita"];
                 $visita->titulo=$row["titulo"];
+                $visita->descripcion=$row["descVisita"];
                 
                 array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
@@ -1282,7 +1295,7 @@
             return $paraDevolver;
         }
 
-        public function actualizarVisita ($nuevoTitulo, $idVisita, $mediosAInsertar, $tiposAInsertar) {
+        public function actualizarVisita ($nuevoTitulo, $idVisita, $nuevaDescripcion, $mediosAInsertar, $tiposAInsertar) {
         	// Hay que borrar las relaciones de la tabla de relaciones
             $database = new Database();
             $query = "DELETE FROM rel_visita WHERE id_Visita LIKE ".$idVisita.";";
@@ -1296,7 +1309,7 @@
            	if (is_array($resultadoMedios)) {
            	// Tenemos array de ids
            	// Actualizar	
-           	$query = "UPDATE visitas SET titulo = '".$nuevoTitulo."' WHERE id_Visita LIKE ".$idVisita.";";
+           	$query = "UPDATE visitas SET titulo = '".$nuevoTitulo."', descripcion = '".$nuevaDescripcion."' WHERE id_Visita LIKE ".$idVisita.";";
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
 

@@ -35,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
  
      $idPrograma = htmlspecialchars($_GET["idPrograma"]);
      $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
+     $nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
+     $nuevaUbicacion = htmlspecialchars($_GET["nuevaUbicacion"]);
      $nuevaFecha = htmlspecialchars($_GET["nuevaFecha"]);
      $boolEnUso = htmlspecialchars($_GET["enUso"]);
 
@@ -59,6 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
             // lo primero es comprobar que existe el elemento que se quiere modificar 
             if (!empty($idPrograma)
              && !empty($nuevoTitulo)
+             && !empty($nuevaDescripcion)
+             && !empty($nuevaUbicacion)
               && !empty($nuevaFecha)
                && $boolEnUso!=null
            		&& !empty($mediosAInsertar) 
@@ -69,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
                 if ($cf->comprobarExisteActoPorId($idPrograma)) {
                     // efectivamente existe 
                     
-                	$dao->actualizarActo($nuevoTitulo, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar);
+                	$dao->actualizarActo($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar);
                     http_response_code(200);
                     echo $logger->updated_element();
                     
