@@ -450,6 +450,46 @@ class CommonFunctions {
         }
     }
 
+    /**
+     * Funcion de wcomprobar permisos hecha por Diego 
+     */
+    function checkPermission ($token, $permissionLevel) {
+        $database = new Database();
+        $idObtenido = -1;
+        $consulta = "SELECT idUser FROM session WHERE token LIKE '".$token."';";
+        // echo "\n\nConsulta del token > ".$consulta."\n\n";
+        $resultado = $database->getConn()->query($consulta);
+        //Esto debe devolver un ID de usuario, si es correcto, se crea la sesion 
+        if ($resultado->rowCount() == 0) {
+            // El token del usuario que esta creando el nuevo usuario no existe 
+            return 0;
+        } else {
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $idObtenido = $row["idUser"];
+            }
+            // Se comprueba el rol del user
+            $query = "SELECT idRol FROM user WHERE idUser LIKE '".$idObtenido."';";
+            $resultado = $database->getConn()->query($query);
+            $rolObtenido = -1;
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $rolObtenido = $row["idRol"];
+            }
+			// Se saca el nombre del rol.
+			$query = "SELECT rolName FROM user_rol WHERE idRol LIKE '".$rolObtenido."';";
+			$resultado = $database->getConn()->query($query);
+			while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $rolName = $row["rolName"];
+            }
+			if (in_array($rolName, $permissionLevel))
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+        }  
+    }
     
 
 }

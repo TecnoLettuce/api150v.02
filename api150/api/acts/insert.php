@@ -21,6 +21,11 @@
     include_once '../../util/uploadFilesByURL.php';
     include_once '../../objects/DAO.php';
     include_once '../../util/logger.php';
+    include_once '../../config/rolConfig.php';
+
+    $rolConfig = new RolConfig();
+    $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
+
 
     //Creación de la base de datos 
     $database = new Database();
@@ -56,7 +61,7 @@
 
 
     // Comprobamos que tiene permisos de administrador
-    if ($cf->comprobarTokenAdmin($token) >= 0) { 
+    if ($cf->checkPermission($token, $permissionLevel) == 1) { 
         // Comprobamos que su sesión no ha caducado
         if ($cf->comprobarExpireDate($token)) {
             // La sesión no ha caducado, por lo que seguimos adelante y le otorgamos 2 minutos más

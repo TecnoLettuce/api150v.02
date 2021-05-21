@@ -20,6 +20,10 @@
     $cf = new CommonFunctions();
     $logger = new Logger();
     $dao = new Dao();
+    include_once '../../config/rolConfig.php';
+
+    $rolConfig = new RolConfig();
+    $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
   
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
@@ -36,7 +40,7 @@
     $ucf = new UploadCommonFunctions();
     $cf = new CommonFunctions();
 
-    if ($cf->comprobarTokenAdmin($token) >= 0) {
+    if ($cf->checkPermission($token, $permissionLevel) == 1) {
         $result = array();
         $result = $ucf->insertarMedios($url, $tipo, $token);
 

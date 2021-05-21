@@ -23,6 +23,11 @@
     $dao = new Dao();
     $ucf = new UploadCommonFunctions();
 
+    include_once '../../config/rolConfig.php';
+
+    $rolConfig = new RolConfig();
+    $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
+
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
@@ -49,7 +54,7 @@
 
 
     // Comprobamos que tiene permisos de administrador
-    if ($cf->comprobarTokenAdmin($token) >= 0) { 
+    if ($cf->checkPermission($token, $permissionLevel) == 1) { 
 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida

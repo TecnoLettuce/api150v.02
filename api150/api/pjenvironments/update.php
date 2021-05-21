@@ -30,6 +30,11 @@ $database = new Database();
 $cf = new CommonFunctions();
 $logger = new Logger();
 $dao = new Dao();
+include_once '../../config/rolConfig.php';
+
+$rolConfig = new RolConfig();
+$permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
+
 
 //region Definicion de los datos que llegan
 $data = json_decode(file_get_contents("php://input"));
@@ -59,7 +64,7 @@ $token = htmlspecialchars($_GET["token"]);
     // Comprobamos que tiene permisos de administrador
     if ($cf->comprobarTokenAdmin($token) >= 0) { 
 
-        if ($cf->comprobarExpireDate($token)) {
+        if ($cf->checkPermission($token, $permissionLevel) == 1) {
             // La sesión es válida
             // lo primero es comprobar que existe el elemento que se quiere modificar 
             if (!empty($idAmbiente) 

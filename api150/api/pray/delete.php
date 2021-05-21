@@ -29,8 +29,12 @@
 
     $token = $data->token;
 
+    include_once '../../config/rolConfig.php';
+    $rolConfig = new RolConfig();
+    $permissionLevel = [$rolConfig->adminRol]; // Ambos
+
     // Comprobamos que tiene permisos de administrador
-    if ($cf->comprobarTokenAdmin($token) >= 0) { 
+    if ($cf->checkPermission($token, $permissionLevel) == 1) { 
 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida

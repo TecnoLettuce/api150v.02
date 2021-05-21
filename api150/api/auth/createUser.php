@@ -33,6 +33,9 @@
     // recogemos los datos pasados 
     $data = json_decode(file_get_contents("php://input"));
 
+    include_once '../../config/rolConfig.php';
+    $rolConfig = new RolConfig();
+    $permissionLevel = [$rolConfig->adminRol]; // Ambos
     // Aqui tengo que recibir usuario, contraseña, mail, el rol (opcional), y el token de quien crea el user
     // La logica es que si el token no coincide, no se puede crear un usuario
 
@@ -55,12 +58,9 @@
         $tokenValido = $common->comprobarTokenAdmin($tokenRecibido);
         //$tokenValido = comprobarToken($tokenRecibido);
 
-        if ($tokenValido == -1) {
+        if ($cf->checkPermission($token, $permissionLevel) != 1) {
             http_response_code(403);
             echo $logger->invalid_token();
-        } else if ($tokenValido == 0) {
-            http_response_code(403);
-            echo $logger->not_permission();
         } else {
             $passwordRecibida = sha1($passwordRecibida, $raw_output = false);
             $idUser = crearUsuario($userNameRecibido, $passwordRecibida, $mailRecibido, $rolRecibido);

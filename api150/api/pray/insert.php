@@ -15,6 +15,11 @@
     $logger = new Logger();
     $dao = new Dao();
 
+    include_once '../../config/rolConfig.php';
+
+    $rolConfig = new RolConfig();
+    $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
+
     //Creación de la base de datos 
     $database = new Database();
     // Declaración de commonFunctions
@@ -31,7 +36,7 @@
 
 
     // Comprobamos que tiene permisos de administrador
-    if ($cf->comprobarTokenAdmin($token) >= 0) { 
+    if ($cf->checkPermission($token, $permissionLevel) == 1) { 
 
         if ($cf->comprobarExpireDate($token)) {
             // La sesión es válida

@@ -13,6 +13,10 @@
     include_once '../../util/commonFunctions.php';
     include_once '../../objects/DAO.php';
     include_once '../../util/logger.php';
+    include_once '../../config/rolConfig.php';
+
+    $rolConfig = new RolConfig();
+    $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
 
     //Creación de la base de datos 
     $database = new Database();
@@ -28,7 +32,7 @@
     $token = $data->token;
 
     // Comprobamos que el token es de admin
-    if ($cf->comprobarTokenAdmin($token) >= 0) {
+    if ($cf->checkPermission($token, $permissionLevel) == 1) {
         // Token de admin
 
         if ($cf->comprobarExpireDate($token)) {
