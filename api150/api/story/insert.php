@@ -38,8 +38,8 @@
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
-    $tituloHistoriaRecibido = $data->tituloHistoria;
-    $subtituloHistoriaRecibido = $data->subtituloHistoria;
+    $tituloHistoriaRecibido = $data->titulo;
+    $subtituloHistoriaRecibido = $data->subtitulo;
     $descripcionRecibida = $data->descripcion;
     $boolEnUso = $data->enUso;
     $token = $data->token;

@@ -29,9 +29,9 @@ $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
 //region Definicion de los datos que llegan
 $data = json_decode(file_get_contents("php://input"));
 
-$idOracion = htmlspecialchars($_GET["idOracion"]);
-$nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
-$nuevoTexto = htmlspecialchars($_GET["nuevoTexto"]);
+$idOracion = htmlspecialchars($_GET["idn"]);
+$nuevoTitulo = htmlspecialchars($_GET["titulo"]);
+$nuevoTexto = htmlspecialchars($_GET["texto"]);
 $boolEnUso = htmlspecialchars($_GET["enUso"]);
 //endregion
 

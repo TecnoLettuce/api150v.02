@@ -41,9 +41,9 @@ $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
 //region Definicion de los datos que llegan
 $data = json_decode(file_get_contents("php://input"));
 
-$idVisita = htmlspecialchars($_GET["idVisita"]);
-$nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
-$nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
+$idVisita = htmlspecialchars($_GET["id"]);
+$nuevoTitulo = htmlspecialchars($_GET["titulo"]);
+$nuevaDescripcion = htmlspecialchars($_GET["descripcion"]);
 
 $arrayMedios = array();
 $arrayMedios = $data->medios;

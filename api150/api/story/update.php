@@ -38,9 +38,9 @@ $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
 $data = json_decode(file_get_contents("php://input"));
 
 $idHistoria = htmlspecialchars($_GET["idHistoria"]);
-$nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
-$nuevoSubtitulo = htmlspecialchars($_GET["nuevoSubtitulo"]);
-$nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
+$nuevoTitulo = htmlspecialchars($_GET["titulo"]);
+$nuevoSubtitulo = htmlspecialchars($_GET["subtitulo"]);
+$nuevaDescripcion = htmlspecialchars($_GET["descripcion"]);
 $boolEnUso = htmlspecialchars($_GET["enUso"]);
 
 $arrayMedios = array();

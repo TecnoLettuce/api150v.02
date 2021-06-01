@@ -39,8 +39,9 @@ $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
 //region Definicion de los datos que llegan
 $data = json_decode(file_get_contents("php://input"));
 
-$idAmbiente = htmlspecialchars($_GET["idAmbiente"]);
-$nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
+$idAmbiente = htmlspecialchars($_GET["id"]);
+$nuevoTitulo = htmlspecialchars($_GET["titulo"]);
+$descripcion = htmlspecialchars($_GET["descripcion"]);
 $boolEnUso = htmlspecialchars($_GET["enUso"]);
 
 $arrayMedios = array();
@@ -78,6 +79,7 @@ $token = htmlspecialchars($_GET["token"]);
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteAmbientePorId($idAmbiente)) {
             
+					// ¿NO FALTA LA DESCRIPCIÓ AQUÍ?
                     $dao->actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente, $mediosAInsertar, $tiposAInsertar);
                     http_response_code(200);
                     echo $logger->updated_element();

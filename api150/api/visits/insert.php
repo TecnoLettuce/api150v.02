@@ -25,13 +25,13 @@
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
-    $tituloVisita = $data->tituloVisita;
+    $tituloVisita = $data->titulo;
     $descripcion = $data->descripcion;
     $token = $data->token;
 
     include_once '../../config/rolConfig.php';
     $rolConfig = new RolConfig();
-    $permissionLevel = [$rolConfig->adminRol]; // Ambos
+    $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
 
     // Datos de los medios
 

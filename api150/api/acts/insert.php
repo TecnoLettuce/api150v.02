@@ -41,7 +41,7 @@
     
     $titulo = $data->titulo;
     $descripcion = $data->descripcion;
-    $ubicacion = $data->$ubicacion;
+    $ubicacion = $data->ubicacion;
     $fecha = $data->fecha;
     $boolEnUso = $data->enUso;
     $categoria = $data->categoria;

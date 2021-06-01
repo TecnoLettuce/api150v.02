@@ -37,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
      //region Definicion de los datos que llegan
      $data = json_decode(file_get_contents("php://input"));
  
-     $idSaludo = htmlspecialchars($_GET["idSaludo"]);
-     $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
-     $nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
-     $nuevoTexto = htmlspecialchars($_GET["nuevoTexto"]);
+     $idSaludo = htmlspecialchars($_GET["id"]);
+     $nuevoTitulo = htmlspecialchars($_GET["titulo"]);
+     $nuevaDescripcion = htmlspecialchars($_GET["descripcion"]);
+     $nuevoTexto = htmlspecialchars($_GET["texto"]);
      $boolEnuso = htmlspecialchars($_GET["enUso"]);
 
      $arrayMedios = array();

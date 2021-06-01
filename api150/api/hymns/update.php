@@ -36,9 +36,9 @@ $dao = new Dao();
 //region Definicion de los datos que llegan
 $data = json_decode(file_get_contents("php://input"));
 
-$idHimno = htmlspecialchars($_GET["idHimno"]);
-$nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
-$nuevaLetra = htmlspecialchars($_GET["nuevaLetra"]);
+$idHimno = htmlspecialchars($_GET["id"]);
+$nuevoTitulo = htmlspecialchars($_GET["titulo"]);
+$nuevaLetra = htmlspecialchars($_GET["letra"]);
 $boolEnUso = htmlspecialchars($_GET["enUso"]);
 
 

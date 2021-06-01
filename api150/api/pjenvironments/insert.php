@@ -31,8 +31,8 @@
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
-    $tituloAmbienteRecibido = $data->tituloAmbiente;
-    $descripcionAmbienteRecibido = $data->descripcionAmbiente;
+    $tituloAmbienteRecibido = $data->titulo;
+    $descripcionAmbienteRecibido = $data->descripcion;
     $boolEnUso = $data->enUso;
     $token = $data->token;
 

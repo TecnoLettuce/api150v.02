@@ -24,6 +24,10 @@
             $cf = new CommonFunctions();
             $logger = new Logger();
             $cfu = new UploadCommonFunctions();
+			
+			ini_set('display_errors', '1');
+			ini_set('display_startup_errors', '1');
+			error_reporting(E_ALL);
         }
 
         //region Actos
@@ -145,7 +149,7 @@
 
                 if ($programa->id != $idsYaListadas) {
                     // Hace la segunda consulta
-                    $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+                    $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion as 'descr', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
                     FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
                     WHERE programas.id_Programa LIKE ".$programa->id.";";
 
@@ -154,19 +158,19 @@
                     
                     $arrayMedios = array();
                     
-                    while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
+                     while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
                         $programa = new Programa();
                         $programa->id=$row2["id_Programa"];
                         $programa->titulo=$row2["titulo"];
-                        $programa->descripcion=$row2["descPrograma"];
+                        $programa->descripcion=$row2["descr"];
                         $programa->ubicacion=$row2["ubicacion"];
                         $programa->fecha=$row2["fecha"];
                         $programa->enUso=$row2["enUso"];
                         $programa->categoria=$row2["id_Categoria"];
                         array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
                     }
-                    $programa->medios = $arrayMedios;
-                    array_push($arr, $programa);
+                   $programa->medios = $arrayMedios;
+                   array_push($arr, $programa);
                 } else {
                     // No se lista
                 }
@@ -287,7 +291,7 @@
 
                 if ($saludo->id != $idsYaListadas) {
                     // Hace la segunda consulta
-                    $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.id_Saludo LIKE ".$saludo->id.";";
+                    $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion as 'descr', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.id_Saludo LIKE ".$saludo->id.";";
 
                     $database = new Database();
                     $resultado2 = $database->getConn()->query($query);
@@ -298,7 +302,7 @@
                         $saludo = new Saludo();
                         $saludo->id=$row2["id_Saludo"];
                         $saludo->titulo=$row2["titulo"];
-                        $saludo->descripcion=$row2["saludosDesc"];
+                        $saludo->descripcion=$row2["descr"];
                         $saludo->texto=$row2["texto"];
                         $saludo->enUso=$row2["enUso"];
                         array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
@@ -753,7 +757,7 @@
 
                 if ($ambiente->id != $idsYaListadas) {
                     // Hace la segunda consulta
-                    $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.url, tipos.descripcion 
+                    $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion as 'descr', ambiente.enUso, medios.url, tipos.descripcion 
                     FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente=rel_ambiente.id_Ambiente INNER JOIN medios ON rel_ambiente.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
                     WHERE ambiente.id_Ambiente LIKE ".$ambiente->id.";";
 
@@ -766,7 +770,7 @@
                         $ambiente = new Ambiente();
                         $ambiente->id=$row2["id_Ambiente"];
                         $ambiente->titulo=$row2["titulo"];
-                        $ambiente->descripcion=$row2["ambienteDesc"];
+                        $ambiente->descripcion=$row2["descr"];
                         $ambiente->enUso=$row2["enUso"];
                         array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
                     }
@@ -1028,7 +1032,7 @@
 
                 if ($historia->idHistoria != $idsYaListadas) {
                     // Hace la segunda consulta
-                    $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.id_Historia LIKE ".$historia->idHistoria.";";
+                    $query = "SELECT historias.id_Historia, historias.titulo as title, historias.subtitulo, historias.descripcion as 'descr', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.id_Historia LIKE ".$historia->idHistoria.";";
 
                     $database = new Database();
                     $resultado2 = $database->getConn()->query($query);
@@ -1037,12 +1041,12 @@
                     
                     while ($row2 = $resultado2->fetch(PDO::FETCH_ASSOC)) {
                         $historia = new Historia();
-                        $historia->idHistoria=$row["id_Historia"];
-                        $historia->titulo=$row["titulo"];
-                        $historia->subtitulo=$row["subtitulo"];
-                        $historia->descripcion=$row["descripcion"];
-                        $historia->enUso=$row["enUso"];
-                        array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                        $historia->idHistoria=$row2["id_Historia"];
+                        $historia->titulo=$row2["title"];
+                        $historia->subtitulo=$row2["subtitulo"];
+                        $historia->descripcion=$row2["descr"];
+                        $historia->enUso=$row2["enUso"];
+                        array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
                     }
                     $historia->medios = $arrayMedios;
                     array_push($arr, $historia);
@@ -1225,7 +1229,7 @@
 
                 if ($visita->id != $idsYaListadas) {
                     // Hace la segunda consulta
-                    $query = "SELECT visitas.id_Visita, visitas.titulo, medios.url, tipos.descripcion 
+                    $query = "SELECT visitas.id_Visita, visitas.titulo, visitas.descripcion as 'descr', medios.url, tipos.descripcion 
                     FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
                     WHERE visitas.id_Visita LIKE ".$visita->id.";";
 
@@ -1238,7 +1242,7 @@
                         $visita = new Visit();
                         $visita->id=$row2["id_Visita"];
                         $visita->titulo=$row2["titulo"];
-                        $visita->descripcion=$row2["descripcion"];
+                        $visita->descripcion=$row2["descr"];
                         array_push($arrayMedios, array("url"=> $row2["url"], "tipo"=> $row2["descripcion"]) );
                     }
                     $visita->medios = $arrayMedios;
