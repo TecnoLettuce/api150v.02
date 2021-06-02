@@ -28,6 +28,7 @@ $permissionLevel = [$rolConfig->adminRol, $rolConfig->editorRol]; // Ambos
 $data = json_decode(file_get_contents("php://input"));
 
 $idMedio = htmlspecialchars($_GET["id"]);
+$nombreMedio = htmlspecialchars($_GET["nombre"]);
 $nuevaURL = htmlspecialchars($_GET["url"]);
 $tipo = htmlspecialchars($_GET["tipo"]);
 //endregion
@@ -46,7 +47,7 @@ $token = htmlspecialchars($_GET["token"]);
                 if ($cf->comprobarExisteMedioPorId($idMedio)) {
                     // Efectivamente existe
 					// ¿No falta el tipo?
-                    $dao->actualizarMedio($nuevaURL, $idMedio);
+                    $dao->actualizarMedio($nombreMedio, $nuevaURL, $idMedio);
                     http_response_code(200);
                     echo $logger->updated_element();
                 } else {

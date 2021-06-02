@@ -1273,9 +1273,9 @@
             return $this->listarMedioPorId($medio->id);
         }
 
-        public function actualizarMedio($nuevaURL, $idMedio) {
+        public function actualizarMedio($nombre, $nuevaURL, $idMedio) {
             $database = new Database();
-            $query = "UPDATE medios SET url = '".$nuevaURL."' WHERE id_Medio LIKE ".$idMedio.";";
+            $query = "UPDATE medios SET nombre = '".$nombre."' ,url = '".$nuevaURL."' WHERE id_Medio LIKE ".$idMedio.";";
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
         }

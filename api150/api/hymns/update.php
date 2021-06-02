@@ -50,6 +50,7 @@ $tiposAInsertar = array();
 $nombresAInsertar = array();
 
 for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
+    array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
     array_push($mediosAInsertar, $arrayMedios[$i]->url);
     array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
 }
