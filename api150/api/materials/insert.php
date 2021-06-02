@@ -33,7 +33,7 @@
      * Aquí va la lógica de subir un archivo por url 
      */
     $nombres = array(); // Declaramos el array
-    $nombres = $data->nombres; // Este es el campo nombre añadido recientemente
+    $nombres = $data->nombre; // Este es el campo nombre añadido recientemente
     $url = array(); // Declaramos el array
     $url = $data->url; // Esto puede ser un array
     $tipo = array(); // Declaramos el array
@@ -44,7 +44,7 @@
 
     if ($cf->checkPermission($token, $permissionLevel) == 1) {
         $result = array();
-        $result = $ucf->insertarMedios($url, $tipo, $token);
+        $result = $ucf->insertarMedios($nombres,$url, $tipo);
 
         // Comprobar si ha devuelto fallo o acierto 
         if (count($result, COUNT_NORMAL) > 0) {
