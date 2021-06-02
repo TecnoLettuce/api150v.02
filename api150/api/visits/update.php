@@ -50,6 +50,7 @@ $arrayMedios = $data->medios;
 
 $mediosAInsertar = array();
 $tiposAInsertar = array();
+$nombresAInsertar = array();
 
 
 
@@ -79,7 +80,7 @@ $token = htmlspecialchars($_GET["token"]);
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteVisitaPorId($idVisita)) {
                     
-                    $dao->actualizarVisita($nuevoTitulo, $idVisita, $nuevaDescripcion, $mediosAInsertar, $tiposAInsertar); 
+                    $dao->actualizarVisita($nuevoTitulo, $idVisita, $nuevaDescripcion, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar); 
 
                     http_response_code(200);
                     echo $logger->updated_element();

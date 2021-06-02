@@ -32,6 +32,8 @@
     /**
      * Aquí va la lógica de subir un archivo por url 
      */
+    $nombres = array(); // Declaramos el array
+    $nombres = $data->nombres; // Este es el campo nombre añadido recientemente
     $url = array(); // Declaramos el array
     $url = $data->url; // Esto puede ser un array
     $tipo = array(); // Declaramos el array

@@ -44,15 +44,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
      $nuevaFecha = htmlspecialchars($_GET["fecha"]);
      $boolEnUso = htmlspecialchars($_GET["enUso"]);
 
-     $arrayMedios = array();
+    $arrayNombres = array();
+    $arrayNombres = $data->nombres;
+
+    $arrayMedios = array();
 	$arrayMedios = $data->medios;
 
 	$mediosAInsertar = array();
 	$tiposAInsertar = array();
+    $nombresAInsertar = array();
 
     for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
     array_push($mediosAInsertar, $arrayMedios[$i]->url);
     array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
+    array_push($nombresAInsertar, $arrayNombres[$i]->nombre);
 }
       
      $token = htmlspecialchars($_GET["token"]);
@@ -77,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
                 if ($cf->comprobarExisteActoPorId($idPrograma)) {
                     // efectivamente existe 
                     
-                	$dao->actualizarActo($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar);
+                	$dao->actualizarActo($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
                     http_response_code(200);
                     echo $logger->updated_element();
                     

@@ -48,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
     $mediosAInsertar = array();
     $tiposAInsertar = array();
+    $nombresAInsertar = array();
 
 
 
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
                 if ($cf->comprobarExisteSaludoPorId($idSaludo)) {
                     // efectivamente existe 
 
-                    $dao->actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnuso, $idSaludo, $mediosAInsertar, $tiposAInsertar);
+                    $dao->actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnuso, $idSaludo, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
                     http_response_code(200);
                     echo $logger->updated_element();
                 } else {

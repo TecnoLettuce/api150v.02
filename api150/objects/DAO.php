@@ -61,28 +61,19 @@
 
         // Listar acto por id + titulo
         function listarUnActoPorIdyTitulo($id, $titulo) {
-            $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
-                    FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            $query = "SELECT programas.id_Programa 
+                    FROM programas  
                     WHERE programas.id_Programa LIKE ".$id." AND programas.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
             $arrayMedios = array();
-            
+            $programa = new Programa();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $programa = new Programa();
                 $programa->id=$row["id_Programa"];
-                $programa->titulo=$row["titulo"];
-                $programa->descripcion=$row["descPrograma"];
-                $programa->ubicacion=$row["ubicacion"];
-                $programa->fecha=$row["fecha"];
-                $programa->enUso=$row["enUso"];
-                $programa->categoria=$row["id_Categoria"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $programa->medios = $arrayMedios;
-            $paraDevolver = json_encode($programa);
-            return $paraDevolver;
+            return $this->listarUnActoPorId($programa->id);
         }
         // Listar acto por id
         function listarUnActoPorId($id) {
@@ -112,28 +103,17 @@
         }
         // Listar acto por titulo
         function listarUnActoPorTitulo($titulo) {
-            $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
-                    FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
-                    WHERE programas.titulo LIKE '".$titulo."';";
+            $query = "SELECT programas.id_Programa FROM programas WHERE programas.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
             $arrayMedios = array();
-            
+            $programa = new Programa();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $programa = new Programa();
                 $programa->id=$row["id_Programa"];
-                $programa->titulo=$row["titulo"];
-                $programa->descripcion=$row["descPrograma"];
-                $programa->ubicacion=$row["ubicacion"];
-                $programa->fecha=$row["fecha"];
-                $programa->enUso=$row["enUso"];
-                $programa->categoria=$row["id_Categoria"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $programa->medios = $arrayMedios;
-            $paraDevolver = json_encode($programa);
-            return $paraDevolver;
+            return $this->listarUnActoPorId($programa->id);
         }
 
         public function listarCadaActo() {
@@ -180,14 +160,14 @@
         }
 
         // Métodos para el endpoint de update Actos 
-        function actualizarActo ($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar) {
+        function actualizarActo ($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
             $database = new Database();
             $query = "DELETE FROM rel_programa WHERE id_Programa LIKE ".$idPrograma.";"; 
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
                    
             // Comprobamos el resultado
             if (is_array($resultadoMedios)) {
@@ -318,51 +298,30 @@
         }
 
         function listarUnSaludoPorIdyTitulo($id, $titulo) {
-            $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.id_Saludo LIKE ".$id." AND saludos.titulo LIKE '".$titulo."'";
+            $query = "SELECT saludos.id_Saludo FROM saludos WHERE saludos.id_Saludo LIKE ".$id." AND saludos.titulo LIKE '".$titulo."'";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arrayMedios = array();
-            
-            
+            $saludo = new Saludo();
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $saludo = new Saludo();
                 $saludo->id=$row["id_Saludo"];
-                $saludo->titulo=$row["titulo"];
-                $saludo->descripcion=$row["saludosDesc"];
-                $saludo->texto=$row["texto"];
-                $saludo->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $saludo->medios = $arrayMedios;
-            $paraDevolver = json_encode($saludo);
-            return $paraDevolver;
+            return $this->listarUnSaludoPorId($saludo->id);
         }
 
         function listarUnSaludoPorTitulo($titulo) {
-            $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.titulo LIKE '".$titulo."';";
+            $query = "SELECT saludos.id_Saludo FROM saludos WHERE saludos.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arrayMedios = array();
-            
+            $saludo = new Saludo();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $saludo = new Saludo();
                 $saludo->id=$row["id_Saludo"];
-                $saludo->titulo=$row["titulo"];
-                $saludo->descripcion=$row["saludosDesc"];
-                $saludo->texto=$row["texto"];
-                $saludo->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $saludo->medios = $arrayMedios;
-            $paraDevolver = json_encode($saludo);
-            return $paraDevolver;
+            return $this->listarUnSaludoPorId($saludo->id);
         }
 
         // Métodos para el endpoint de update saludos
-        function actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnUso, $idSaludo, $mediosAInsertar, $tiposAInsertar) {
+        function actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnUso, $idSaludo, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
              // Hay que borrar las relaciones de la tabla de relaciones 
             $database = new Database();
             $query = "DELETE FROM rel_saludo WHERE id_Saludo LIKE ".$idSaludo.";"; 
@@ -370,7 +329,7 @@
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
                    
             // Comprobamos el resultado
              if (is_array($resultadoMedios)) {
@@ -494,50 +453,34 @@
         }
 
         public function listarUnHimnoPorIdyTitulo($id, $titulo){
-            $query = "SELECT himnos.id_Himno, himnos.titulo, himnos.letra, himnos.enUso, medios.url, tipos.descripcion 
-            FROM himnos INNER JOIN rel_himno ON himnos.id_Himno=rel_himno.id_Himno INNER JOIN medios ON rel_himno.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
-            WHERE himnos.id_Himno LIKE ".$id." AND himnos.titulo LIKE '".$titulo."';";
+            $query = "SELECT himnos.id_Himno FROM himnos WHERE himnos.id_Himno LIKE ".$id." AND himnos.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arrayMedios = array();
-            
+            $himno = new Himno();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $himno = new Himno();
                 $himno->id=$row["id_Himno"];
-                $himno->titulo=$row["titulo"];
-                $himno->letra=$row["letra"];
-                $himno->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $himno->medios = $arrayMedios;
-            $paraDevolver = json_encode($himno);
-            return $paraDevolver;
+            
+            return $this->listarUnHimnoPorId($himno->id);
         }
 
         public function listarUnHimnoPorTitulo($titulo){
-            $query = "SELECT himnos.id_Himno, himnos.titulo, himnos.letra, himnos.enUso, medios.url, tipos.descripcion 
-            FROM himnos INNER JOIN rel_himno ON himnos.id_Himno=rel_himno.id_Himno INNER JOIN medios ON rel_himno.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            $query = "SELECT himnos.id_Himno
+            FROM himnos 
             WHERE himnos.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arrayMedios = array();
+            $himno = new Himno();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $himno = new Himno();
                 $himno->id=$row["id_Himno"];
-                $himno->titulo=$row["titulo"];
-                $himno->letra=$row["letra"];
-                $himno->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $himno->medios = $arrayMedios;
-            $paraDevolver = json_encode($himno);
-            return $paraDevolver;
+            
+            return $this->listarUnHimnoPorId($himno->id );
         }
 
-        public function actualizarHimno($nuevoTitulo, $nuevaLetra, $boolEnUso, $idHimno, $mediosAInsertar, $tiposAInsertar ) {
+        public function actualizarHimno($nuevoTitulo, $nuevaLetra, $boolEnUso, $idHimno, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar ) {
             // Hay que borrar las relaciones de la tabla de relaciones
             $database = new Database();
             $query = "DELETE FROM rel_himno WHERE id_Himno LIKE ".$idHimno.";"; 
@@ -546,7 +489,7 @@
 
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
 
              if (is_array($resultadoMedios)) {
                 // Tenemos array de ids
@@ -641,41 +584,30 @@
         }
 
         public function listarUnaFrasePorIdyFecha($id, $fecha){
-            $query = "SELECT * FROM frase_inicio WHERE id_Frase LIKE ".$id." AND fecha LIKE '".$fecha."';";
+            $query = "SELECT id_Frase FROM frase_inicio WHERE id_Frase LIKE ".$id." AND fecha LIKE '".$fecha."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
             $arr = array();
+            $frase = new Frase();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $frase = new Frase();
                 $frase->id=$row["id_Frase"];
-                $frase->texto=$row["texto"];
-                $frase->fecha=$row["fecha"];
-                $frase->enUso=$row["enUso"];
-                array_push($arr, $frase);
             }
-            $paraDevolver = json_encode($arr);
-            return $paraDevolver;
+          
+            return $this->listarUnaFrasePorId($frase->id);
         }
 
         public function listarUnaFrasePorFecha($fecha){
-            $query = "SELECT * FROM frase_inicio WHERE fecha LIKE '".$fecha."';";
+            $query = "SELECT id_Frase FROM frase_inicio WHERE fecha LIKE '".$fecha."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arr = array();
+            $frase = new Frase();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $frase = new Frase();
                 $frase->id=$row["id_Frase"];
-                $frase->texto=$row["texto"];
-                $frase->fecha=$row["fecha"];
-                $frase->enUso=$row["enUso"];
-                array_push($arr, $frase);
             }
-            $paraDevolver = json_encode($arr);
-            return $paraDevolver;
+            return $this->listarUnaFrasePorId($frase->id);
         }
 
         public function actualizarFrase($nuevoTexto, $nuevaFecha, $boolEnUso, $idFrase) {
@@ -785,57 +717,44 @@
         }
 
         public function ListarUnAmbientePorIdyTitulo($id, $titulo) {
-            $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.url, tipos.descripcion 
-            FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente=rel_ambiente.id_Ambiente INNER JOIN medios ON rel_ambiente.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            $query = "SELECT ambiente.id_Ambiente 
+            FROM ambiente  
             WHERE ambiente.id_Ambiente LIKE ".$id." AND ambiente.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
+            $ambiente = new ambiente();
             
-            $arrayMedios = array();
-            
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $ambiente = new ambiente();
                 $ambiente->id=$row["id_Ambiente"];
-                $ambiente->titulo=$row["titulo"];
-                $ambiente->descripcion=$row["ambienteDesc"];
-                $ambiente->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $ambiente->medios = $arrayMedios;
-            $paraDevolver = json_encode($ambiente);
-            return $paraDevolver;
+            
+            return $this->ListarUnAmbientePorId($ambiente->id);
         }
 
         public function ListarUnAmbientePorTitulo($titulo) {
-            $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.url, tipos.descripcion 
-            FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente=rel_ambiente.id_Ambiente INNER JOIN medios ON rel_ambiente.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            $query = "SELECT ambiente.id_Ambiente 
+            FROM ambiente 
             WHERE ambiente.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arrayMedios = array();
-            
+            $ambiente = new ambiente();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $ambiente = new ambiente();
-                $ambiente->id=$row["id_Ambiente"];
-                $ambiente->titulo=$row["titulo"];
-                $ambiente->descripcion=$row["ambienteDesc"];
-                $ambiente->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                $ambiente->id = $row["id_Ambiente"];
             }
-            $ambiente->medios = $arrayMedios;
-            $paraDevolver = json_encode($ambiente);
-            return $paraDevolver;
+
+            return $this->ListarUnAmbientePorId($ambiente->id);
         }
         
-        public function actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente, $mediosAInsertar, $tiposAInsertar) {
+        public function actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
             $database = new Database();
             $query = "DELETE FROM rel_ambiente WHERE id_Ambiente LIKE ".$idAmbiente.";";
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
 
             // Comprobamos el resultado
             if (is_array($resultadoMedios)) {
@@ -936,42 +855,29 @@
 
 
         public function listarUnaOracionPorIdyTitulo($id, $titulo){
-            $query = "SELECT * FROM oraciones WHERE id_Oracion LIKE ".$id." AND titulo LIKE '".$titulo."';";
+            $query = "SELECT id_Oracion FROM oraciones WHERE id_Oracion LIKE ".$id." AND titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arr = array();
-            
+            $pray = new Pray();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $pray = new Pray();
                 $pray->id=$row["id_Oracion"];
-                $pray->titulo=$row["titulo"];
-                $pray->texto=$row["texto"];
-                $pray->enUso=$row["enUso"];
-                array_push($arr, $pray);
             }
-            $paraDevolver = json_encode($arr);
-            return $paraDevolver;
+            return $this->listarUnaOracionPorId($pray->id);
 
         }
 
         public function listarUnaOracionPorTitulo($titulo){
-            $query = "SELECT * FROM oraciones WHERE titulo LIKE '".$titulo."';";
+            $query = "SELECT id_Oracion FROM oraciones WHERE titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arr = array();
+            $pray = new Pray();
             
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $pray = new Pray();
-                $pray->id=$row["id_Oracion"];
-                $pray->titulo=$row["titulo"];
-                $pray->texto=$row["texto"];
-                $pray->enUso=$row["enUso"];
-                array_push($arr, $pray);
+                $pray->id = $row["id_Oracion"];
             }
-            $paraDevolver = json_encode($arr);
-            return $paraDevolver;
+            
+            return $this->listarUnaOracionPorId($pray->id);
 
         }
 
@@ -1059,7 +965,6 @@
         }
 
 
-
         public function listarUnaHistoriaPorId($id) {
             $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.id_Historia LIKE ".$id.";";
 
@@ -1083,51 +988,31 @@
         }
 
         public function listarUnaHistoriaPorTitulo($titulo) {
-            $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.titulo LIKE '".$titulo."';";
-
+            $query = "SELECT historias.id_Historia FROM historias WHERE historias.titulo LIKE '".$titulo."';";
 
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arrayMedios = array();
-            
+            $historia = new Historia();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $historia = new Historia();
                 $historia->idHistoria=$row["id_Historia"];
-                $historia->titulo=$row["titulo"];
-                $historia->subtitulo=$row["subtitulo"];
-                $historia->descripcion=$row["Desc_Historia"];
-                $historia->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $historia->medios = $arrayMedios;
-            $paraDevolver = json_encode($historia);
-            return $paraDevolver;
+            return $this->listarUnaHistoriaPorId($historia->idHistoria);
         }
 
         public function listarUnaHistoriaPorIdyTitulo($id, $titulo) {
-            $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.titulo LIKE '".$titulo."' AND historias.id_Historia LIKE ".$id.";";
+            $query = "SELECT historias.id_Historia FROM historias WHERE historias.titulo LIKE '".$titulo."' AND historias.id_Historia LIKE ".$id.";";
 
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arrayMedios = array();
-            
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $historia = new Historia();
-                $historia->idHistoria=$row["id_Historia"];
-                $historia->titulo=$row["titulo"];
-                $historia->subtitulo=$row["subtitulo"];
-                $historia->descripcion=$row["Desc_Historia"];
-                $historia->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $historia->medios = $arrayMedios;
-            $paraDevolver = json_encode($historia);
-            return $paraDevolver;
+            return $this->listarUnaHistoriaPorId($historia->idHistoria);
         }
 
-        public function actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion,$boolEnUso, $mediosAInsertar, $tiposAInsertar) {
+        public function actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion,$boolEnUso, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
             // Hay que borrar las relaciones de la tabla de relaciones 
             $database = new Database();
             $query = "DELETE FROM rel_historia WHERE id_Historia LIKE ".$idHistoria.";"; 
@@ -1135,7 +1020,7 @@
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
                    
             // Comprobamos el resultado
             if (is_array($resultadoMedios)) {
@@ -1256,50 +1141,35 @@
         }
 
         public function listarVisitaPorTitulo ($titulo) {
-            $query = "SELECT visitas.id_Visita, visitas.titulo, visitas.descripcion AS 'descVisita', medios.url, tipos.descripcion 
-            FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            $query = "SELECT visitas.id_Visita 
+            FROM visitas  
             WHERE visitas.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arrayMedios = array();
-            
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $visita = new Visit();
-                $visita->id=$row["id_Visita"];
-                $visita->titulo=$row["titulo"];
-                $visita->descripcion=$row["descVisita"];
-                
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                $visita->id = $row["id_Visita"];
             }
-            $visita->medios = $arrayMedios;
-            $paraDevolver = json_encode($visita);
-            return $paraDevolver;
+            return $this->listarVisitaPorId($visita->id);
         }
 
         public function listarVisitaPorIdyTitulo ($id, $titulo) {
-            $query = "SELECT visitas.id_Visita, visitas.titulo, visitas.descripcion AS 'descVisita', medios.url, tipos.descripcion 
-            FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
+            $query = "SELECT visitas.id_Visita
+            FROM visitas 
             WHERE visitas.id_Visita LIKE ".$id." AND visitas.titulo LIKE '".$titulo."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arrayMedios = array();
-            
+            $visita = new Visit();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $visita = new Visit();
                 $visita->id=$row["id_Visita"];
-                $visita->titulo=$row["titulo"];
-                $visita->descripcion=$row["descVisita"];
-                
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
-            $visita->medios = $arrayMedios;
-            $paraDevolver = json_encode($visita);
-            return $paraDevolver;
+            
+            return $this->listarVisitaPorId($visita->id);
         }
 
-        public function actualizarVisita ($nuevoTitulo, $idVisita, $nuevaDescripcion, $mediosAInsertar, $tiposAInsertar) {
+        public function actualizarVisita ($nuevoTitulo, $idVisita, $nuevaDescripcion, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
         	// Hay que borrar las relaciones de la tabla de relaciones
             $database = new Database();
             $query = "DELETE FROM rel_visita WHERE id_Visita LIKE ".$idVisita.";";
@@ -1307,7 +1177,7 @@
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-           	$resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+           	$resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
 
            	// Comprobamos el resultado
            	if (is_array($resultadoMedios)) {
@@ -1350,6 +1220,7 @@
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $medio = new Medio();
                 $medio->id=$row["id_Medio"];
+                $medio->nombre=$row["nombre"];
                 $medio->url=$row["url"];
                 $medio->tipo=$row["id_Tipo"];
                 array_push($arr, $medio);
@@ -1358,21 +1229,16 @@
         }
 
         public function listarMedioPorIdyURL($id, $url) {
-            $query = "SELECT * FROM medios WHERE id_Medio LIKE ".$id." AND url LIKE '".$url."';";
+            $query = "SELECT id_Medio FROM medios WHERE id_Medio LIKE ".$id." AND url LIKE '".$url."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
-            
-            $arr = array();
-            
+            $medio = new Medio();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $medio = new Medio();
                 $medio->id=$row["id_Medio"];
-                $medio->url=$row["url"];
-                $medio->tipo=$row["id_Tipo"];
-                array_push($arr, $medio);
             }
-            $paraDevolver = json_encode($arr);
-            return $paraDevolver;
+            
+            return $this->listarMedioPorId($medio->id);
         }
 
         public function listarMedioPorId($id) {
@@ -1385,6 +1251,7 @@
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 $medio = new Medio();
                 $medio->id=$row["id_Medio"];
+                $medio->nombre=$row["nombre"];
                 $medio->url=$row["url"];
                 $medio->tipo=$row["id_Tipo"];
                 array_push($arr, $medio);
@@ -1394,21 +1261,16 @@
         }
 
         public function listarMedioPorURL($url) {
-            $query = "SELECT * FROM medios WHERE url LIKE '".$url."';";
+            $query = "SELECT id_Medio FROM medios WHERE url LIKE '".$url."';";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
-            $arr = array();
-            
+            $medio = new Medio();
+
             while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                $medio = new Medio();
                 $medio->id=$row["id_Medio"];
-                $medio->url=$row["url"];
-                $medio->tipo=$row["id_Tipo"];
-                array_push($arr, $medio);
             }
-            $paraDevolver = json_encode($arr);
-            return $paraDevolver;
+            return $this->listarMedioPorId($medio->id);
         }
 
         public function actualizarMedio($nuevaURL, $idMedio) {

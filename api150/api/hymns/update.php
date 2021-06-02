@@ -47,6 +47,7 @@ $arrayMedios = $data->medios;
 
 $mediosAInsertar = array();
 $tiposAInsertar = array();
+$nombresAInsertar = array();
 
 for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
     array_push($mediosAInsertar, $arrayMedios[$i]->url);
@@ -77,7 +78,7 @@ $token = htmlspecialchars($_GET["token"]);
                     // efectivamente existe 
 
             
-                    $dao->actualizarHimno($nuevoTitulo,$nuevaLetra,$boolEnUso,$idHimno, $mediosAInsertar, $tiposAInsertar);
+                    $dao->actualizarHimno($nuevoTitulo,$nuevaLetra,$boolEnUso,$idHimno, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
                     http_response_code(200);
                     echo $logger->updated_element();
                 } else {

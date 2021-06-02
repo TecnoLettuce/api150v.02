@@ -13,7 +13,7 @@ class UploadCommonFunctions {
     }
     // Getters && Setters 
     // Metodos 
-    function insertarMedios($arrayURL, $arrayTipo) {
+    function insertarMedios($Arraynombre, $arrayURL, $arrayTipo) {
         $database = new Database();
         $cf = new CommonFunctions();
         $log = new Logger();
@@ -39,9 +39,10 @@ class UploadCommonFunctions {
 
                 } else {
                     // No existe 
+                    $nombreParaInsertar = $Arraynombre[$i];
                     $urlParaInsertar = $arrayURL[$i];
                     $tipoParaInsertar = $arrayTipo[$i];
-                    $query = "INSERT INTO medios( url, id_Tipo) VALUES ('" . $urlParaInsertar . "' , (SELECT tipos.id_Tipo FROM tipos WHERE tipos.descripcion LIKE '" . $tipoParaInsertar . "'));";
+                    $query = "INSERT INTO medios(nombre, url, id_Tipo) VALUES ( '".$nombreParaInsertar."', '" . $urlParaInsertar . "' , (SELECT tipos.id_Tipo FROM tipos WHERE tipos.descripcion LIKE '" . $tipoParaInsertar . "'));";
                     // echo "DEBUG > Consulta que se manda a la inserción de medios > ".$query;
                     $stmt = $database->getConn()->prepare($query);
                     $stmt->execute();

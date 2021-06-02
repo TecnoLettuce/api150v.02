@@ -48,6 +48,7 @@ $arrayMedios = $data->medios;
 
 $mediosAInsertar = array();
 $tiposAInsertar = array();
+$nombresAInsertar = array();
 
 
 
@@ -81,7 +82,7 @@ $token = htmlspecialchars($_GET["token"]);
                 if ($cf->comprobarExisteHistoriaPorId($idHistoria)) {
                     // efectivamente existe 
 
-                    $dao->actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion, $boolEnUso, $mediosAInsertar, $tiposAInsertar);
+                    $dao->actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion, $boolEnUso, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
                     http_response_code(200);
                     echo $logger->created_element();
                 } else {

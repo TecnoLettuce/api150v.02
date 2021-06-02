@@ -49,6 +49,7 @@ $arrayMedios = $data->medios;
 
 $mediosAInsertar = array();
 $tiposAInsertar = array();
+$nombresAInsertar = array();
 
 
 
@@ -80,7 +81,7 @@ $token = htmlspecialchars($_GET["token"]);
                 if ($cf->comprobarExisteAmbientePorId($idAmbiente)) {
             
 					// ¿NO FALTA LA DESCRIPCIÓ AQUÍ?
-                    $dao->actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente, $mediosAInsertar, $tiposAInsertar);
+                    $dao->actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
                     http_response_code(200);
                     echo $logger->updated_element();
                 } else {

@@ -50,10 +50,12 @@
 
     $mediosAInsertar = array();
     $tiposAInsertar = array();
+    $nombresAInsertar = array();
 
 
 
     for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
+        array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
         array_push($mediosAInsertar, $arrayMedios[$i]->url);
         array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
     }
@@ -82,7 +84,7 @@
                     if (!empty($mediosAInsertar) && !empty($tiposAInsertar) && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
                         // Hay medios para insertar 
                         // Insertamos los medios
-                        $resultadoMedios = $ucf->insertarMedios($mediosAInsertar, $tiposAInsertar);
+                        $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
                         
 
                         // Comprobamos el resultado

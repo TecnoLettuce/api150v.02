@@ -5,6 +5,8 @@
         public $id;
         public $titulo;
         public $descripcion;
+        public $ubicacion;
+        public $fecha;
         public $enUso;
         public $medios = array();
 
