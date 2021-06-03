@@ -31,10 +31,12 @@
     //region Definicion de los datos que llegan
     $data = json_decode(file_get_contents("php://input"));
 
-    $tituloAmbienteRecibido = $data->titulo;
-    $descripcionAmbienteRecibido = $data->descripcion;
+    $tituloAmbienteRecibido = $data->tituloAmbiente;
+    $descripcionAmbienteRecibido = $data->descripcionAmbiente;
     $boolEnUso = $data->enUso;
     $token = $data->token;
+    // es necesario agregar que inserte ubicacion y fecha como int usando el timestamp supongo
+    // en el update tambien
 
     // Datos de los medios
 

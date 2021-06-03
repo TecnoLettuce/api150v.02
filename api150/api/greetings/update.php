@@ -37,11 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
      //region Definicion de los datos que llegan
      $data = json_decode(file_get_contents("php://input"));
  
-     $idSaludo = htmlspecialchars($_GET["id"]);
-     $nuevoTitulo = htmlspecialchars($_GET["titulo"]);
-     $nuevaDescripcion = htmlspecialchars($_GET["descripcion"]);
-     $nuevoTexto = htmlspecialchars($_GET["texto"]);
-     $boolEnuso = htmlspecialchars($_GET["enUso"]);
+     $idSaludo = htmlspecialchars($_GET["idSaludo"]);
+     $nuevoTitulo = htmlspecialchars($_GET["nuevoTitulo"]);
+     $nuevaDescripcion = htmlspecialchars($_GET["nuevaDescripcion"]);
+     $nuevoTexto = htmlspecialchars($_GET["nuevoTexto"]);
+     $boolEnUso = htmlspecialchars($_GET["enUso"]);
 
      $arrayMedios = array();
     $arrayMedios = $data->medios;
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
                 if ($cf->comprobarExisteSaludoPorId($idSaludo)) {
                     // efectivamente existe 
 
-                    $dao->actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnuso, $idSaludo, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
+                    $dao->actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnUso, $idSaludo, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
                     http_response_code(200);
                     echo $logger->updated_element();
                 } else {

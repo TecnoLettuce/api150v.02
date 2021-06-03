@@ -348,7 +348,7 @@
 
             } else {
                 // Algo ha ido mal al insertar los medios 
-                echo "Algo ha ido mal al actualizar los medios desde el endpoint historia";
+                echo "Algo ha ido mal al actualizar los medios desde el endpoint Saludo";
             }
         }
         //endregion
