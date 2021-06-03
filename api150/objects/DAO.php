@@ -77,7 +77,7 @@
         }
         // Listar acto por id
         function listarUnActoPorId($id) {
-            $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.url, tipos.descripcion 
+            $query = "SELECT programas.id_Programa, programas.titulo, programas.descripcion AS 'descPrograma', programas.ubicacion, programas.fecha, programas.enUso, programas.id_Categoria, medios.nombre, medios.url, tipos.descripcion 
                     FROM programas INNER JOIN rel_programa ON programas.id_Programa=rel_programa.id_Programa INNER JOIN medios ON rel_programa.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
                     WHERE programas.id_Programa LIKE ".$id.";";
             $database = new Database();
@@ -94,7 +94,7 @@
                 $programa->fecha=$row["fecha"];
                 $programa->enUso=$row["enUso"];
                 $programa->categoria=$row["id_Categoria"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                array_push($arrayMedios, array("nombre"=> $row["nombre"], "url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
             $programa->medios = $arrayMedios;
             $paraDevolver = json_encode($programa);
@@ -160,14 +160,14 @@
         }
 
         // Métodos para el endpoint de update Actos 
-        function actualizarActo ($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
+        function actualizarActo ($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $arrayMedios) {
             $database = new Database();
             $query = "DELETE FROM rel_programa WHERE id_Programa LIKE ".$idPrograma.";"; 
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($arrayMedios);
                    
             // Comprobamos el resultado
             if (is_array($resultadoMedios)) {
@@ -237,7 +237,7 @@
 
         // Métodos para el endpoint de listar un saludo
         function listarUnSaludoPorId($id) {
-            $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.id_Saludo LIKE ".$id.";";
+            $query = "SELECT saludos.id_Saludo, saludos.titulo, saludos.descripcion AS 'saludosDesc', saludos.texto, saludos.enUso, medios.nombre, medios.url, tipos.descripcion FROM saludos INNER JOIN rel_saludo ON saludos.id_Saludo=rel_saludo.id_Saludo INNER JOIN medios ON rel_saludo.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE saludos.id_Saludo LIKE ".$id.";";
             $database = new Database();
             $resultado = $database->getConn()->query($query);
             
@@ -251,7 +251,7 @@
                 $saludo->descripcion=$row["saludosDesc"];
                 $saludo->texto=$row["texto"];
                 $saludo->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                array_push($arrayMedios, array("nombre"=> $row["nombre"], "url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
             $saludo->medios = $arrayMedios;
             $paraDevolver = json_encode($saludo);
@@ -321,7 +321,7 @@
         }
 
         // Métodos para el endpoint de update saludos
-        function actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnUso, $idSaludo, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
+        function actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnUso, $idSaludo, $arrayMedios) {
              // Hay que borrar las relaciones de la tabla de relaciones 
             $database = new Database();
             $query = "DELETE FROM rel_saludo WHERE id_Saludo LIKE ".$idSaludo.";"; 
@@ -329,7 +329,7 @@
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($arrayMedios);
                    
             // Comprobamos el resultado
              if (is_array($resultadoMedios)) {
@@ -391,7 +391,7 @@
         }
 
         public function listarUnHimnoPorId($id) {
-            $query = "SELECT himnos.id_Himno, himnos.titulo, himnos.letra, himnos.enUso, medios.url, tipos.descripcion 
+            $query = "SELECT himnos.id_Himno, himnos.titulo, himnos.letra, himnos.enUso, medios.nombre, medios.url, tipos.descripcion 
             FROM himnos INNER JOIN rel_himno ON himnos.id_Himno=rel_himno.id_Himno INNER JOIN medios ON rel_himno.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
             WHERE himnos.id_Himno LIKE ".$id.";";
             $database = new Database();
@@ -405,7 +405,7 @@
                 $himno->titulo=$row["titulo"];
                 $himno->letra=$row["letra"];
                 $himno->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                array_push($arrayMedios, array("nombre"=> $row["nombre"], "url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
             $himno->medios = $arrayMedios;
             $paraDevolver = json_encode($himno);
@@ -480,7 +480,7 @@
             return $this->listarUnHimnoPorId($himno->id );
         }
 
-        public function actualizarHimno($nuevoTitulo, $nuevaLetra, $boolEnUso, $idHimno, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar ) {
+        public function actualizarHimno($nuevoTitulo, $nuevaLetra, $boolEnUso, $idHimno, $arrayMedios) {
             // Hay que borrar las relaciones de la tabla de relaciones
             $database = new Database();
             $query = "DELETE FROM rel_himno WHERE id_Himno LIKE ".$idHimno.";"; 
@@ -489,7 +489,7 @@
 
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($arrayMedios);
 
              if (is_array($resultadoMedios)) {
                 // Tenemos array de ids
@@ -655,7 +655,7 @@
         }
 
         public function ListarUnAmbientePorId($id) {
-            $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.url, tipos.descripcion 
+            $query = "SELECT ambiente.id_Ambiente, ambiente.titulo, ambiente.descripcion AS 'ambienteDesc', ambiente.enUso, medios.nombre, medios.url, tipos.descripcion 
             FROM ambiente INNER JOIN rel_ambiente ON ambiente.id_Ambiente=rel_ambiente.id_Ambiente INNER JOIN medios ON rel_ambiente.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
             WHERE ambiente.id_Ambiente LIKE ".$id.";";
             $database = new Database();
@@ -669,7 +669,7 @@
                 $ambiente->titulo=$row["titulo"];
                 $ambiente->descripcion=$row["ambienteDesc"];
                 $ambiente->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                array_push($arrayMedios, array("nombre"=> $row["nombre"], "url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
             $ambiente->medios = $arrayMedios;
             $paraDevolver = json_encode($ambiente);
@@ -747,20 +747,25 @@
             return $this->ListarUnAmbientePorId($ambiente->id);
         }
         
-        public function actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
+        public function actualizarAmbiente($nuevoTitulo, $descripcion, $ubicacion, $fecha, $boolEnUso, $idAmbiente, $arrayMedios) {
             $database = new Database();
             $query = "DELETE FROM rel_ambiente WHERE id_Ambiente LIKE ".$idAmbiente.";";
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($arrayMedios);
 
             // Comprobamos el resultado
             if (is_array($resultadoMedios)) {
             // Tenemos array de ids
-            // Actualizar   
-            $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."', enUso = ".$boolEnUso." WHERE id_Ambiente LIKE ".$idAmbiente.";";
+            // Actualizar
+            
+            // Se cambia la fecha a timestamp
+            $date = new DateTime($fecha);
+            $fecha = $date->getTimestamp();
+            
+            $query = "UPDATE ambiente SET titulo = '".$nuevoTitulo."', descripcion= '".$descripcion."', ubicacion = '".$ubicacion."', fecha = ".$fecha.", enUso = ".$boolEnUso." WHERE id_Ambiente LIKE ".$idAmbiente.";";
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
 
@@ -966,7 +971,7 @@
 
 
         public function listarUnaHistoriaPorId($id) {
-            $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.id_Historia LIKE ".$id.";";
+            $query = "SELECT historias.id_Historia, historias.titulo, historias.subtitulo, historias.descripcion AS 'Desc_Historia', historias.enUso, medios.nombre, medios.url, tipos.descripcion FROM historias INNER JOIN rel_historia ON historias.id_Historia=rel_historia.id_Historia INNER JOIN medios ON rel_historia.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo WHERE historias.id_Historia LIKE ".$id.";";
 
             $database = new Database();
             $resultado = $database->getConn()->query($query);
@@ -980,7 +985,7 @@
                 $historia->subtitulo=$row["subtitulo"];
                 $historia->descripcion=$row["Desc_Historia"];
                 $historia->enUso=$row["enUso"];
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                array_push($arrayMedios, array("nombre" => $row["nombre"],"url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
             $historia->medios = $arrayMedios;
             $paraDevolver = json_encode($historia);
@@ -1012,15 +1017,16 @@
             return $this->listarUnaHistoriaPorId($historia->idHistoria);
         }
 
-        public function actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion,$boolEnUso, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
+        public function actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion,$boolEnUso, $mediosAInsertar) {
             // Hay que borrar las relaciones de la tabla de relaciones 
             $database = new Database();
             $query = "DELETE FROM rel_historia WHERE id_Historia LIKE ".$idHistoria.";"; 
             $stmt = $database->getConn()->prepare($query);
             $stmt->execute();
+
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-            $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+            $resultadoMedios = $ucf->insertarMedios($mediosAInsertar);
                    
             // Comprobamos el resultado
             if (is_array($resultadoMedios)) {
@@ -1080,7 +1086,7 @@
         }
 
         public function listarVisitaPorId ($id) {
-            $query = "SELECT visitas.id_Visita, visitas.titulo, visitas.descripcion AS 'descVisita',  medios.url, tipos.descripcion 
+            $query = "SELECT visitas.id_Visita, visitas.titulo, visitas.descripcion AS 'descVisita', medios.nombre, medios.url, tipos.descripcion 
             FROM visitas INNER JOIN rel_visita ON visitas.id_Visita=rel_visita.id_Visita INNER JOIN medios ON rel_visita.id_Medio=medios.id_Medio INNER JOIN tipos ON medios.id_Tipo = tipos.id_Tipo 
             WHERE visitas.id_Visita LIKE ".$id.";";
             $database = new Database();
@@ -1094,7 +1100,7 @@
                 $visita->titulo=$row["titulo"];
                 $visita->descripcion=$row["descVisita"];
                 
-                array_push($arrayMedios, array("url"=> $row["url"], "tipo"=> $row["descripcion"]) );
+                array_push($arrayMedios, array("nombre"=> $row["nombre"], "url"=> $row["url"], "tipo"=> $row["descripcion"]) );
             }
             $visita->medios = $arrayMedios;
             $paraDevolver = json_encode($visita);
@@ -1169,7 +1175,7 @@
             return $this->listarVisitaPorId($visita->id);
         }
 
-        public function actualizarVisita ($nuevoTitulo, $idVisita, $nuevaDescripcion, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar) {
+        public function actualizarVisita ($nuevoTitulo, $idVisita, $nuevaDescripcion, $arrayMedios) {
         	// Hay que borrar las relaciones de la tabla de relaciones
             $database = new Database();
             $query = "DELETE FROM rel_visita WHERE id_Visita LIKE ".$idVisita.";";
@@ -1177,7 +1183,7 @@
             $stmt->execute();
             // Insertamos los medios
             $ucf = new UploadCommonFunctions();
-           	$resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+           	$resultadoMedios = $ucf->insertarMedios($arrayMedios);
 
            	// Comprobamos el resultado
            	if (is_array($resultadoMedios)) {

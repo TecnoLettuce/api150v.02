@@ -46,19 +46,6 @@ $boolEnUso = htmlspecialchars($_GET["enUso"]);
 $arrayMedios = array();
 $arrayMedios = $data->medios;
 
-$mediosAInsertar = array();
-$tiposAInsertar = array();
-$nombresAInsertar = array();
-
-
-
-for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
-    array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
-    array_push($mediosAInsertar, $arrayMedios[$i]->url);
-    array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
-}
-
-
 
 //endregion
 
@@ -74,16 +61,14 @@ $token = htmlspecialchars($_GET["token"]);
                 && !empty($nuevoTitulo) 
                 && !empty($nuevoSubtitulo) 
                 && !empty($nuevaDescripcion) 
-                && $boolEnUso != null 
-                && !empty($mediosAInsertar) 
-                && !empty($tiposAInsertar) 
-                && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
+                && $boolEnUso != null
+                && !empty($arrayMedios)) {
                 // Tenemos todos los datos ok
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteHistoriaPorId($idHistoria)) {
                     // efectivamente existe 
 
-                    $dao->actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion, $boolEnUso, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
+                    $dao->actualizarHistoria($idHistoria, $nuevoTitulo, $nuevoSubtitulo, $nuevaDescripcion, $boolEnUso, $arrayMedios);
                     http_response_code(200);
                     echo $logger->created_element();
                 } else {

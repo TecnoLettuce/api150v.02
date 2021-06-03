@@ -39,20 +39,6 @@
     $arrayMedios = array();
     $arrayMedios = $data->medios;
 
-    $mediosAInsertar = array();
-    $tiposAInsertar = array();
-    $nombresAInsertar = array();
-
-
-
-    for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
-        array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
-        array_push($mediosAInsertar, $arrayMedios[$i]->url);
-        array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
-    }
-
-
-
     // Comprobamos que tiene permisos de administrador
     if ($cf->checkPermission($token, $permissionLevel) == 1) { 
 
@@ -71,8 +57,8 @@
                     // El saludo no existe 
 
                     // Hay medios para insertar?
-                    if (!empty($mediosAInsertar) && !empty($tiposAInsertar) && ( count($mediosAInsertar, COUNT_NORMAL) == count($tiposAInsertar, COUNT_NORMAL))) {
-                        $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+                    if (!empty($arrayMedios)) {
+                        $resultadoMedios = $ucf->insertarMedios($arrayMedios);
 
                         // Comprobamos el resultado 
                         if (is_array($resultadoMedios)) {

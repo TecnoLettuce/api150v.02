@@ -48,19 +48,6 @@ $nuevaDescripcion = htmlspecialchars($_GET["descripcion"]);
 $arrayMedios = array();
 $arrayMedios = $data->medios;
 
-$mediosAInsertar = array();
-$tiposAInsertar = array();
-$nombresAInsertar = array();
-
-
-
-for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
-    array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
-    array_push($mediosAInsertar, $arrayMedios[$i]->url);
-    array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
-}
-
-
 //endregion
 
 $token = htmlspecialchars($_GET["token"]);
@@ -74,14 +61,12 @@ $token = htmlspecialchars($_GET["token"]);
             if (!empty($idVisita)
                 && !empty($nuevoTitulo)
                 && !empty($nuevaDescripcion)
-                && !empty($mediosAInsertar) 
-                && !empty($tiposAInsertar)
-                && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
+                && !empty($arrayMedios)) {
                 // Tenemos todos los datos ok
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteVisitaPorId($idVisita)) {
                     
-                    $dao->actualizarVisita($nuevoTitulo, $idVisita, $nuevaDescripcion, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar); 
+                    $dao->actualizarVisita($nuevoTitulo, $idVisita, $nuevaDescripcion, $arrayMedios); 
 
                     http_response_code(200);
                     echo $logger->updated_element();

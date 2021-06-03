@@ -45,19 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
      $arrayMedios = array();
     $arrayMedios = $data->medios;
-
-    $mediosAInsertar = array();
-    $tiposAInsertar = array();
-    $nombresAInsertar = array();
-
-
-
-    for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
-    array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
-    array_push($mediosAInsertar, $arrayMedios[$i]->url);
-    array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
-    }
-
      
      //endregion
      $token = htmlspecialchars($_GET["token"]);
@@ -72,15 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
                 && !empty($nuevaDescripcion) 
                 && !empty($nuevoTexto)
                 && $boolEnUso != null 
-                && !empty($mediosAInsertar) 
-                && !empty($tiposAInsertar) 
-                && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
+                && !empty($arrayMedios)) {
                 // Tenemos todos los datos ok
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteSaludoPorId($idSaludo)) {
                     // efectivamente existe 
 
-                    $dao->actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnUso, $idSaludo, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
+                    $dao->actualizarSaludo($nuevoTitulo, $nuevaDescripcion, $nuevoTexto, $boolEnUso, $idSaludo, $arrayMedios);
                     http_response_code(200);
                     echo $logger->updated_element();
                 } else {

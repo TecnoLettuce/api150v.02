@@ -37,18 +37,7 @@
 
     $arrayMedios = array();
     $arrayMedios = $data->medios;
-    
-    $mediosAInsertar = array();
-    $tiposAInsertar = array();
-    $nombresAInsertar = array();
-    
-    
-    
-    for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
-        array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
-        array_push($mediosAInsertar, $arrayMedios[$i]->url);
-        array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
-    }
+
     //endregion
 
 
@@ -70,9 +59,9 @@
                     // el visita no existe 
 
                     // Hay medios para insertar? 
-                    if (!empty($mediosAInsertar) && !empty($tiposAInsertar) && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
+                    if (!empty($arrayMedios)) {
                         // Hay medios
-                        $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+                        $resultadoMedios = $ucf->insertarMedios($arrayMedios);
 
                         // Comprobamos el resultado 
                         if (is_array($resultadoMedios)) {

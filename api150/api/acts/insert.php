@@ -51,17 +51,6 @@
     $arrayMedios = array();
     $arrayMedios = $data->medios;
 
-    $mediosAInsertar = array();
-    $tiposAInsertar = array();
-    $nombresAInsertar = array();
-
-    for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) {
-        array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
-        array_push($mediosAInsertar, $arrayMedios[$i]->url);
-        array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
-    }
-
-
     // Comprobamos que tiene permisos de administrador
     if ($cf->checkPermission($token, $permissionLevel) == 1) { 
         // Comprobamos que su sesión no ha caducado
@@ -84,9 +73,9 @@
                     // el programa no existe 
 
                     // Hay medios para insertar?
-                    if (!empty($mediosAInsertar) && !empty($tiposAInsertar) && (count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar,COUNT_NORMAL))) {
+                    if (!empty($arrayMedios)) {
                         // Hay medios para insertar, insertamos los medios
-                        $resultadoMedios = $ucf->insertarMedios($nombresAInsertar, $mediosAInsertar, $tiposAInsertar);
+                        $resultadoMedios = $ucf->insertarMedios($arrayMedios);
 
                         // Comprobamos los resultados
                         if (is_array($resultadoMedios)) {

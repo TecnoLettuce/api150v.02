@@ -9,9 +9,11 @@
         public $enUso;
         public $medios = array();
 
-        // Cosntructor
+        // Constructor
         public function __construct() {
         } 
+
+        // Crear funcion inicializar. (Parecido al constructor, pero en una función falseada) 
 
     }
 ?>

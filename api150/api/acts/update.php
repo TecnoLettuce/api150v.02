@@ -47,15 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     $arrayMedios = array();
 	$arrayMedios = $data->medios;
 
-	$mediosAInsertar = array();
-	$tiposAInsertar = array();
-    $nombresAInsertar = array();
 
-    for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
-    array_push($mediosAInsertar, $arrayMedios[$i]->url);
-    array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
-    array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
-}
       
      $token = htmlspecialchars($_GET["token"]);
     //endregion
@@ -71,15 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
              && !empty($nuevaUbicacion)
               && !empty($nuevaFecha)
                && $boolEnUso!=null
-           		&& !empty($mediosAInsertar) 
-                && !empty($tiposAInsertar) 
-                && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
+           		&& !empty($arrayMedios)) {
                 // Tenemos todos los datos ok
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteActoPorId($idPrograma)) {
                     // efectivamente existe 
                     
-                	$dao->actualizarActo($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
+                	$dao->actualizarActo($nuevoTitulo, $nuevaDescripcion, $nuevaUbicacion, $nuevaFecha, $boolEnUso, $idPrograma, $arrayMedios);
                     http_response_code(200);
                     echo $logger->updated_element();
                     
@@ -103,9 +93,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
         echo $logger->invalid_token();
     }
 
-     
-     
-
-     
 
 ?>

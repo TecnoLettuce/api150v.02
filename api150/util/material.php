@@ -8,9 +8,8 @@
         public $tipo;
         
 
-        // Cosntructor
+        // Constructor
         public function __construct() {
         } 
-
     }
 ?>

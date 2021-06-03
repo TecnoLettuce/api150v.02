@@ -42,23 +42,12 @@ $data = json_decode(file_get_contents("php://input"));
 $idAmbiente = htmlspecialchars($_GET["id"]);
 $nuevoTitulo = htmlspecialchars($_GET["titulo"]);
 $descripcion = htmlspecialchars($_GET["descripcion"]);
+$ubicacion = htmlspecialchars($_GET["ubicacion"]);
+$fecha = htmlspecialchars($_GET["fecha"]);
 $boolEnUso = htmlspecialchars($_GET["enUso"]);
 
 $arrayMedios = array();
 $arrayMedios = $data->medios;
-
-$mediosAInsertar = array();
-$tiposAInsertar = array();
-$nombresAInsertar = array();
-
-
-
-for ($i=0; $i < count($arrayMedios, COUNT_NORMAL); $i++) { 
-    array_push($nombresAInsertar, $arrayMedios[$i]->nombre);
-    array_push($mediosAInsertar, $arrayMedios[$i]->url);
-    array_push($tiposAInsertar, $arrayMedios[$i]->tipo);
-}
-
 
 //endregion
 
@@ -72,17 +61,16 @@ $token = htmlspecialchars($_GET["token"]);
             // lo primero es comprobar que existe el elemento que se quiere modificar 
             if (!empty($idAmbiente) 
             	&& !empty($nuevoTitulo)
-            	&& $boolEnUso!=null
+            	&& !empty($descripcion)
+            	&& !empty($ubicacion)
+            	&& !empty($fecha)
             	&& $boolEnUso != null 
-                && !empty($mediosAInsertar) 
-                && !empty($tiposAInsertar) 
-                && ( count($tiposAInsertar, COUNT_NORMAL) == count($mediosAInsertar, COUNT_NORMAL))) {
+                && !empty($arrayMedios)) {
                 // Tenemos todos los datos ok
                 // Comprobamos que el id existe
                 if ($cf->comprobarExisteAmbientePorId($idAmbiente)) {
             
-					// ¿NO FALTA LA DESCRIPCIÓ AQUÍ?
-                    $dao->actualizarAmbiente($nuevoTitulo, $boolEnUso, $idAmbiente, $mediosAInsertar, $tiposAInsertar, $nombresAInsertar);
+                    $dao->actualizarAmbiente($nuevoTitulo, $descripcion, $ubicacion, $fecha, $boolEnUso, $idAmbiente, $arrayMedios);
                     http_response_code(200);
                     echo $logger->updated_element();
                 } else {
