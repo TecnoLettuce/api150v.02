@@ -36,17 +36,17 @@
         // Recibe el titulo o el ID de un historia y lo busca en la base de datos 
         $id = htmlspecialchars($_GET["idHistoria"]);
         $titulo = htmlspecialchars($_GET["titulo"]);
-        echo $dao->listarUnaHistoriaPorIdyTitulo($id, $titulo);
+        echo  json_encode($dao->listarUnaHistoriaPorIdyTitulo($id, $titulo));
 
     } else if (isset($_GET["idHistoria"])) {
 
         $id = htmlspecialchars($_GET["idHistoria"]);
-        echo $dao->listarUnaHistoriaPorId($id);
+        echo  json_encode($dao->listarUnaHistoriaPorId($id));
         
     } else if (isset($_GET["titulo"])) {
 
         $titulo = htmlspecialchars($_GET["titulo"]);
-        echo $dao->listarUnaHistoriaPorTitulo($titulo);
+        echo  json_encode($dao->listarUnaHistoriaPorTitulo($titulo));
         
     } else {
 

@@ -26,5 +26,5 @@
 
     // No tiene que recibir parámetros es solo la consulta pelada
     
-    echo json_encode($dao->listarFrases());
+    echo json_encode($dao->listarCadaFrase());
 ?>

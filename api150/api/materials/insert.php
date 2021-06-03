@@ -43,8 +43,10 @@
     $cf = new CommonFunctions();
 
     if ($cf->checkPermission($token, $permissionLevel) == 1) {
+
+
         $result = array();
-        $result = $ucf->insertarMedios($nombres,$url, $tipo);
+        $result = $ucf->insertarMedios($nombres,$url, $tipo); // TODO ESTO NO FUNCIONA LA FUNCION AHORA RECIBE UN ARRAY DE MEDIOS
 
         // Comprobar si ha devuelto fallo o acierto 
         if (count($result, COUNT_NORMAL) > 0) {

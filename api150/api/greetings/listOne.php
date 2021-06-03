@@ -29,17 +29,17 @@
         
         $id = htmlspecialchars($_GET["idSaludo"]);
         $titulo = htmlspecialchars($_GET["titulo"]);
-        echo $dao->listarUnSaludoPorIdyTitulo($id,$titulo);
+        echo json_encode($dao->listarUnSaludoPorIdyTitulo($id,$titulo));
 
     } else if (isset($_GET["idSaludo"])) {
 
         $id = htmlspecialchars($_GET["idSaludo"]);
-        echo $dao->listarUnSaludoPorId($id);
+        echo json_encode($dao->listarUnSaludoPorId($id));
         
     } else if (isset($_GET["titulo"])) {
 
         $titulo = htmlspecialchars($_GET["titulo"]);
-        echo $dao->listarUnSaludoPorTitulo($titulo);
+        echo json_encode($dao->listarUnSaludoPorTitulo($titulo));
         
     } else {
         http_response_code(400);

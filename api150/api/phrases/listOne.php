@@ -27,17 +27,17 @@
         // Recibe el titulo o el ID de una frase y lo busca en la base de datos 
         $id = htmlspecialchars($_GET["idFrase"]);
         $fecha = htmlspecialchars($_GET["fecha"]);
-        echo $dao->listarUnaFrasePorIdyFecha($id,$fecha);
+        echo json_encode($dao->listarUnaFrasePorIdyFecha($id,$fecha));
 
     } else if (isset($_GET["idFrase"])) {
 
         $id = htmlspecialchars($_GET["idFrase"]);
-        echo $dao->listarUnaFrasePorId($id);
+        echo json_encode($dao->listarUnaFrasePorId($id));
         
     } else if (isset($_GET["fecha"])) {
 
         $fecha = htmlspecialchars($_GET["fecha"]);
-        echo $dao->listarUnaFrasePorFecha($fecha);
+        echo json_encode($dao->listarUnaFrasePorFecha($fecha));
         
     } else {
         http_response_code(400);

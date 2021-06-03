@@ -28,14 +28,14 @@
         $id = htmlspecialchars($_GET["idVisita"]);
         $titulo = htmlspecialchars($_GET["titulo"]);
 
-        echo $dao->listarVisitaPorIdyTitulo($id,$titulo);
+        echo  json_encode($dao->listarVisitaPorIdyTitulo($id,$titulo));
 
     } else if (isset($_GET["idVisita"])) {
         $id = htmlspecialchars($_GET["idVisita"]);
-        echo $dao->listarVisitaPorId($id);
+        echo  json_encode($dao->listarVisitaPorId($id));
     } else if (isset($_GET["titulo"])) {
         $titulo = htmlspecialchars($_GET["titulo"]);
-        echo $dao->listarVisitaPorTitulo($titulo);
+        echo json_encode($dao->listarVisitaPorTitulo($titulo));
     } else {
         http_response_code(400);
         $logger->incomplete_data();

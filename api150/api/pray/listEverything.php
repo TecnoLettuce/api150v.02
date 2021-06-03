@@ -25,5 +25,5 @@
 
     // No tiene que recibir parámetros es solo la consulta pelada
     
-    echo json_encode($dao->listarOracion());
+    echo json_encode($dao->listarCadaOracion());
 ?>

@@ -28,17 +28,17 @@
         // Recibe el titulo o el ID de un historia y lo busca en la base de datos 
         $id = htmlspecialchars($_GET["idHimno"]);
         $titulo = htmlspecialchars($_GET["titulo"]);
-        echo $dao->listarUnHimnoPorIdyTitulo($id, $titulo);
+        echo json_encode($dao->listarUnHimnoPorIdyTitulo($id, $titulo));
 
     } else if (isset($_GET["idHimno"])) {
 
         $id = htmlspecialchars($_GET["idHimno"]);
-        echo $dao->listarUnHimnoPorId($id);
+        echo json_encode($dao->listarUnHimnoPorId($id));
         
     } else if (isset($_GET["titulo"])) {
 
         $titulo = htmlspecialchars($_GET["titulo"]);
-        echo $dao->listarUnHimnoPorTitulo($titulo);
+        echo json_encode($dao->listarUnHimnoPorTitulo($titulo));
         
     } else {
         http_response_code(400);
