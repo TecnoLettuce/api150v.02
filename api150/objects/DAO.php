@@ -1118,6 +1118,113 @@
         }
         //endregion
 
+
+        //region CRUD de usuarios
+        
+        public function listarUsuarios() {
+            $database = new Database();
+            $query = "SELECT idUser, userName, password, mail, rolName FROM user INNER JOIN user_rol ON user_rol.idRol = user.idRol";
+            $resultado = $database->getConn()->query($query);
+
+            $arr = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $usuario = new Usuario();
+                $usuario->id=$row["idUser"];
+                $usuario->username=$row["userName"];
+                $usuario->password=$row["password"];
+                $usuario->mail=$row["mail"];
+                $usuario->rolName=$row["rolName"];
+                array_push($arr, $usuario);
+            }
+            $paraDevolver = json_encode($arr);
+            return $paraDevolver;
+        }
+
+        public function listarUsuarioPorId($id) {
+            $query = "SELECT idUser, userName, password, mail, rolName 
+            FROM user INNER JOIN user_rol ON user_rol.idRol = user.idRol
+            WHERE idUser LIKE ".$id."";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $arr = array();
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $usuario = new Usuario();
+                $usuario->id=$row["idUser"];
+                $usuario->username=$row["userName"];
+                $usuario->password=$row["password"];
+                $usuario->mail=$row["mail"];
+                $usuario->rolName=$row["rolName"];
+                array_push($arr, $usuario);
+            }
+            $paraDevolver = $arr;
+            return $paraDevolver;
+        }
+
+        public function listarUsuarioPorNombre($userName) {
+
+            $query = "SELECT idUser FROM user WHERE userName LIKE '".$userName."';";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $usuario = new Usuario();
+
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $usuario->id=$row["idUser"];
+            }
+            return $this->listarUsuarioPorId($usuario->id);
+        }
+
+        public function listarUsuarioPorIdYNombre($id, $userName) {
+
+            $query = "SELECT idUser FROM user 
+            WHERE userName LIKE '".$userName."' AND idUser LIKE ".$id.";";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $usuario = new Usuario();
+
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $usuario->id=$row["idUser"];
+            }
+            return $this->listarUsuarioPorId($usuario->id);
+        }
+
+        public function borrarUsuario($idUser){
+            $database  = new Database();
+            $query = "DELETE FROM user WHERE idUser like ".$idUser.";";
+            $stmt = $database->getConn()->prepare($query);
+            $stmt->execute();
+        }
+
+        function actualizarUsuario($idUser, $userName, $password, $mail, $rolName) {
+
+            // buscar el rol que se le quiere asignar 
+
+            $query = "SELECT idRol 
+            FROM user_rol 
+            WHERE rolName LIKE '".$rolName."'";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+            
+            $idRol = -1;
+
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {    
+                $idRol=$row["idRol"];
+            }
+
+            // Encriptar la contraseña
+            $passwordEncriptada = sha1($password, $raw_output = false);
+
+           $query = "UPDATE user SET userName = '".$userName."', password = '".$passwordEncriptada."', mail = '".$mail."', idRol = ".$idRol." WHERE idUser LIKE ".$idUser.";";
+           $stmt = $database->getConn()->prepare($query);
+           $stmt->execute();
+       }
+
+        //endregion
+
     } // Salida de la clase
     
 ?>

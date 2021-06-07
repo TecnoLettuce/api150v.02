@@ -490,6 +490,25 @@ class CommonFunctions {
             return false;
         }
 	}
-}
+
+    /**
+     * Recibe el id de un usuario y devuelve si existe o no
+     * @param integer id
+     * @return boolean
+     */
+    public function comprobarExisteUsuarioPorId($id) {
+        $database = new Database();
+        $query = "SELECT userName FROM user WHERE idUser LIKE ".$id.";";
+        $resultado = $database->getConn()->query($query);
+
+        if ($resultado->rowCount() != 0) {
+            return true;    
+        } else {
+            return false;
+        }
+    }
+
+
+} // Salida de la clase
 
 ?>
