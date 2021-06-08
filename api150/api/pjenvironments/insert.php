@@ -33,6 +33,8 @@
 
     $tituloAmbienteRecibido = $data->tituloAmbiente;
     $descripcionAmbienteRecibido = $data->descripcionAmbiente;
+    $ubicacion = $data->ubicacion;
+    $fecha = $data->fecha;
     $boolEnUso = $data->enUso;
     $token = $data->token;
     // es necesario agregar que inserte ubicacion y fecha como int usando el timestamp supongo
@@ -53,7 +55,7 @@
             // La sesión es válida
             $cf->actualizarExpireDate($token);
             // comprobación de que los datos se reciben correctamente
-            if (!empty($tituloAmbienteRecibido) && !empty($descripcionAmbienteRecibido) && $boolEnUso!=null) {
+            if (!empty($tituloAmbienteRecibido) && !empty($descripcionAmbienteRecibido) && !empty($ubicacion) && !empty($fecha) && $boolEnUso!=null) {
                 // tengo todos los datos que necesito
                 //Comprobamos que el registro no existe ya en la base de datos 
                 if ($cf->comprobarExisteAmbientePorTitulo($tituloAmbienteRecibido)) {
@@ -73,7 +75,7 @@
                             // tenemos array de ids
 
                             // Insertamos el ambiente 
-                            $dao->insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $boolEnUso);
+                            $dao->insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $ubicacion, $fecha, $boolEnUso);
 
                             // consultamos el elemento que acabamos de insertar 
                             $query = "SELECT id_Ambiente FROM ambiente WHERE titulo LIKE '".$tituloAmbienteRecibido."';";
@@ -110,7 +112,7 @@
                         
                     } else {
                         // No hay medios para insertar, se inserta el ambiente 
-                        $dao->insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $boolEnUso);
+                        $dao->insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $ubicacion, $fecha, $boolEnUso);
                         http_response_code(201);
                         echo $logger->created_element();
                     }

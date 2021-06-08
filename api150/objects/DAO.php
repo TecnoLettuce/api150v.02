@@ -532,9 +532,10 @@
         //endregion
 
         //region Ambientes
-        public function insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $boolEnUso) {
+        public function insertarAmbiente($tituloAmbienteRecibido, $descripcionAmbienteRecibido, $ubicacion, $fecha, $boolEnUso) {
             $database = new Database();
-            $query = "INSERT INTO ambiente (id_Ambiente, titulo, descripcion, enUso) VALUES (null,'".$tituloAmbienteRecibido."', '".$descripcionAmbienteRecibido."', ".$boolEnUso.");";
+            $fecha = strtotime($fecha);
+            $query = "INSERT INTO ambiente (id_Ambiente, titulo, descripcion, ubicacion, fecha, enUso) VALUES (null,'".$tituloAmbienteRecibido."', '".$descripcionAmbienteRecibido."', '".$ubicacion."' , ".$fecha." , ".$boolEnUso.");";
             // echo "La consulta para insertar un ambiente es ".$query;
             $stmt = $database->getConn()->prepare($query);
                         
