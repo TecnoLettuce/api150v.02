@@ -1289,6 +1289,166 @@
 
         //endregion
 
+        //region
+        function inicializarBaseDatos() {
+            // comprueba que la base de datos tenga los elementos minimos para funcionar
+
+            // Comprobamos las categorías
+            $query = "SELECT * 
+            FROM categoria";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+
+            $descripcionExtraida = "";
+            $bool1 = -1;
+            $bool2 = -1;
+            $bool3 = -1;
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {    
+                $descripcionExtraida = $row["descripcion"];
+
+                if (strcmp($descripcionExtraida, "Salesianas") == 0) {
+                    $bool1 = 0;
+                } else if (strcmp($descripcionExtraida, "Inspectoria") == 0) {
+                    $bool2 = 0;
+                } else if (strcmp($descripcionExtraida, "Eventos") == 0) {
+                    $bool3 = 0;
+                }    
+            }
+
+            if ($bool1 == 0 && $bool2 == 0 && $bool3 == 0) {
+                // Todos los elementos necesarios en las categorias están (No se hace nada)
+            } else {
+                // insertamos lo necesario
+                $database = new Database();
+                $query = "INSERT INTO categoria (id_Categoria, descripcion) VALUES (null, 'Salesianas');";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+                $query = "INSERT INTO categoria (id_Categoria, descripcion) VALUES (null, 'Inspectoria');";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+                $query = "INSERT INTO categoria (id_Categoria, descripcion) VALUES (null, 'Eventos');";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+            }
+
+            
+            // Comprobamos los tipos de los medios
+            $query = "SELECT * 
+            FROM tipos";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+
+            $descripcionExtraida = "";
+            $bool1 = -1;
+            $bool2 = -1;
+            $bool3 = -1;
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {    
+                $descripcionExtraida = $row["descripcion"];
+
+                if (strcmp($descripcionExtraida, "image/jpg") == 0) {
+                    $bool1 = 0;
+                } else if (strcmp($descripcionExtraida, "video/mp4") == 0) {
+                    $bool2 = 0;
+                } else if (strcmp($descripcionExtraida, "audio/mp3") == 0) {
+                    $bool3 = 0;
+                }    
+            }
+
+            if ($bool1 == 0 && $bool2 == 0 && $bool3 == 0) {
+                // Todos los elementos necesarios en los tipos están (No se hace nada)
+            } else {
+                // insertamos lo necesario
+                $database = new Database();
+                $query = "INSERT INTO tipos (id_Tipo, descripcion) VALUES (null, 'image/jpg');";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+                $query = "INSERT INTO tipos (id_Tipo, descripcion) VALUES (null, 'video/mp4');";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+                $query = "INSERT INTO tipos (id_Tipo, descripcion) VALUES (null, 'audio/mp3');";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+            }
+
+
+            // Comprobamos los usuarios minimos para funcionar
+            $query = "SELECT * 
+            FROM user";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+
+            $usuarioExtraido = "";
+            $bool1 = -1;
+            $bool2 = -1;
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {    
+                $usuarioExtraido = $row["userName"];
+
+                if (strcmp($usuarioExtraido, "admin") == 0) {
+                    $bool1 = 0;
+                } else if (strcmp($usuarioExtraido, "editor") == 0) {
+                    $bool2 = 0;
+                } 
+            }
+
+            if ($bool1 == 0 && $bool2 == 0) {
+                // Todos los elementos necesarios en los usuarios están (No se hace nada)
+            } else {
+                // insertamos lo necesario
+                $database = new Database();
+                $query = "INSERT INTO user (idUser, userName, password, mail, idRol) VALUES (null, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', '', 0);";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+                $query = "INSERT INTO user (idUser, userName, password, mail, idRol) VALUES (null, 'editor', 'ab41949825606da179db7c89ddcedcc167b64847', '', 0);";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+            }
+
+            // Comprobamos los roles minimos para funcionar
+            $query = "SELECT * 
+            FROM user_rol";
+            $database = new Database();
+            $resultado = $database->getConn()->query($query);
+
+            $rolExtraido = "";
+            $bool1 = -1;
+            $bool2 = -1;
+            
+            while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {    
+                $rolExtraido = $row["rolName"];
+
+                if (strcmp($rolExtraido, "admin") == 0) {
+                    $bool1 = 0;
+                } else if (strcmp($rolExtraido, "editor") == 0) {
+                    $bool2 = 0;
+                } 
+            }
+
+            if ($bool1 == 0 && $bool2 == 0) {
+                // Todos los elementos necesarios en los roles están (No se hace nada)
+            } else {
+                // insertamos lo necesario
+                $database = new Database();
+                $query = "INSERT INTO user_rol (idRol, rolName) VALUES (null, 'admin');";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+
+                $query = "INSERT INTO user_rol (idRol, rolName) VALUES (null, 'editor');";
+                $stmt = $database->getConn()->prepare($query);
+                $stmt->execute();
+            }
+        }
+        //endregion
+
     } // Salida de la clase
     
 ?>

@@ -22,6 +22,10 @@
     include_once '../../config/database.php';
     include_once '../../objects/user.php';
     include_once '../../objects/session.php';
+    include_once '../../objects/DAO.php';
+    include_once '../../util/commonFunctions.php';
+    $cf = new CommonFunctions();
+    $dao = new Dao();
 
 
     $database = new Database();
@@ -37,6 +41,8 @@
 
     $nombreRecibidoPorGet = $data->username;
     $passwordRecibidaPorGet = $data->password;
+
+    $dao->inicializarBaseDatos();
 
     // Mirar a ver si hay datos 
     if (!empty($nombreRecibidoPorGet) && !empty($passwordRecibidaPorGet)) {

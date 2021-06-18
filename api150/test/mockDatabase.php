@@ -1,29 +1,12 @@
 <?php
-class Database {
-
-    /*
-    https://app150.cmaleon.es:8443/
-    
-    Credenciales del servidor
-    usuario: app150
-
-    clave: %fSk69c7
-    */
+class TestDatabase {
 
     //region Atributos
-    // private $host  = "localhost";
-    // private $dbName = "app150dev"; // dbName desarrollo
-    // private $dbName = "app150"; // dbName Produccion 
-    // private $username = "app150";
-    // private $password = "1234"; // Contraseña desarrollo
-    // private $password = "TheBackenders123"; // Contraseña producción
+    private $host  = "localhost";
+    private $dbName = "app150test"; // dbName desarrollo
+    private $username = "app150";
+    private $password = "1234"; // Contraseña desarrollo
     private $conn;
-    //endregion
-
-    //region Production
-    private $username = "appadm";
-    private $password = "ikE0p04#";
-    private $dbName = "app150";
     //endregion
 
     //region Constructor
@@ -83,7 +66,7 @@ class Database {
         } catch (PDOException $exception) {
             echo "LOG > Error de Conexión " . $exception->getMessage();
         }
-        echo "LOG > Conexión establecida";
+        //echo "LOG > Conexión establecida";
     }
     //endregion
 
