@@ -42,7 +42,7 @@
     $nombreRecibidoPorGet = $data->username;
     $passwordRecibidaPorGet = $data->password;
 
-    $dao->inicializarBaseDatos();
+    // $dao->inicializarBaseDatos();
 
     // Mirar a ver si hay datos 
     if (!empty($nombreRecibidoPorGet) && !empty($passwordRecibidaPorGet)) {

@@ -11,7 +11,7 @@ class Database {
     */
 
     //region Atributos
-    // private $host  = "localhost";
+    // private $host  = "localhost";  
     // private $dbName = "app150dev"; // dbName desarrollo
     // private $dbName = "app150"; // dbName Produccion 
     // private $username = "app150";
@@ -21,6 +21,7 @@ class Database {
     //endregion
 
     //region Production
+    private $host = 'localhost';  //'app150.salesianas.org'
     private $username = "appadm";
     private $password = "ikE0p04#";
     private $dbName = "app150";
@@ -81,12 +82,9 @@ class Database {
             $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->dbName, $this->username, $this->password);
             $this->conn->exec("set names utf8");
         } catch (PDOException $exception) {
-            echo "LOG > Error de Conexión " . $exception->getMessage();
+            // echo "LOG > Error de Conexión " . $exception->getMessage();
         }
-        echo "LOG > Conexión establecida";
+        // echo "LOG > Conexión establecida";
     }
     //endregion
-
-
-
 }
